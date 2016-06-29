@@ -24,4 +24,8 @@ object Routes {
     def connectSSE(username: String) = base + s"/sse/$username"
     def talk = base + "/talk"
   }
+
+  object ExplainEditor {
+    val base = "/explain"
+  }
 }

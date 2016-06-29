@@ -29,5 +29,10 @@ GET           /chat/ws/:username           controllers.ChatController.chatWS(use
 GET           /chat/sse/:username          controllers.ChatController.chatSSE(username: String)
 POST          /chat/talk                   controllers.ChatController.talk
 
+GET           /explain/:id                 controllers.ExplainEditorController.get(id: Long)
+POST          /explain/update/:id          controllers.ExplainEditorController.update(id: Long)
+GET           /explain/all                 controllers.ExplainEditorController.all
+
+
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                controllers.Assets.at(path="/public", file)
