@@ -4,7 +4,7 @@ import common.Framework
 import config.Routes
 import org.scalajs.dom
 import org.scalajs.dom.ext.{Ajax, AjaxException}
-import org.scalajs.dom.html.Input
+import org.scalajs.dom.html.{Input, TextArea}
 import rx._
 import shared._
 
@@ -61,8 +61,8 @@ object ExplainEditorJS {
     }
 
 
-    def saveHeadline(headline: String) = {
-      val json = s"""{"headline": "$headline"}"""
+    def saveContent(field: String, value: String) = {
+      val json = s"""{"$field": "$value"}"""
       val id = 123
       Ajax.postAsJson(Routes.ExplainEditor.update(id), json).map{ r =>
         if(r.ok){
@@ -98,26 +98,25 @@ object ExplainEditorJS {
     placeholder:="headline",
     autofocus:=true,
     onchange := { () =>
-      Model.saveHeadline(headline.value)
+      Model.saveContent("headline", headline.value)
       false
     }
   ).render
 
-  val body = textarea(
+  val body: TextArea = textarea(
     id:="new-todo",
     placeholder:="body",
-    autofocus:=true
+    autofocus:=true,
+    onchange := { () =>
+      Model.saveContent("body", body.value)
+      false
+    }
   ).render
 
   def templateHeader = {
     header(id:="header")(
       form(
-        headline, body,
-        onsubmit := { () =>
-          Model.create(headline.value)
-          headline.value = ""
-          false
-        }
+        headline, body
       )
     )
   }
