@@ -79,30 +79,24 @@ object ExplainEditorJS {
       }
     }
 
-    def clearCompletedTasks = {
-      Ajax.postAsForm(Routes.Todos.clear).map{ r =>
-        if(r.ok) tasks() = tasks().filter(!_.done)
-      }
-    }
-
   }
 
   val headline = input(
     id:="new-todo",
-    placeholder:="Explainer Headline",
+    placeholder:="headline",
     autofocus:=true
   ).render
 
-  val body = input(
+  val body = textarea(
     id:="new-todo",
-    placeholder:="Explainer Body",
+    placeholder:="body",
     autofocus:=true
   ).render
 
   def templateHeader = {
     header(id:="header")(
       form(
-        headline,
+        headline, body,
         onsubmit := { () =>
           Model.create(headline.value)
           headline.value = ""
@@ -123,80 +117,7 @@ object ExplainEditorJS {
 //          Var.set(tasks().map(_.done -> target): _*)
         }
       ),
-      label(`for`:="toggle-all", "Mark all as complete"),
-      partList,
-      partControls
-    )
-  }
-
-  def templateFooter = {
-    footer(id:="info")(
-      p("Double-click to edit a todo"),
-      p("Original version created by ", a(href:="https://github.com/lihaoyi/workbench-example-app/blob/todomvc/src/main/scala/example/ScalaJSExample.scala")("Li Haoyi")),
-      p("Modified version with database backend can be found ", a(href:="https://github.com/hussachai/play-scalajs-showcase")("here"))
-    )
-  }
-
-  def partList = Rx {
-    ul(id := "todo-list")(
-      for (task <- Model.tasks() if Model.filters(Model.filter())(task)) yield {
-        val inputRef = input(`class` := "edit", value := task.txt).render
-
-        li(
-          `class` := Rx{
-            if (task.done) "completed"
-            else if (Model.editing() == Some(task)) "editing"
-            else ""
-          },
-          div(`class` := "view")(
-            "ondblclick".attr := { () =>
-              Model.editing() = Some(task)
-            },
-            input(`class`:= "toggle", `type`:= "checkbox", cursor:= "pointer", onchange:= { () =>
-                Model.update(task.copy(done = !task.done))
-              }, if (task.done) checked := true else ""
-            ),
-            label(task.txt),
-            button(
-              `class` := "destroy",
-              cursor := "pointer",
-              onclick := { () => Model.delete(task.id) }
-            )
-          ),
-          form(
-            onsubmit := { () =>
-              Model.update(task.copy(txt = inputRef.value))
-              Model.editing() = None
-              false
-            },
-            inputRef
-          )
-        )
-      }
-    )
-  }
-
-  def partControls = {
-    footer(id:="footer")(
-      span(id:="todo-count")(strong(Model.notDone), " item left"),
-      ul(id:="filters")(
-        for ((name, pred) <- Model.filters.toSeq) yield {
-          li(a(
-            `class`:=Rx{
-              if(name == Model.filter()) "selected"
-              else ""
-            },
-            name,
-            href:="#",
-            onclick := {() => Model.filter() = name}
-          ))
-        }
-      ),
-      button(
-        id:="clear-completed",
-        onclick := { () => Model.clearCompletedTasks },
-        "Clear completed (", Model.done, ")"
-      )
+      label(`for`:="toggle-all", "Mark all as complete")
     )
   }
 
