@@ -1,5 +1,6 @@
 package models
 
+import cats.data.Xor
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.auth.{AWSCredentialsProviderChain, InstanceProfileCredentialsProvider}
 import com.amazonaws.regions.Regions._
@@ -20,6 +21,17 @@ object ExplainerStore {
   val dynamoDBClient: AmazonDynamoDBAsyncClient  = new AmazonDynamoDBAsyncClient(defaultCredentialsProvider).withRegion(EU_WEST_1)
 
   val explainersTable = Table[Explainer]("explainers")
+
+
+  def all : Future[Seq[Explainer]] = {
+//    val operations = for {
+//      explainers: List[Xor[error.DynamoReadError, Explainer]] <- explainersTable.scan()
+//    } yield {
+//      explainers
+//    }
+    ScanamoAsync.exec(dynamoDBClient)(explainersTable.scan()).map(_.toList.flatMap(_.toOption))
+  }
+
 
   def update(id: Long, fieldSymbol: Symbol, value: String): Future[Explainer] = {
     val operations = for {

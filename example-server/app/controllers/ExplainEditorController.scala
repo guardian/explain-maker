@@ -32,10 +32,9 @@ object ExplainEditorController extends Controller{
     Ok(views.html.explainEditor("Explain Editor"))
   }
 
-
   def all = Action.async{ implicit request =>
-    TaskModel.store.all.map{ r =>
-      Ok(write(r))
+    ExplainerStore.all.map{ r =>
+        Ok(views.html.explainList(r))
     }.recover{ case err =>
       InternalServerError(err.getMessage)
     }

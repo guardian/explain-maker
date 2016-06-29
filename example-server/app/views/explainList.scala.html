@@ -1,9 +1,11 @@
-@(message: String)(implicit request: RequestHeader)
+@(explainers: Seq[shared.Explainer])(implicit request: RequestHeader)
 
 @header = {
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/todo.css")">
 }
 @templates.main("Explainers", header){
+    <ul>@for(e <- explainers) {
+        <ul>@e</ul>
+    }</ul>
 
-    <script>example.ExplainEditorJS().main()</script>
 }
