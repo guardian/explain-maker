@@ -4,6 +4,7 @@ import common.Framework
 import config.Routes
 import org.scalajs.dom
 import org.scalajs.dom.ext.{Ajax, AjaxException}
+import org.scalajs.dom.html.Input
 import rx._
 import shared._
 
@@ -59,6 +60,17 @@ object ExplainEditorJS {
       }.recover{case e: AjaxException => dom.alert(e.xhr.responseText)}
     }
 
+
+    def saveHeadline(headline: String) = {
+      val json = s"""{"headline": "$headline"}"""
+      val id = 123
+      Ajax.postAsJson(Routes.ExplainEditor.update(id), json).map{ r =>
+        if(r.ok){
+          // celebrate in some way
+        }
+      }
+    }
+
     def update(task: Task) = {
       val json = s"""{"txt": "${task.txt}", "done": ${task.done}}"""
       task.id.map{ id =>
@@ -81,10 +93,14 @@ object ExplainEditorJS {
 
   }
 
-  val headline = input(
+  val headline: Input = input(
     id:="new-todo",
     placeholder:="headline",
-    autofocus:=true
+    autofocus:=true,
+    onchange := { () =>
+      Model.saveHeadline(headline.value)
+      false
+    }
   ).render
 
   val body = textarea(

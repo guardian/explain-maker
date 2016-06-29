@@ -16,6 +16,7 @@ lazy val exampleServer = (project in file("example-server")).settings(
     filters,
     jdbc,
     evolutions,
+    "com.gu" %% "scanamo" % "0.6.0",
     "com.typesafe.play" %% "anorm" % "2.5.0",
     "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
     "com.typesafe.slick" %% "slick" % "3.0.2",

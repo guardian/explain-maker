@@ -1,18 +1,23 @@
 package controllers
 
 import models.TaskMemStore.InsufficientStorageException
-import models.TaskModel
+import models.{ExplainerStore, TaskModel}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
-import shared.Task
+import shared.{Explainer, Task}
 import upickle.default._
+import com.gu.scanamo._
+import com.gu.scanamo.syntax.{set => _, _}
 
 import scala.concurrent.Future
+import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType._
 
 object ExplainEditorController extends Controller{
+
+  val explainersTable = Table[Explainer]("explainers")
 
   implicit val jsonReader = (
     (__ \ 'txt).read[String](minLength[String](2)) and
@@ -48,11 +53,13 @@ object ExplainEditorController extends Controller{
   }
 
   def update(id: Long) = Action.async(parse.json){ implicit request =>
-    val fn = (txt: String, done: Boolean) =>
-      TaskModel.store.update(Task(Some(id), txt, done)).map{ r =>
-        if(r) Ok else BadRequest
-      }.recover{ case e => InternalServerError(e)}
-    executeRequest(fn)
+    val headline: String = (request.body \ "headline").as[String]
+    for {
+       explainer <- ExplainerStore.update(id, headline)
+    } yield {
+      explainer
+      Ok
+    }
   }
 
   def executeRequest(fn: (String, Boolean) => Future[Result])
