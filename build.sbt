@@ -54,7 +54,3 @@ lazy val exampleSharedJs = exampleShared.js
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project exampleServer", _: State)) compose (onLoad in Global).value
 
-// for Eclipse users
-EclipseKeys.skipParents in ThisBuild := false
-// Compile the project before generating Eclipse files, so that generated .scala or .class files for views and routes are present
-EclipseKeys.preTasks := Seq(compile in (exampleServer, Compile))
