@@ -87,19 +87,25 @@ object ExplainEditorJS {
 
   }
 
-  val inputBox = input(
+  val headline = input(
     id:="new-todo",
-    placeholder:="What needs to be done?",
+    placeholder:="Explainer Headline",
+    autofocus:=true
+  ).render
+
+  val body = input(
+    id:="new-todo",
+    placeholder:="Explainer Body",
     autofocus:=true
   ).render
 
   def templateHeader = {
     header(id:="header")(
       form(
-        inputBox,
+        headline,
         onsubmit := { () =>
-          Model.create(inputBox.value)
-          inputBox.value = ""
+          Model.create(headline.value)
+          headline.value = ""
           false
         }
       )
@@ -201,8 +207,7 @@ object ExplainEditorJS {
       dom.document.getElementById("content").appendChild(
         section(id:="todoapp")(
           templateHeader,
-          templateBody,
-          templateFooter
+          templateBody
         ).render
       )
     }
