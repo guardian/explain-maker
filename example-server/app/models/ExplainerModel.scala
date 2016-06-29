@@ -21,9 +21,9 @@ object ExplainerStore {
 
   val explainersTable = Table[Explainer]("explainers")
 
-  def update(id: Long, headline: String): Future[Explainer] = {
+  def update(id: Long, fieldSymbol: Symbol, value: String): Future[Explainer] = {
     val operations = for {
-      _ <- explainersTable.update('id -> id, set('headline -> headline))
+      _ <- explainersTable.update('id -> id, set(fieldSymbol -> value))
       explainer <- explainersTable.get('id -> id)
     } yield {
       println(explainer)

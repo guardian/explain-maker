@@ -53,9 +53,9 @@ object ExplainEditorController extends Controller{
   }
 
   def update(id: Long) = Action.async(parse.json){ implicit request =>
-    val headline: String = (request.body \ "headline").as[String]
+    val (fieldName, value) = request.body.as[JsObject].fields.head
     for {
-       explainer <- ExplainerStore.update(id, headline)
+       explainer <- ExplainerStore.update(id, Symbol(fieldName), value.as[JsString].value)
     } yield {
       explainer
       Ok
