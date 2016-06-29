@@ -1,0 +1,43 @@
+*.class
+*.log
+.DS_STORE
+/*.iml
+/.classpath
+/.idea
+/.idea_modules
+/.project
+/.settings
+/RUNNING_PID
+/out
+logs
+tmp
+
+# IDE specific
+.worksheet
+.scala_dependencies
+*.sublime-project
+*.sublime-workspace
+
+# sbt specific
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/project
+project/target
+project/boot/
+project/plugins/project/
+
+# Frontend
+.sass-cache
+bower_components
+node_modules
+conf/assets.map
+
+public/dist
+public/images
+public/javascripts
+public/stylesheets
