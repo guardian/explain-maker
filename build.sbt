@@ -46,6 +46,7 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   maintainer := "Membership Discovery <membership.dev@theguardian.com>",
   packageSummary := "Explainer tool",
   packageDescription := """Editor tool to create and update the Explainer 'atoms'""",
+  riffRaffPackageName := "explain-maker",
   riffRaffPackageType := (packageBin in Debian).value,
   riffRaffUploadArtifactBucket := Option("riffraff-artifact"),
   riffRaffUploadManifestBucket := Option("riffraff-builds"),
