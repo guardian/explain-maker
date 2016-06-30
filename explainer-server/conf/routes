@@ -4,6 +4,7 @@
 
 # Home page
 GET           /                            controllers.Application.index
+GET           /healthcheck                 controllers.Healthcheck.healthcheck
 
 GET           /todos                       controllers.TodoController.index
 GET           /todos/all                   controllers.TodoController.all
