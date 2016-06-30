@@ -1,11 +1,15 @@
 import sbt.Project.projectToRef
+import com.typesafe.sbt.packager.archetypes.ServerLoader.Systemd
 
 lazy val clients = Seq(explainerClient)
 lazy val scalaV = "2.11.7"
 
+def env(key: String): Option[String] = Option(System.getenv(key))
 
 lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
-  PlayScala
+  PlayScala,
+  RiffRaffArtifact,
+  JDebPackaging
 ).settings(
   scalaVersion := scalaV,
   routesImport += "config.Routes._",
@@ -26,7 +30,28 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
     "org.webjars" % "bootstrap" % "3.3.5",
     "org.webjars" % "jquery" % "2.1.4",
     "org.webjars" % "font-awesome" % "4.4.0"
-  )
+  ),
+  sources in (Compile,doc) := Seq.empty, publishArtifact in (Compile, packageDoc) := false, // Don't do slow ScalaDoc step for anything but a library!
+  serverLoading in Debian := Systemd,
+  debianPackageDependencies := Seq("openjdk-8-jre-headless"),
+  javaOptions in Universal ++= Seq(
+    "-Dpidfile.path=/dev/null",
+    "-J-XX:MaxRAMFraction=2",
+    "-J-XX:InitialRAMFraction=2",
+    "-J-XX:MaxMetaspaceSize=500m",
+    "-J-XX:+PrintGCDetails",
+    "-J-XX:+PrintGCDateStamps",
+    s"-J-Xloggc:/var/log/${name.value}/gc.log"
+  ),
+  maintainer := "Membership Discovery <membership.dev@theguardian.com>",
+  packageSummary := "Explainer tool",
+  packageDescription := """Editor tool to create and update the Explainer 'atoms'""",
+  riffRaffPackageType := (packageBin in Debian).value,
+  riffRaffUploadArtifactBucket := Option("riffraff-artifact"),
+  riffRaffUploadManifestBucket := Option("riffraff-builds"),
+  riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("unknown_branch"),
+  riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV"),
+  riffRaffManifestVcsUrl  := "git@github.com:guardian/explain-maker.git"
 ).aggregate(clients.map(projectToRef): _*).
   dependsOn(explainerSharedJvm)
 

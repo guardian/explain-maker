@@ -15,3 +15,4 @@ addSbtPlugin("com.vmunier" % "sbt-play-scalajs" % "0.3.1")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 
+addSbtPlugin("com.gu" % "sbt-riffraff-artifact" % "0.8.4")

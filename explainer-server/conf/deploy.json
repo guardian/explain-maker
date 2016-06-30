@@ -1,0 +1,19 @@
+{
+  "defaultStacks": ["membership"],
+  "packages": {
+    "explain-maker": {
+      "type": "autoscaling",
+      "data": {
+        "bucket": "gu-membership-attribute-service-dist"
+      }
+    }
+  },
+  "recipes":{
+    "default":{
+      "actionsBeforeApp": ["explain-maker.uploadArtifacts", "explain-maker.deploy"]
+    },
+    "artifactUploadOnly": {
+      "actions": [ "explain-maker.uploadArtifacts" ]
+    }
+  }
+}
