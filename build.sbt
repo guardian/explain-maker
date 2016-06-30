@@ -1,12 +1,12 @@
 import sbt.Project.projectToRef
-import play.PlayImport.PlayKeys._
 
-lazy val clients = Seq(exampleClient)
+lazy val clients = Seq(explainerClient)
 lazy val scalaV = "2.11.7"
 
-//resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 
-lazy val exampleServer = (project in file("example-server")).settings(
+lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
+  PlayScala
+).settings(
   scalaVersion := scalaV,
   routesImport += "config.Routes._",
   scalaJSProjects := clients,
@@ -27,11 +27,10 @@ lazy val exampleServer = (project in file("example-server")).settings(
     "org.webjars" % "jquery" % "2.1.4",
     "org.webjars" % "font-awesome" % "4.4.0"
   )
- ).enablePlugins(PlayScala).
-  aggregate(clients.map(projectToRef): _*).
-  dependsOn(exampleSharedJvm)
+).aggregate(clients.map(projectToRef): _*).
+  dependsOn(explainerSharedJvm)
 
-lazy val exampleClient = (project in file("example-client")).settings(
+lazy val explainerClient = (project in file("explainer-client")).settings(
   scalaVersion := scalaV,
   persistLauncher := true,
   persistLauncher in Test := false,
@@ -42,16 +41,16 @@ lazy val exampleClient = (project in file("example-client")).settings(
     "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
     "com.lihaoyi" %%% "upickle" % "0.3.4"
   )
-).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
-  dependsOn(exampleSharedJs)
+).enablePlugins(ScalaJSPlugin, ScalaJSPlay)
+  .dependsOn(explainerSharedJs)
 
-lazy val exampleShared = (crossProject.crossType(CrossType.Pure) in file("example-shared")).
+lazy val explainerShared = (crossProject.crossType(CrossType.Pure) in file("explainer-shared")).
   settings(scalaVersion := scalaV).
   jsConfigure(_ enablePlugins ScalaJSPlay)
 
-lazy val exampleSharedJvm = exampleShared.jvm
-lazy val exampleSharedJs = exampleShared.js
+lazy val explainerSharedJvm = explainerShared.jvm
+lazy val explainerSharedJs = explainerShared.js
 
 // loads the jvm project at sbt startup
-onLoad in Global := (Command.process("project exampleServer", _: State)) compose (onLoad in Global).value
+onLoad in Global := (Command.process("project explainerServer", _: State)) compose (onLoad in Global).value
 
