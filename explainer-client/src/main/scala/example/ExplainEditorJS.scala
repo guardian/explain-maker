@@ -43,23 +43,7 @@ object ExplainEditorJS {
       ("Completed", _.done)
     )
 
-    def init: Future[Unit] = {
-      Ajax.get(Routes.Todos.all).map { r =>
-        read[List[Task]](r.responseText)
-      }.map{ r =>
-        tasks() = r
-      }
-    }
-
     def all: List[Task] = tasks()
-
-    def create(txt: String, done: Boolean = false) = {
-      val json = s"""{"txt": "${txt}", "done": ${done}}"""
-      Ajax.postAsJson(Routes.Todos.create, json).map{ r =>
-        tasks() = read[Task](r.responseText) +: tasks()
-      }.recover{case e: AjaxException => dom.alert(e.xhr.responseText)}
-    }
-
 
     def saveContent(field: String, value: String) = {
       val json = s"""{"$field": "$value"}"""
@@ -67,26 +51,6 @@ object ExplainEditorJS {
       Ajax.postAsJson(Routes.ExplainEditor.update(id), json).map{ r =>
         if(r.ok){
           // celebrate in some way
-        }
-      }
-    }
-
-    def update(task: Task) = {
-      val json = s"""{"txt": "${task.txt}", "done": ${task.done}}"""
-      task.id.map{ id =>
-        Ajax.postAsJson(Routes.Todos.update(id), json).map{ r =>
-          if(r.ok){
-            val pos = tasks().indexWhere(t => t.id == task.id)
-            tasks() = tasks().updated(pos, task)
-          }
-        }
-      }
-    }
-
-    def delete(idOp: Option[Long]) = {
-      idOp.map{ id =>
-        Ajax.delete(Routes.Todos.delete(id)).map{ r =>
-          if(r.ok) tasks() = tasks().filter(_.id != idOp)
         }
       }
     }
@@ -138,15 +102,12 @@ object ExplainEditorJS {
 
   @JSExport
   def main(): Unit = {
-
-    Model.init.map { r =>
-      dom.document.getElementById("content").appendChild(
-        section(id:="todoapp")(
-          templateHeader,
-          templateBody
-        ).render
-      )
-    }
+    dom.document.getElementById("content").appendChild(
+      section(id:="todoapp")(
+        templateHeader,
+        templateBody
+      ).render
+    )
   }
 
 
