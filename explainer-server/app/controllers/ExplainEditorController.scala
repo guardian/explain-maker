@@ -1,19 +1,16 @@
 package controllers
 
-import models.TaskMemStore.InsufficientStorageException
-import models.{ExplainerStore, TaskModel}
+import com.gu.scanamo._
+import com.gu.scanamo.syntax.{set => _}
+import models.ExplainerStore
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
-import shared.{Explainer, Task}
-import upickle.default._
-import com.gu.scanamo._
-import com.gu.scanamo.syntax.{set => _, _}
+import shared.Explainer
 
 import scala.concurrent.Future
-import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType._
 
 object ExplainEditorController extends Controller{
 
@@ -25,7 +22,7 @@ object ExplainEditorController extends Controller{
   ).tupled
 
   def index = Action { implicit request =>
-    Ok(views.html.todo("TODO"))
+    Ok("Ok!")
   }
 
   def get(id: Long) = Action { implicit request =>
@@ -38,17 +35,6 @@ object ExplainEditorController extends Controller{
     }.recover{ case err =>
       InternalServerError(err.getMessage)
     }
-  }
-
-  def create = Action.async(parse.json){ implicit request =>
-    val fn = (txt: String, done: Boolean) =>
-      TaskModel.store.create(txt, done).map{ r =>
-        Ok(write(r))
-      }.recover{
-        case e: InsufficientStorageException => InsufficientStorage(e)
-        case e: Throwable => InternalServerError(e)
-      }
-    executeRequest(fn)
   }
 
   def update(id: Long) = Action.async(parse.json){ implicit request =>
@@ -72,16 +58,5 @@ object ExplainEditorController extends Controller{
     }
   }
 
-  def delete(id: Long) = Action.async{ implicit request =>
-    TaskModel.store.delete(id).map{ r =>
-      if(r) Ok else BadRequest
-    }.recover{ case e => InternalServerError(e)}
-  }
-
-  def clear = Action.async{ implicit request =>
-    TaskModel.store.clearCompletedTasks.map{ r =>
-      Ok(write(r))
-    }.recover{ case e => InternalServerError(e)}
-  }
 
 }
