@@ -32,13 +32,21 @@ object ExplainerStore {
     ScanamoAsync.exec(dynamoDBClient)(explainersTable.scan()).map(_.toList.flatMap(_.toOption))
   }
 
+  def load(id: Long): Future[Explainer] = {
+    val operations = for {
+      explainer <- explainersTable.get('id -> id)
+    } yield {
+      explainer
+    }
+    ScanamoAsync.exec(dynamoDBClient)(operations).map(_.flatMap(_.toOption).get)
+  }
+
 
   def update(id: Long, fieldSymbol: Symbol, value: String): Future[Explainer] = {
     val operations = for {
       _ <- explainersTable.update('id -> id, set(fieldSymbol -> value))
       explainer <- explainersTable.get('id -> id)
     } yield {
-      println(explainer)
       explainer
     }
     ScanamoAsync.exec(dynamoDBClient)(operations).map(_.flatMap(_.toOption).get)

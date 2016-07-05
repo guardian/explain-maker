@@ -9,6 +9,7 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
 import shared.Explainer
+import upickle.default._
 
 import scala.concurrent.Future
 
@@ -26,7 +27,7 @@ object ExplainEditorController extends Controller{
   }
 
   def get(id: Long) = Action { implicit request =>
-    Ok(views.html.explainEditor("Explain Editor"))
+    Ok(views.html.explainEditor(id, "Explain Editor"))
   }
 
   def all = Action.async{ implicit request =>
@@ -34,6 +35,14 @@ object ExplainEditorController extends Controller{
         Ok(views.html.explainList(r))
     }.recover{ case err =>
       InternalServerError(err.getMessage)
+    }
+  }
+
+  def load(id: Long) = Action.async { implicit request =>
+    for {
+      explainer <- ExplainerStore.load(id)
+    } yield {
+      Ok(write(explainer))
     }
   }
 
