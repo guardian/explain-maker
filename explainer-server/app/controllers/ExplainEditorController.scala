@@ -26,7 +26,7 @@ object ExplainEditorController extends Controller{
     Ok("Ok!")
   }
 
-  def get(id: Long) = Action { implicit request =>
+  def get(id: String) = Action { implicit request =>
     Ok(views.html.explainEditor(id, "Explain Editor"))
   }
 
@@ -38,7 +38,7 @@ object ExplainEditorController extends Controller{
     }
   }
 
-  def load(id: Long) = Action.async { implicit request =>
+  def load(id: String) = Action.async { implicit request =>
     for {
       explainer <- ExplainerStore.load(id)
     } yield {
@@ -46,7 +46,7 @@ object ExplainEditorController extends Controller{
     }
   }
 
-  def update(id: Long) = Action.async(parse.json){ implicit request =>
+  def update(id: String) = Action.async(parse.json){ implicit request =>
     val (fieldName, value) = request.body.as[JsObject].fields.head
     for {
        explainer <- ExplainerStore.update(id, Symbol(fieldName), value.as[JsString].value)

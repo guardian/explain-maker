@@ -31,13 +31,13 @@ object ExplainEditorJS {
 
     val explainer = Var(Explainer)
 
-    def init(id: Long): Future[Explainer] = {
+    def init(id: String): Future[Explainer] = {
       Ajax.get(Routes.ExplainEditor.loadExplainer(id)).map { r =>
         read[Explainer](r.responseText)
       }
     }
 
-    def saveContent(id: Long, field: String, value: String) = {
+    def saveContent(id: String, field: String, value: String) = {
       val json = s"""{"$field": "$value"}"""
       Ajax.postAsJson(Routes.ExplainEditor.update(id), json).map{ r =>
         if(r.ok){
@@ -60,7 +60,7 @@ object ExplainEditorJS {
     autofocus:=true
   )
 
-  def templateHeader(explainerId: Long, explainer: Explainer) = {
+  def templateHeader(explainerId: String, explainer: Explainer) = {
 
     val headlineTag = headline(value := explainer.headline).render
     headlineTag.onchange = (x: Event) => {
@@ -84,7 +84,7 @@ object ExplainEditorJS {
   }
 
   @JSExport
-  def main(explainerId: Long) = {
+  def main(explainerId: String) = {
 
     Model.init(explainerId).map { explainer: Explainer =>
       dom.document.getElementById("content").appendChild(
