@@ -37,8 +37,9 @@ object ExplainEditorJS {
       }
     }
 
-    def saveContent(id: String, field: String, value: String) = {
-      val json = s"""{"$field": "$value"}"""
+    def saveContent(id: String, explainer: ExplainerUpdate) = {
+
+      val json = write(explainer)
       Ajax.postAsJson(Routes.ExplainEditor.update(id), json).map{ r =>
         if(r.ok){
           // celebrate in some way
@@ -64,13 +65,13 @@ object ExplainEditorJS {
 
     val headlineTag = headline(value := explainer.headline).render
     headlineTag.onchange = (x: Event) => {
-      Model.saveContent(explainerId ,"headline", headlineTag.value)
+      Model.saveContent(explainerId, ExplainerUpdate("headline", headlineTag.value))
       false
     }
 
     val bodyTag = body(explainer.body).render
     bodyTag.onchange = (x: Event) => {
-      Model.saveContent(explainerId, "body", bodyTag.value)
+      Model.saveContent(explainerId, ExplainerUpdate("body", bodyTag.value))
       false
     }
 

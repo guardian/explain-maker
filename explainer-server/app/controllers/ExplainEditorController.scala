@@ -8,7 +8,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
-import shared.Explainer
+import shared.{Explainer, ExplainerUpdate}
 import upickle.default._
 
 import scala.concurrent.Future
@@ -47,9 +47,9 @@ object ExplainEditorController extends Controller{
   }
 
   def update(id: String) = Action.async(parse.json){ implicit request =>
-    val (fieldName, value) = request.body.as[JsObject].fields.head
+    val explainerUpdate = read[ExplainerUpdate](request.body.toString)
     for {
-       explainer <- ExplainerStore.update(id, Symbol(fieldName), value.as[JsString].value)
+       explainer <- ExplainerStore.update(id, Symbol(explainerUpdate.field), explainerUpdate.value)
     } yield {
       explainer
       Ok
