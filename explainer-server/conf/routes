@@ -6,9 +6,11 @@
 GET           /                            controllers.Application.index
 GET           /healthcheck                 controllers.Healthcheck.healthcheck
 
-GET           /explain/:id                 controllers.ExplainEditorController.get(id: Long)
-POST          /explain/update/:id          controllers.ExplainEditorController.update(id: Long)
+GET           /explain/:id                 controllers.ExplainEditorController.get(id)
+GET           /explain/api/:id             controllers.ExplainEditorController.load(id)
+POST          /explain/update/:id          controllers.ExplainEditorController.update(id)
 GET           /explain                     controllers.ExplainEditorController.all
+
 
 
 # Map static resources from the /public folder to the /assets URL path

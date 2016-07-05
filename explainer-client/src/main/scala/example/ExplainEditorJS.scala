@@ -1,8 +1,8 @@
 package example
 
-import common.Framework
 import config.Routes
 import org.scalajs.dom
+import org.scalajs.dom.Event
 import org.scalajs.dom.ext.{Ajax, AjaxException}
 import org.scalajs.dom.html.{Input, TextArea}
 import rx._
@@ -10,15 +10,17 @@ import shared._
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+import scala.scalajs.js
+import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom._
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2.section
 
 
+
 @JSExport
 object ExplainEditorJS {
-  import Framework._
 
   object Model {
     import scala.scalajs.js
@@ -27,27 +29,17 @@ object ExplainEditorJS {
     import upickle.default._
     import common.ExtAjax._
 
-    val tasks = Var(List.empty[Task])
+    val explainer = Var(Explainer)
 
-    val done = Rx{ tasks().count(_.done)}
+    def init(id: String): Future[Explainer] = {
+      Ajax.get(Routes.ExplainEditor.loadExplainer(id)).map { r =>
+        read[Explainer](r.responseText)
+      }
+    }
 
-    val notDone = Rx{ tasks().length - done()}
+    def saveContent(id: String, explainer: ExplainerUpdate) = {
 
-    val editing = Var[Option[Task]](None)
-
-    val filter = Var("All")
-
-    val filters = Map[String, Task => Boolean](
-      ("All", t => true),
-      ("Active", !_.done),
-      ("Completed", _.done)
-    )
-
-    def all: List[Task] = tasks()
-
-    def saveContent(field: String, value: String) = {
-      val json = s"""{"$field": "$value"}"""
-      val id = 123
+      val json = write(explainer)
       Ajax.postAsJson(Routes.ExplainEditor.update(id), json).map{ r =>
         if(r.ok){
           // celebrate in some way
@@ -57,58 +49,51 @@ object ExplainEditorJS {
 
   }
 
-  val headline: Input = input(
+  val headline: TypedTag[Input] = input(
     id:="new-todo",
     placeholder:="headline",
-    autofocus:=true,
-    onchange := { () =>
-      Model.saveContent("headline", headline.value)
-      false
-    }
-  ).render
+    autofocus:=true
+  )
 
-  val body: TextArea = textarea(
+  val body: TypedTag[TextArea] = textarea(
     id:="new-todo",
     placeholder:="body",
-    autofocus:=true,
-    onchange := { () =>
-      Model.saveContent("body", body.value)
+    autofocus:=true
+  )
+
+  def templateHeader(explainerId: String, explainer: Explainer) = {
+
+    val headlineTag = headline(value := explainer.headline).render
+    headlineTag.onchange = (x: Event) => {
+      Model.saveContent(explainerId, ExplainerUpdate("headline", headlineTag.value))
       false
     }
-  ).render
 
-  def templateHeader = {
+    val bodyTag = body(explainer.body).render
+    bodyTag.onchange = (x: Event) => {
+      Model.saveContent(explainerId, ExplainerUpdate("body", bodyTag.value))
+      false
+    }
+
+
     header(id:="header")(
       form(
-        headline, body
+        headlineTag,
+        bodyTag
       )
     )
   }
 
-  def templateBody = {
-    section(id:="main")(
-      input(
-        id:="toggle-all",
-        `type`:="checkbox",
-        cursor:="pointer",
-        onclick := { () =>
-          val target = Model.tasks().exists(_.done == false)
-//          Var.set(tasks().map(_.done -> target): _*)
-        }
-      ),
-      label(`for`:="toggle-all", "Mark all as complete")
-    )
-  }
-
   @JSExport
-  def main(): Unit = {
-    dom.document.getElementById("content").appendChild(
-      section(id:="todoapp")(
-        templateHeader,
-        templateBody
-      ).render
-    )
-  }
+  def main(explainerId: String) = {
 
+    Model.init(explainerId).map { explainer: Explainer =>
+      dom.document.getElementById("content").appendChild(
+        section(id:="Explainer Editor")(
+          templateHeader(explainerId, explainer)
+        ).render
+      )
+    }
+  }
 
 }
