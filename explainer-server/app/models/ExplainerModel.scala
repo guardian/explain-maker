@@ -20,7 +20,7 @@ object ExplainerStore {
 
   val dynamoDBClient: AmazonDynamoDBAsyncClient  = new AmazonDynamoDBAsyncClient(defaultCredentialsProvider).withRegion(EU_WEST_1)
 
-  val explainersTable = Table[Explainer]("explainers")
+  val explainersTable = Table[Explainer]("explainers-"+config.Config.stage)
 
 
   def all : Future[Seq[Explainer]] = {
