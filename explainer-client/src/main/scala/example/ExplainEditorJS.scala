@@ -51,13 +51,16 @@ object ExplainEditorJS {
   }
 
   val headline: TypedTag[Input] = input(
-    id:="new-todo",
+    id:="new-atom",
     placeholder:="headline",
     autofocus:=true
   )
 
   val body: TypedTag[TextArea] = textarea(
-    id:="new-todo",
+    id:="new-atom",
+    rows:=18,
+    cols:=50,
+    maxlength:=1800,
     placeholder:="body",
     autofocus:=true
   )

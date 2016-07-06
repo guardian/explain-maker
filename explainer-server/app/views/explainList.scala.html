@@ -1,11 +1,23 @@
 @(explainers: Seq[shared.Explainer])(implicit request: RequestHeader)
 
 @header = {
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/todo.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
 }
 @templates.main("Explainers", header){
-    <ul>@for(e <- explainers) {
-        <ul>@e</ul>
-    }</ul>
+    <div class="button-row">
+        <button class="new-explainer col-sm-offset-10 col-md-1">Create New</button>
+    </div>
+    <div id="content" class="col-md-10 col-md-offset-1 main">
+        <div class="explainer-row">
+        <div class="col-sm-8">Headline</div>
+        <div class="col-sm-2">Author</div>
+        <div class="col-sm-2">Active</div>
+        <ul class="explainer">@for(e <- explainers) {
+            <li class="explainer col-sm-4">
+                <a href="/explain/@e.id">@e.headline</a>
+            </li>}
+        </ul>
+    </div>
+</div>
 
 }
