@@ -79,8 +79,6 @@
                       "apt-get -y upgrade",
                       "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Membership-and-Subscriptions || true \n",
                       "mkdir /etc/gu",
-                      {"Fn::Join":["", ["aws --region ", { "Ref": "AWS::Region" }, " s3 cp s3://membership-private/", { "Ref" : "Stage" }, "/explainer.conf /etc/gu"]]},
-
                       "cat >/etc/gu/explainer.stage.conf << EOF",
                       { "Fn::Join": [ "", [ "stage=", { "Ref": "Stage"} ] ] },
                       "EOF",
