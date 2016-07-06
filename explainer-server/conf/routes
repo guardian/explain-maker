@@ -7,10 +7,10 @@ GET           /                            controllers.Application.index
 GET           /healthcheck                 controllers.Healthcheck.healthcheck
 
 GET           /explain/:id                 controllers.ExplainEditorController.get(id)
-GET           /explain/api/:id             controllers.ExplainEditorController.load(id)
-POST          /explain/update/:id          controllers.ExplainEditorController.update(id)
 GET           /explain                     controllers.ExplainEditorController.all
 
+# Autowire calls
+POST    /api/*path                        controllers.ApiController.autowireApi(path: String)
 
 
 # Map static resources from the /public folder to the /assets URL path

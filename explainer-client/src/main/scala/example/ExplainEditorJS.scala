@@ -1,50 +1,51 @@
 package example
 
-import config.Routes
+import autowire._
+import common.ExtAjax._
 import org.scalajs.dom
 import org.scalajs.dom.Event
-import org.scalajs.dom.ext.{Ajax, AjaxException}
+import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.html.{Input, TextArea}
 import rx._
 import shared._
+import upickle.Js
+import upickle.default._
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-import scala.scalajs.js
-import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom._
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2.section
 
+object Ajaxer extends autowire.Client[Js.Value, Reader, Writer]{
+  override def doCall(req: Request): Future[Js.Value] = {
+    Ajax.postAsJson(
+      "/api/" + req.path.mkString("/"),
+      upickle.json.write(Js.Obj(req.args.toSeq:_*))
+    ).map(_.responseText)
+      .map(upickle.json.read)
+  }
+
+  def read[Result: Reader](p: Js.Value) = readJs[Result](p)
+  def write[Result: Writer](r: Result) = writeJs(r)
+}
 
 
 @JSExport
 object ExplainEditorJS {
 
   object Model {
-    import scala.scalajs.js
-    import js.Dynamic.{global => g}
-    import org.scalajs.jquery.{jQuery=>$}
-    import upickle.default._
-    import common.ExtAjax._
+    import org.scalajs.jquery.{jQuery => $}
 
     val explainer = Var(Explainer)
 
     def init(id: String): Future[Explainer] = {
-      Ajax.get(Routes.ExplainEditor.loadExplainer(id)).map { r =>
-        read[Explainer](r.responseText)
-      }
+      Ajaxer[ExplainerApi].load(id).call()
     }
 
     def saveContent(id: String, explainer: ExplainerUpdate) = {
-
-      val json = write(explainer)
-      Ajax.postAsJson(Routes.ExplainEditor.update(id), json).map{ r =>
-        if(r.ok){
-          // celebrate in some way
-        }
-      }
+      Ajaxer[ExplainerApi].update(id, explainer.field, explainer.value).call()
     }
 
   }
