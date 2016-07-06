@@ -99,8 +99,41 @@ body, p {
     padding: 0px;
 }
 
+#new-atom,
+.edit {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    font-size: 20px;
+    font-family: inherit;
+    line-height: 1.4em;
+    border: 0;
+    outline: none;
+    color: inherit;
+    padding: 6px;
+    border: 1px solid #999;
+    box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    -ms-font-smoothing: antialiased;
+    -o-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+}
+
+#new-atom {
+    padding: 16px 16px 16px 60px;
+    border: none;
+    background: rgba(0, 0, 0, 0.02);
+    z-index: 100;
+    box-shadow: none;
+}
+
 .explainer li {
-    font-size: 24px;
+    font-size: 20px;
     display-list: inline-block;
     margin: 6px;
     border-color: #a6a6a6;
@@ -118,6 +151,18 @@ body, p {
 }
 
 .col-sm-4 {
+    display: inline;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 28px;
+}
+
+.col-sm-8 {
+    display: inline;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 28px;
+}
+
+.col-sm-2 {
     display: inline;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 28px;
