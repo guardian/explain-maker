@@ -36,6 +36,10 @@
         "ImageId": {
             "Description": "AMI ID",
             "Type": "String"
+        },
+        "ELBSSLCertificate": {
+            "Description": "ELB SSL Certificate ARN",
+            "Type": "String"
         }
     },
     "Resources" : {
@@ -174,9 +178,10 @@
             "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
             "Properties" : {
                 "Listeners" : [ {
-                    "LoadBalancerPort": "80",
+                    "LoadBalancerPort": "443",
                     "InstancePort": 9000,
-                    "Protocol": "HTTP"
+                    "Protocol": "HTTPS",
+                    "SSLCertificateId" : { "Ref" : "ELBSSLCertificate" }
                 }],
                 "SecurityGroups" : [ { "Ref" : "LoadBalancerSecurityGroup" } ],
                 "Subnets" : { "Ref" : "Subnets" },
@@ -196,10 +201,10 @@
         "LoadBalancerSecurityGroup" : {
             "Type" : "AWS::EC2::SecurityGroup",
             "Properties" : {
-                "GroupDescription" : "Permit incoming HTTP access on port 80, egress to port 9000",
+                "GroupDescription" : "Permit incoming HTTPS access on port 443, egress to port 9000",
                 "VpcId" : { "Ref" : "VpcId" },
                 "SecurityGroupIngress" : [
-                    { "IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "CidrIp": "0.0.0.0/0" }
+                    { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" }
                 ],
                 "SecurityGroupEgress" : [
                     { "IpProtocol": "tcp", "FromPort": "9000", "ToPort": "9000", "CidrIp": "0.0.0.0/0" }
