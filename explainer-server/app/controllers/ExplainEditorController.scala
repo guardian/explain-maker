@@ -38,24 +38,6 @@ object ExplainEditorController extends Controller{
     }
   }
 
-  def load(id: String) = Action.async { implicit request =>
-    for {
-      explainer <- ExplainerStore.load(id)
-    } yield {
-      Ok(write(explainer))
-    }
-  }
-
-  def update(id: String) = Action.async(parse.json){ implicit request =>
-    val explainerUpdate = read[ExplainerUpdate](request.body.toString)
-    for {
-       explainer <- ExplainerStore.update(id, Symbol(explainerUpdate.field), explainerUpdate.value)
-    } yield {
-      explainer
-      Ok
-    }
-  }
-
   def executeRequest(fn: (String, Boolean) => Future[Result])
     (implicit request: Request[JsValue]) = {
     request.body.validate[(String, Boolean)].map{

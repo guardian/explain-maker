@@ -43,6 +43,7 @@ object ExplainerStore {
 
 
   def update(id: String, fieldSymbol: Symbol, value: String): Future[Explainer] = {
+    assert(Set("headline","body").contains(fieldSymbol.name))
     val operations = for {
       _ <- explainersTable.update('id -> id, set(fieldSymbol -> value))
       explainer <- explainersTable.get('id -> id)
