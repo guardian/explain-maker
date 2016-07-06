@@ -8,6 +8,7 @@ def env(key: String): Option[String] = Option(System.getenv(key))
 
 lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   PlayScala,
+  BuildInfoPlugin,
   RiffRaffArtifact,
   JDebPackaging
 ).settings(
@@ -53,9 +54,22 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   riffRaffUploadManifestBucket := Option("riffraff-builds"),
   riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("unknown_branch"),
   riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV"),
-  riffRaffManifestVcsUrl  := "git@github.com:guardian/explain-maker.git"
+  riffRaffManifestVcsUrl  := "git@github.com:guardian/explain-maker.git",
+  buildInfoKeys := Seq[BuildInfoKey](
+    name,
+    BuildInfoKey.constant("gitCommitId", env("BUILD_VCS_NUMBER") getOrElse (try {
+      "git rev-parse HEAD".!!.trim
+    } catch {
+      case e: Exception => "unknown"
+    })),
+    BuildInfoKey.constant("buildNumber", env("BUILD_NUMBER") getOrElse "DEV"),
+    BuildInfoKey.constant("buildTime", System.currentTimeMillis)
+  ),
+  buildInfoPackage := "app"
 ).aggregate(clients.map(projectToRef): _*).
   dependsOn(explainerSharedJvm)
+
+
 
 lazy val explainerClient = (project in file("explainer-client")).settings(
   scalaVersion := scalaV,
