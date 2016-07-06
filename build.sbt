@@ -2,7 +2,7 @@ import sbt.Project.projectToRef
 import com.typesafe.sbt.packager.archetypes.ServerLoader.Systemd
 
 lazy val clients = Seq(explainerClient)
-lazy val scalaV = "2.11.7"
+lazy val scalaV = "2.11.8"
 
 def env(key: String): Option[String] = Option(System.getenv(key))
 
@@ -19,13 +19,9 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases",
   libraryDependencies ++= Seq(
     filters,
-    jdbc,
-    evolutions,
     "com.gu" %% "scanamo" % "0.6.0",
     "com.typesafe.play" %% "anorm" % "2.5.0",
     "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
-    "com.typesafe.slick" %% "slick" % "3.0.2",
-    "com.typesafe.play" %% "play-slick" % "1.0.1",
     "com.lihaoyi" %% "upickle" % "0.4.1",
     "com.lihaoyi" %% "autowire" % "0.2.5",
     "org.webjars" %% "webjars-play" % "2.4.0",
@@ -68,8 +64,6 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   buildInfoPackage := "app"
 ).aggregate(clients.map(projectToRef): _*).
   dependsOn(explainerSharedJvm)
-
-
 
 lazy val explainerClient = (project in file("explainer-client")).settings(
   scalaVersion := scalaV,
