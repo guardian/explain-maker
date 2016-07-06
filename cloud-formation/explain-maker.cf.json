@@ -134,7 +134,7 @@
                       {
                         "Effect": "Allow",
                         "Action": [ "dynamodb:*" ],
-                        "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:865473395570:table/explainer-", { "Ref": "Stage" } ] ] } ]
+                        "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:865473395570:table/explainers-", { "Ref": "Stage" } ] ] } ]
                       }
                     ]
                   }
