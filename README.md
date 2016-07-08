@@ -7,6 +7,15 @@ The sbt build file contains 3 modules
 - `ExplainerClient` Scala.js application (client side)
 - `ExplainerShared` Scala code that you want to share between the server and the client.
 
+### Setup
+
+You need a `/etc/gu/explainer.stage.conf` file:
+
+```
+$ cat /etc/gu/explainer.stage.conf
+stage=DEV
+```
+
 ### Run the application
 ```
 $ sbt
