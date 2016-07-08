@@ -1,5 +1,6 @@
 package controllers
 
+import actions.ActionRefiners.PandaAuthenticated
 import com.gu.scanamo._
 import com.gu.scanamo.syntax.{set => _}
 import models.ExplainerStore
@@ -14,20 +15,11 @@ class ExplainEditorController extends Controller {
 
   val explainersTable = Table[Explainer]("explainers")
 
-  implicit val jsonReader = (
-    (__ \ 'txt).read[String](minLength[String](2)) and
-    (__ \ 'done).read[Boolean]
-  ).tupled
-
-  def index = Action { implicit request =>
-    Ok("Ok!")
-  }
-
-  def get(id: String) = Action { implicit request =>
+  def get(id: String) = PandaAuthenticated { implicit request =>
     Ok(views.html.explainEditor(id, "Explain Editor"))
   }
 
-  def all = Action.async{ implicit request =>
+  def all = PandaAuthenticated.async{ implicit request =>
     ExplainerStore.all.map{ r =>
         Ok(views.html.explainList(r))
     }.recover{ case err =>
