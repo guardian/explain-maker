@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc._
 
-object Healthcheck extends Controller {
+class Healthcheck extends Controller {
 
   def healthcheck = Action {
     Ok(app.BuildInfo.gitCommitId)

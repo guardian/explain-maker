@@ -8,12 +8,9 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
-import shared.{Explainer, ExplainerUpdate}
-import upickle.default._
+import shared.Explainer
 
-import scala.concurrent.Future
-
-object ExplainEditorController extends Controller{
+class ExplainEditorController extends Controller {
 
   val explainersTable = Table[Explainer]("explainers")
 
@@ -37,17 +34,4 @@ object ExplainEditorController extends Controller{
       InternalServerError(err.getMessage)
     }
   }
-
-  def executeRequest(fn: (String, Boolean) => Future[Result])
-    (implicit request: Request[JsValue]) = {
-    request.body.validate[(String, Boolean)].map{
-      case (txt, done) => {
-        fn(txt, done)
-      }
-    }.recoverTotal{
-      e => Future(BadRequest(e))
-    }
-  }
-
-
 }

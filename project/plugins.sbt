@@ -7,7 +7,7 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 //resolvers += "Sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
 // Sbt plugins
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.8")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.4")
 
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.10")
 

@@ -15,7 +15,7 @@ object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
   def write[Result: Writer](r: Result) = upickle.default.writeJs(r)
 }
 
-object ApiController extends Controller with ExplainerApi {
+class ApiController extends Controller with ExplainerApi {
 
   def autowireApi(path: String) = Action.async(parse.json) { implicit request =>
     val autowireRequest: Request[Js.Value] = autowire.Core.Request(
@@ -23,7 +23,7 @@ object ApiController extends Controller with ExplainerApi {
       upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
     )
 
-    AutowireServer.route[ExplainerApi](ApiController)(autowireRequest).map(responseJS => {
+    AutowireServer.route[ExplainerApi](this)(autowireRequest).map(responseJS => {
       Ok(upickle.json.write(responseJS))
     })
   }
