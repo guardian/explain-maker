@@ -20,7 +20,6 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   libraryDependencies ++= Seq(
     filters,
     "com.gu" %% "scanamo" % "0.6.0",
-    "com.typesafe.play" %% "anorm" % "2.5.0",
     "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
     "com.lihaoyi" %% "upickle" % "0.4.1",
     "com.lihaoyi" %% "autowire" % "0.2.5",
