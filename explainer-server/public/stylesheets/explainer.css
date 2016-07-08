@@ -56,6 +56,16 @@ body, p {
     border-top: 1px dotted #adadad;
 }
 
+.presence-field-container {
+    position: relative;
+}
+
+.field-presence-indicator {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
 
 /*
         Hack to remove background from Mobile Safari.
