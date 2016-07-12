@@ -5,22 +5,22 @@
         "VpcId" : {
             "Type" : "String",
             "Description" : "VpcId of your existing Virtual Private Cloud (VPC)",
-            "Default" : "vpc-e6e00183"
+            "Default" : "vpc-381fa95d"
         },
         "Subnets" : {
             "Type" : "CommaDelimitedList",
             "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
-            "Default" : "subnet-cb91ae8d, subnet-a7b74ac2, subnet-179e8063"
+            "Default" : "subnet-c2620fa7,subnet-2967c870,subnet-2a37bd5d"
         },
         "Stack": {
             "Type": "String",
             "Description": "Applied directly as a tag",
-            "Default" : "membership"
+            "Default" : "flexible"
         },
         "KeyName" : {
             "Description" : "The EC2 Key Pair to allow SSH access to the instance",
             "Type" : "String",
-            "Default" : "aws-membership"
+            "Default" : "composer-team"
         },
         "Stage": {
             "Type" : "String",
@@ -77,13 +77,13 @@
                       "#!/bin/bash -ev",
                       "apt-get -y update",
                       "apt-get -y upgrade",
-                      "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Membership-and-Subscriptions || true \n",
+                      "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
                       "mkdir /etc/gu",
                       "cat >/etc/gu/explainer.stage.conf << EOF",
                       { "Fn::Join": [ "", [ "stage=", { "Ref": "Stage"} ] ] },
                       "EOF",
 
-                      {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/gu-membership-attribute-service-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "explain-maker/explainerserver_0.1-SNAPSHOT_all.deb"]]},
+                      {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/composer-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "explain-maker/explainerserver_0.1-SNAPSHOT_all.deb"]]},
                       "dpkg -i explainerserver_0.1-SNAPSHOT_all.deb"
                     ]]
                 }}
@@ -109,11 +109,6 @@
                         "Statement": [
                             {
                                 "Effect": "Allow",
-                                "Action": "s3:GetObject",
-                                "Resource": "arn:aws:s3:::membership-private/*"
-                            },
-                            {
-                                "Effect": "Allow",
                                 "Action": ["s3:GetObject"],
                                 "Resource": ["arn:aws:s3:::github-team-keys/*"]
                             },
@@ -132,7 +127,7 @@
                       {
                         "Effect": "Allow",
                         "Action": [ "dynamodb:*" ],
-                        "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:865473395570:table/explainers-", { "Ref": "Stage" } ] ] } ]
+                        "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:743583969668:table/explainers-", { "Ref": "Stage" } ] ] } ]
                       }
                     ]
                   }
