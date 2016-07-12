@@ -1,17 +1,17 @@
 package controllers
 
-import actions.ActionRefiners.PandaAuthenticated
+import javax.inject.Inject
+
+import actions.AuthActions
 import com.gu.scanamo._
 import com.gu.scanamo.syntax.{set => _}
 import models.ExplainerStore
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.functional.syntax._
-import play.api.libs.json.Reads._
-import play.api.libs.json._
 import play.api.mvc._
+import services.PublicSettingsService
 import shared.Explainer
 
-class ExplainEditorController extends Controller {
+class ExplainEditorController @Inject() (val publicSettingsService: PublicSettingsService) extends Controller with AuthActions {
 
   val explainersTable = Table[Explainer]("explainers")
 

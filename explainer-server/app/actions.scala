@@ -1,5 +1,7 @@
 package actions
 
+import javax.inject.{Inject, Singleton}
+
 import com.gu.pandomainauth.model._
 import com.gu.pandomainauth.{PanDomain, PublicKey, PublicSettings}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -9,34 +11,17 @@ import play.api.mvc._
 import com.ning.http.client.AsyncHttpClient
 import config.Config
 import dispatch.Http
+import services.PublicSettingsService
 
 import scala.util.{Failure, Success}
 
-object PanAuthenticationSettings {
-  implicit val httpClient = Http(new AsyncHttpClient())
+trait AuthActions {
 
-  val publicSettings = new PublicSettings(Config.pandaDomain, { // Config.domain
-    case Success(settings) =>
-      println("successfully updated pan-domain public settings")
-    case Failure(err) =>
-      println("failed to update pan-domain public settings", err)
-  })
-
-  def publicKey: Option[String] = publicSettings.publicKey
-}
-
-
-/**
-  * These ActionFunctions serve as components that can be composed to build the
-  * larger, more-generally useful pipelines in 'CommonActions'.
-  *
-  * https://www.playframework.com/documentation/2.5.x/ScalaActionsComposition
-  */
-object ActionRefiners {
+  val publicSettingsService: PublicSettingsService
 
   def userAuthStatusOptFor(req: RequestHeader): Option[AuthenticationStatus] = for {
-    publicKey <- PanAuthenticationSettings.publicKey
-    cookie <- req.cookies.get(PanAuthenticationSettings.publicSettings.assymCookieName)
+    publicKey <- publicSettingsService.publicSettings.publicKey
+    cookie <- req.cookies.get(publicSettingsService.publicSettings.assymCookieName)
   } yield PanDomain.authStatus(cookie.value, PublicKey(publicKey))
 
 
