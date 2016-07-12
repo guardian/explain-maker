@@ -1,10 +1,10 @@
 {
-  "defaultStacks": ["membership"],
+  "defaultStacks": ["flexible"],
   "packages": {
     "explain-maker": {
       "type": "autoscaling",
       "data": {
-        "bucket": "gu-membership-attribute-service-dist"
+        "bucket": "composer-dist"
       }
     }
   },

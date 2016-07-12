@@ -47,6 +47,7 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   riffRaffPackageType := (packageBin in Debian).value,
   riffRaffUploadArtifactBucket := Option("riffraff-artifact"),
   riffRaffUploadManifestBucket := Option("riffraff-builds"),
+  riffRaffManifestProjectName := "editorial-tools:explainer",
   riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("unknown_branch"),
   riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV"),
   riffRaffManifestVcsUrl  := "git@github.com:guardian/explain-maker.git",
