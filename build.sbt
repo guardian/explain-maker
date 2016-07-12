@@ -3,7 +3,6 @@ import com.typesafe.sbt.packager.archetypes.ServerLoader.Systemd
 
 lazy val clients = Seq(explainerClient)
 lazy val scalaV = "2.11.8"
-
 def env(key: String): Option[String] = Option(System.getenv(key))
 
 lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
@@ -20,10 +19,12 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   libraryDependencies ++= Seq(
     filters,
     "com.gu" %% "scanamo" % "0.6.0",
+    ws, // for panda
+    "com.gu" %% "pan-domain-auth-verification" % "0.3.0",
     "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
     "com.lihaoyi" %% "upickle" % "0.4.1",
     "com.lihaoyi" %% "autowire" % "0.2.5",
-    "org.webjars" %% "webjars-play" % "2.4.0",
+    "org.webjars" %% "webjars-play" % "2.5.0",
     "org.webjars" % "bootstrap" % "3.3.5",
     "org.webjars" % "jquery" % "2.1.4",
     "org.webjars" % "font-awesome" % "4.4.0"
