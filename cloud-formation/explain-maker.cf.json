@@ -3,14 +3,19 @@
     "Description" : "Editor tool to create and update the Explainer 'atoms'",
     "Parameters" : {
         "VpcId" : {
-            "Type" : "String",
+            "Type" : "AWS::EC2::VPC::Id",
             "Description" : "VpcId of your existing Virtual Private Cloud (VPC)",
             "Default" : "vpc-381fa95d"
         },
-        "Subnets" : {
-            "Type" : "CommaDelimitedList",
+        "PrivateSubnets" : {
+            "Type" : "List<AWS::EC2::Subnet::Id>",
             "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
             "Default" : "subnet-c2620fa7,subnet-2967c870,subnet-2a37bd5d"
+        },
+        "PublicSubnets" : {
+            "Type" : "List<AWS::EC2::Subnet::Id>",
+            "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
+            "Default" : "subnet-c3620fa6,subnet-2b37bd5c,subnet-3667c86f"
         },
         "Stack": {
             "Type": "String",
@@ -19,7 +24,7 @@
         },
         "KeyName" : {
             "Description" : "The EC2 Key Pair to allow SSH access to the instance",
-            "Type" : "String",
+            "Type" : "AWS::EC2::KeyPair::KeyName",
             "Default" : "composer-team"
         },
         "Stage": {
@@ -40,6 +45,11 @@
         "ELBSSLCertificate": {
             "Description": "ELB SSL Certificate ARN",
             "Type": "String"
+        },
+        "GuardianIP": {
+            "Description": "Ip range for the office",
+            "Type": "String",
+            "Default": "77.91.248.0/21"
         }
     },
     "Resources" : {
@@ -47,7 +57,7 @@
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
             "Properties" : {
                 "AvailabilityZones" : { "Fn::GetAZs" : "" },
-                "VPCZoneIdentifier" : { "Ref" : "Subnets" },
+                "VPCZoneIdentifier" : { "Ref" : "PrivateSubnets" },
                 "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
                 "MinSize" : "2",
                 "MaxSize" : "4",
@@ -67,16 +77,13 @@
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
             "Properties" : {
                 "ImageId" : { "Ref": "ImageId" },
-                "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+                "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" }, { "Ref": "SSHSecurityGroup" } ],
                 "InstanceType" : { "Ref" : "InstanceType" },
                 "KeyName" : { "Ref" : "KeyName" },
                 "IamInstanceProfile": { "Ref" : "AppInstanceProfile" },
-                "AssociatePublicIpAddress": true,
                 "UserData" : { "Fn::Base64": {
                     "Fn::Join":["\n", [
                       "#!/bin/bash -ev",
-                      "apt-get -y update",
-                      "apt-get -y upgrade",
                       "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
                       "mkdir /etc/gu",
                       "cat >/etc/gu/explainer.stage.conf << EOF",
@@ -177,7 +184,7 @@
                     "SSLCertificateId" : { "Ref" : "ELBSSLCertificate" }
                 }],
                 "SecurityGroups" : [ { "Ref" : "LoadBalancerSecurityGroup" } ],
-                "Subnets" : { "Ref" : "Subnets" },
+                "Subnets" : { "Ref" : "PublicSubnets" },
                 "HealthCheck" : {
                     "Target" : "HTTP:9000/healthcheck",
                     "HealthyThreshold" : "2",
@@ -188,7 +195,23 @@
                 "ConnectionDrainingPolicy": {
                     "Enabled" : "true",
                     "Timeout" : "60"
-                }
+                },
+                "Tags":[
+                    {
+                        "Key":"Stage",
+                        "Value":{
+                            "Ref":"Stage"
+                        }
+                    },
+                    {
+                        "Key": "Stack",
+                        "Value": "flexible"
+                    },
+                    {
+                        "Key":"App",
+                        "Value":"explain-maker"
+                    }
+                ]
             }
         },
         "LoadBalancerSecurityGroup" : {
@@ -197,22 +220,56 @@
                 "GroupDescription" : "Permit incoming HTTPS access on port 443, egress to port 9000",
                 "VpcId" : { "Ref" : "VpcId" },
                 "SecurityGroupIngress" : [
-                    { "IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0" }
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "443",
+                        "ToPort": "443",
+                        "CidrIp": "0.0.0.0/0" }
                 ],
                 "SecurityGroupEgress" : [
-                    { "IpProtocol": "tcp", "FromPort": "9000", "ToPort": "9000", "CidrIp": "0.0.0.0/0" }
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "9000",
+                        "ToPort": "9000",
+                        "CidrIp": "0.0.0.0/0"
+                    }
                 ]
             }
         },
+        "SSHSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow SSH access from the office",
+                "VpcId": { "Ref": "VpcId" },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "10.0.0.0/8"
+                    }
+                ]
+            }
+        },
+
         "InstanceSecurityGroup" : {
             "Type" : "AWS::EC2::SecurityGroup",
             "Properties" : {
                 "GroupDescription" : "Open up SSH access and enable HTTP access on the configured port",
                 "VpcId" : { "Ref" : "VpcId" },
                 "SecurityGroupIngress" : [
-                    { "IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": "77.91.248.0/21" },
-                    { "IpProtocol": "tcp", "FromPort": "9000", "ToPort": "9000", "CidrIp": "77.91.248.0/21" },
-                    { "IpProtocol": "tcp", "FromPort": "9000", "ToPort": "9000", "SourceSecurityGroupId" : { "Ref" : "LoadBalancerSecurityGroup" } }
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "9000",
+                        "ToPort": "9000",
+                        "CidrIp": {"Ref": "GuardianIP"}
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "9000",
+                        "ToPort": "9000",
+                        "SourceSecurityGroupId" : { "Ref" : "LoadBalancerSecurityGroup" }
+                    }
                 ]
             }
         }
