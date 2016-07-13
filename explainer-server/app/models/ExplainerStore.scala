@@ -14,7 +14,7 @@ import scala.concurrent.Future
 
 object ExplainerStore {
   val defaultCredentialsProvider = new AWSCredentialsProviderChain(
-    new ProfileCredentialsProvider("membership"),
+    new ProfileCredentialsProvider("composer"),
     new InstanceProfileCredentialsProvider
   )
 

@@ -3,12 +3,12 @@
     "Description" : "Editor tool to create and update the Explainer 'atoms'",
     "Parameters" : {
         "VpcId" : {
-            "Type" : "String",
+            "Type" : "AWS::EC2::VPC::Id",
             "Description" : "VpcId of your existing Virtual Private Cloud (VPC)",
             "Default" : "vpc-381fa95d"
         },
         "Subnets" : {
-            "Type" : "CommaDelimitedList",
+            "Type" : "List<AWS::EC2::Subnet::Id>",
             "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
             "Default" : "subnet-c2620fa7,subnet-2967c870,subnet-2a37bd5d"
         },
@@ -19,7 +19,7 @@
         },
         "KeyName" : {
             "Description" : "The EC2 Key Pair to allow SSH access to the instance",
-            "Type" : "String",
+            "Type" : "AWS::EC2::KeyPair::KeyName",
             "Default" : "composer-team"
         },
         "Stage": {
@@ -71,12 +71,9 @@
                 "InstanceType" : { "Ref" : "InstanceType" },
                 "KeyName" : { "Ref" : "KeyName" },
                 "IamInstanceProfile": { "Ref" : "AppInstanceProfile" },
-                "AssociatePublicIpAddress": true,
                 "UserData" : { "Fn::Base64": {
                     "Fn::Join":["\n", [
                       "#!/bin/bash -ev",
-                      "apt-get -y update",
-                      "apt-get -y upgrade",
                       "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
                       "mkdir /etc/gu",
                       "cat >/etc/gu/explainer.stage.conf << EOF",
