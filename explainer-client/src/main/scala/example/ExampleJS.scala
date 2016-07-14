@@ -6,7 +6,7 @@ import shared.SharedMessages
 
 object ExampleJS extends js.JSApp {
   def main(): Unit = {
-    g.document.getElementById("scalajsShoutOut").textContent = SharedMessages.itWorks
+    g.console.log(SharedMessages.itWorks)
   }
 
   /** Computes the square of an integer.
