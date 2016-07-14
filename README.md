@@ -25,3 +25,5 @@ $ sbt
 > run
 $ open http://localhost:9000
 ```
+
+Main user interface can then be found at [http://localhost:9000/explain](http://localhost:9000/explain).
