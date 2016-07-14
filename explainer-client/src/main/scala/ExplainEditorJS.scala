@@ -1,10 +1,8 @@
-package example
-
 import autowire._
 import common.ExtAjax._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
-import org.scalajs.dom.html.{Div, Element, Input, TextArea}
+import org.scalajs.dom.html.{Element, Input, TextArea}
 import org.scalajs.dom.{Event, FocusEvent}
 import presence.StateChange.State
 import presence.{Person, PresenceGlobalScope, StateChange}
@@ -34,7 +32,6 @@ object Ajaxer extends autowire.Client[Js.Value, Reader, Writer]{
   def read[Result: Reader](p: Js.Value) = readJs[Result](p)
   def write[Result: Writer](r: Result) = writeJs(r)
 }
-
 
 @JSExport
 object ExplainEditorJS {
@@ -128,7 +125,6 @@ object ExplainEditorJS {
     presenceClient.on("connection.open", { data:js.Object =>
       presenceClient.subscribe(articleId)
     })
-
 
     Model.init(explainerId).map { explainer: Explainer =>
       dom.document.getElementById("content").appendChild(
