@@ -4,20 +4,28 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
 }
 @templates.main("Explainers", header){
-    <div class="button-row">
-        <button class="new-explainer col-sm-offset-10 col-md-1">Create New</button>
+    <div id="dashboard">
+        <div id="dashboard__title"><h2>Explainers</h2></div>
+        <div id="dashboard__header">
+            <button onclick="ExplainEditorJS().CreateButtonClick()">Create New</button>
+        </div>
+        <div id="dashboard__body">
+            <div id="dashboard__body__header">
+                <div class="title">Title</div>
+                <div class="last_modified">Last modified</div>
+                <div class="created_by">Created by</div>
+                <div class="status">Status</div>
+            </div>
+            <div id="dashboard__body__listing">
+            @for(e <- explainers) {
+                <div class="dashboard__body__listing__item">
+                    <div class="title"><a href="/explain/@e.id">@e.headline</a></div>
+                    <div class="last_modified">Last modified</div>
+                    <div class="created_by">Created by</div>
+                    <div class="status">Status</div>
+                </div>
+            }
+            </div>
+        </div>
     </div>
-    <div id="content" class="col-md-10 col-md-offset-1 main">
-        <div class="explainer-row">
-        <div class="col-sm-8">Headline</div>
-        <div class="col-sm-2">Author</div>
-        <div class="col-sm-2">Active</div>
-        <ul class="explainer">@for(e <- explainers) {
-            <li class="explainer col-sm-4">
-                <a href="/explain/@e.id">@e.headline</a>
-            </li>}
-        </ul>
-    </div>
-</div>
-
 }
