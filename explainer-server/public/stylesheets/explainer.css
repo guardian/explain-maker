@@ -138,7 +138,7 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
     border-bottom: 1px solid #ededed;
 }
 
-.dashboard__body__listing__item :hover {
+.dashboard__body__listing__item:hover {
     background-color: #ededed;
 }
 
