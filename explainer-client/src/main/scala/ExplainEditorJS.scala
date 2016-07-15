@@ -28,7 +28,6 @@ object Ajaxer extends autowire.Client[Js.Value, Reader, Writer]{
     ).map(_.responseText)
       .map(upickle.json.read)
   }
-
   def read[Result: Reader](p: Js.Value) = readJs[Result](p)
   def write[Result: Writer](r: Result) = writeJs(r)
 }
@@ -133,6 +132,12 @@ object ExplainEditorJS {
         ).render
       )
     }
+  }
+
+  @JSExport
+  def CreateButtonClick() = {
+    g.console.log("CreateButtonClick()")
+    g.location.href = "/explain/new"
   }
 
 }

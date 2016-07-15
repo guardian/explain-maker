@@ -19,5 +19,4 @@ object Routes {
     _.charAt(0), _.toString, (key: String, e: Exception) => "Cannot parse parameter %s as Char: %s".format(key, e.getMessage)
   )
 
-
 }
