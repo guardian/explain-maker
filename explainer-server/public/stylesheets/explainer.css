@@ -1,22 +1,12 @@
-button {
-    margin: 20px;
-    padding: 0;
-    border: 0;
-    background: none;
-    font-size: 100%;
-    vertical-align: baseline;
-    font-family: inherit;
-    color: inherit;
-    -webkit-appearance: none;
-    -ms-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-}
+
+/* -------------------------------------- */
+/* Generic Elements                       */
+/* -------------------------------------- */
 
 body, p {
     font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
     line-height: 1.4em;
-    background: #eaeaea url('../images/bg.png');
+    background: #F5F5F5;
     color: #4d4d4d;
 
     -webkit-font-smoothing: antialiased;
@@ -24,6 +14,146 @@ body, p {
     -ms-font-smoothing: antialiased;
     -o-font-smoothing: antialiased;
     font-smoothing: antialiased;
+}
+
+hr {
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px dashed #C5C5C5;
+    border-bottom: 1px dashed #F7F7F7;
+}
+
+ul, li {
+    list-style: none;
+}
+
+.hidden {
+    display: none;
+}
+
+/* -------------------------------------- */
+/* Presence                               */
+/* -------------------------------------- */
+
+.presence-field-container {
+    position: relative;
+}
+
+.field-presence-indicator {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
+/* -------------------------------------- */
+/* Geometry                               */
+/* -------------------------------------- */
+
+.col-sm-4 {
+    display: inline;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 28px;
+}
+
+.col-sm-8 {
+    display: inline;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 28px;
+}
+
+.col-sm-2 {
+    display: inline;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 28px;
+}
+
+/* -------------------------------------- */
+/* Common                                 */
+/* -------------------------------------- */
+
+h2, h3, h4, h5, h6, .preview__title, .preview__score {
+    font-family: "GuardianTextEgyptianWeb-Medium", Georgia, serif;
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* -------------------------------------- */
+/* Dashboard                              */
+/* -------------------------------------- */
+
+#dashboard {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+    width: 700px;
+    margin: 0 auto;
+    background-color: #f6f6f6;
+    font-size: 13px;
+}
+
+#dashboard__title {
+
+}
+
+#dashboard__header {
+    text-align:right;
+    margin-bottom:20px;
+}
+
+#dashboard__body {
+
+}
+#dashboard__body .title {
+    width:400px;
+    padding: 5px;
+    font-weight: bold;
+}
+#dashboard__body .last_modified {
+    width:100px;
+    padding: 5px;
+}
+#dashboard__body .created_by {
+    width:100px;
+    padding: 5px;
+}
+#dashboard__body .status {
+    width:100px;
+    padding: 5px;
+}
+
+#dashboard__body__header {
+    display: flex;
+    flex-direction: row;
+    background-color: #ededed;
+}
+
+#dashboard__body__listing {
+
+}
+
+.dashboard__body__listing__item {
+    display: flex;
+    flex-direction: row;
+    background-color: #edf7f9;
+    border-bottom: 1px solid #ededed;
+}
+
+.dashboard__body__listing__item :hover {
+    background-color: #ededed;
+}
+
+#dashboard__footer {
+
+}
+
+/* -------------------------------------- */
+/* Explainer                              */
+/* -------------------------------------- */
+
+#main {
+    position: relative;
+    z-index: 2;
+    border-top: 1px dotted #adadad;
 }
 
 #explainer {
@@ -49,59 +179,13 @@ body, p {
     height: 100%;
 }
 
-
-#main {
-    position: relative;
-    z-index: 2;
-    border-top: 1px dotted #adadad;
-}
-
-.presence-field-container {
-    position: relative;
-}
-
-.field-presence-indicator {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-}
-
-
-/*
-        Hack to remove background from Mobile Safari.
-        Can't use it globally since it destroys checkboxes in Firefox and Opera
-*/
-
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-    #toggle-all,
-    #todo-list li .toggle {
-        background: none;
-    }
-
-    #todo-list li .toggle {
-        height: 40px;
-    }
-
-    #toggle-all {
-        top: -56px;
-        left: -15px;
-        width: 65px;
-        height: 41px;
-        -webkit-transform: rotate(90deg);
-        -ms-transform: rotate(90deg);
-        transform: rotate(90deg);
-        -webkit-appearance: none;
-        appearance: none;
-    }
-}
-
 .button-row .explainer-row {
     display: inline-block;
     position: relative;
     width: 90%;
 }
 
-.explainer      {
+.explainer {
     display: inline-block;
     margin: 24px 12px 24px 12px;
     position: relative;
@@ -109,8 +193,7 @@ body, p {
     padding: 0px;
 }
 
-#new-atom,
-.edit {
+#new-atom, .edit {
     position: relative;
     margin: 0;
     width: 100%;
@@ -157,50 +240,6 @@ body, p {
     border-color: #428bca;
     border-radius: 8px;
     padding: 6px;
-
-}
-
-.col-sm-4 {
-    display: inline;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 28px;
-}
-
-.col-sm-8 {
-    display: inline;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 28px;
-}
-
-.col-sm-2 {
-    display: inline;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 28px;
-}
-
-.hidden {
-    display: none;
-}
-
-hr {
-    margin: 20px 0;
-    border: 0;
-    border-top: 1px dashed #C5C5C5;
-    border-bottom: 1px dashed #F7F7F7;
 }
 
 
-@media (min-width: 899px) {
-    .learn-bar {
-        width: auto;
-        margin: 0 0 0 300px;
-    }
-
-    .learn-bar > .learn {
-        left: 8px;
-    }
-
-    .learn-bar #todoapp {
-        width: 550px;
-        margin: 130px auto 40px auto;
-    }
