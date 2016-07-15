@@ -12,5 +12,4 @@ object Config {
 
   val pandaDomain = publicConfigForStage.getString("pandomain.domain")
 
-
 }

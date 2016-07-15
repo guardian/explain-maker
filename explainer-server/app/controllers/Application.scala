@@ -13,6 +13,4 @@ class Application @Inject()(val publicSettingsService: PublicSettingsService) ex
     Ok(views.html.index(SharedMessages.itWorks))
   }
 
-
-
 }

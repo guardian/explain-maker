@@ -26,4 +26,9 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
       InternalServerError(err.getMessage)
     }
   }
+
+  def makeNewExaplainer() = PandaAuthenticated { implicit request =>
+    Ok("The making of a new")
+  }
+
 }
