@@ -55,21 +55,6 @@ object ExplainEditorJS {
 
   }
 
-  val headline: TypedTag[Input] = input(
-    id:="new-atom",
-    placeholder:="headline",
-    autofocus:=true
-  )
-
-  val body: TypedTag[TextArea] = textarea(
-    id:="new-atom",
-    rows:=18,
-    cols:=50,
-    maxlength:=1800,
-    placeholder:="body",
-    autofocus:=true
-  )
-
   def templateHeader(explainerId: String, explainer: Explainer) = {
 
     def turnOnPresenceFor(area: String, field: Element) = {
@@ -114,6 +99,21 @@ object ExplainEditorJS {
       )
     )
   }
+
+  val headline: TypedTag[Input] = input(
+    id:="new-atom",
+    placeholder:="headline",
+    autofocus:=true
+  )
+
+  val body: TypedTag[TextArea] = textarea(
+    id:="new-atom",
+    rows:=18,
+    cols:=50,
+    maxlength:=1800,
+    placeholder:="body",
+    autofocus:=true
+  )
 
   @JSExport
   def main(explainerId: String) = {
