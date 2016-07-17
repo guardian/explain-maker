@@ -26,11 +26,6 @@ object ExplainerStore {
   val explainersTable = Table[Explainer]("explainers-"+config.Config.stage)
 
   def all : Future[Seq[Explainer]] = {
-//    val operations = for {
-//      explainers: List[Xor[error.DynamoReadError, Explainer]] <- explainersTable.scan()
-//    } yield {
-//      explainers
-//    }
     ScanamoAsync.exec(dynamoDBClient)(explainersTable.scan()).map(_.toList.flatMap(_.toOption))
   }
 
@@ -47,6 +42,7 @@ object ExplainerStore {
     assert(Set("headline","body").contains(fieldSymbol.name))
     val operations = for {
       _ <- explainersTable.update('id -> id, set(fieldSymbol -> value))
+      _ <- explainersTable.update('id -> id, set(Symbol("last_update_time_milli") -> (new DateTime).getMillis()))
       explainer <- explainersTable.get('id -> id)
     } yield {
       explainer
@@ -57,7 +53,8 @@ object ExplainerStore {
   def create(): Future[Explainer] = {
     val uuid = java.util.UUID.randomUUID.toString
     val headline = "Default headline @ " + (new DateTime).toString
-    val explainer = new Explainer(uuid, headline, "-") // body field cannot be empty string
+    val updatetime = Some((new DateTime).getMillis())
+    val explainer = new Explainer(uuid, headline, "-",updatetime) // body field cannot be empty string
     Scanamo.put(dynamoDBClient)("explainers-"+config.Config.stage)(explainer)
     Future(explainer)
   }

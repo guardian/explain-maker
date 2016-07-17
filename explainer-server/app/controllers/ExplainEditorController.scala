@@ -21,7 +21,12 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
 
   def all = PandaAuthenticated.async{ implicit request =>
     ExplainerStore.all.map{ r =>
-        Ok(views.html.explainList(r))
+        def sorting(e1: Explainer, e2: Explainer): Boolean = {
+          val time1:Long = e1.last_update_time_milli.getOrElse(0)
+          val time2:Long = e2.last_update_time_milli.getOrElse(0)
+          time1 > time2
+        }
+        Ok(views.html.explainList(r.sortWith(sorting)))
     }.recover{ case err =>
       InternalServerError(err.getMessage)
     }
