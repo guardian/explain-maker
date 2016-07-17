@@ -1,5 +1,8 @@
 @(explainers: Seq[shared.Explainer])(implicit request: RequestHeader)
 
+@import org.joda.time.DateTime
+@import org.joda.time.format.DateTimeFormat
+
 @header = {
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
 }
@@ -11,18 +14,23 @@
         </div>
         <div id="dashboard__body">
             <div id="dashboard__body__header">
-                <div class="title">Title</div>
-                <div class="last_modified">Last modified</div>
-                <div class="created_by">Created by</div>
-                <div class="status">Status</div>
+                <div class="title"><b>Title</b></div>
+                <div class="last_modified"><b>Last modified</b></div>
+                <div class="created_by"><b>Created by</b></div>
+                <div class="status"><b>Status</b></div>
             </div>
             <div id="dashboard__body__listing">
             @for(e <- explainers) {
                 <div class="dashboard__body__listing__item">
                     <div class="title"><a href="/explain/@e.id">@e.headline</a></div>
-                    <div class="last_modified">Last modified</div>
-                    <div class="created_by">Created by</div>
-                    <div class="status">Status</div>
+                    <div class="last_modified">@{
+                        val time:Long = e.last_update_time_milli.getOrElse(0)
+                        val datetime = new DateTime(time)
+                        val fmt = DateTimeFormat.forPattern("MM/dd/YYYY HH:MM");
+                        fmt.print(datetime);
+                    }</div>
+                    <div class="created_by">-</div>
+                    <div class="status">-</div>
                 </div>
             }
             </div>

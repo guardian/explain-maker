@@ -71,7 +71,7 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
     display: flex;
     flex-direction: column;
     padding: 12px 0;
-    width: 700px;
+    width: 1000px;
     margin: 0 auto;
     background-color: #f6f6f6;
     font-size: 13px;
@@ -90,21 +90,24 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
 
     }
     #dashboard__body .title {
-        width:400px;
+        width:500px;
         padding: 5px;
         font-weight: bold;
     }
     #dashboard__body .last_modified {
-        width:100px;
+        width:200px;
         padding: 5px;
+        text-align:center;
     }
     #dashboard__body .created_by {
         width:100px;
         padding: 5px;
+        text-align:center;
     }
     #dashboard__body .status {
         width:100px;
         padding: 5px;
+        text-align:center;
     }
 
         #dashboard__body__header {
