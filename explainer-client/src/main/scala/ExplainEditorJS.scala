@@ -45,34 +45,45 @@ object ExplainEditorJS {
 
     val explainer = Var(Explainer)
 
-    def init(id: String): Future[Explainer] = {
+    def extractExplainer(id: String): Future[Explainer] = {
       Ajaxer[ExplainerApi].load(id).call()
     }
 
-    def saveContent(id: String, explainer: ExplainerUpdate) = {
+    def updateFieldContent(id: String, explainer: ExplainerUpdate) = {
       Ajaxer[ExplainerApi].update(id, explainer.field, explainer.value).call()
     }
 
   }
 
-  val headline: TypedTag[Input] = input(
-    id:="new-atom",
-    placeholder:="headline",
-    autofocus:=true
-  )
+  def ExplainEditor(explainerId: String, explainer: Explainer) = {
 
-  val body: TypedTag[TextArea] = textarea(
-    id:="new-atom",
-    rows:=18,
-    cols:=50,
-    maxlength:=1800,
-    placeholder:="body",
-    autofocus:=true
-  )
+    val headline: TypedTag[Input] = input(
+      id:="explainer-editor__headline-envelop__input",
+      cls:="explainer-input-field",
+      placeholder:="headline",
+      autofocus:=true
+    )
 
-  def templateHeader(explainerId: String, explainer: Explainer) = {
+    val body: TypedTag[TextArea] = textarea(
+      id:="explainer-editor__body-envelop__input",
+      cls:="explainer-input-field",
+      maxlength:=1800,
+      placeholder:="body"
+    )
 
-    def turnOnPresenceFor(area: String, field: Element) = {
+    val headlineTag = headline(value := explainer.headline).render
+    headlineTag.onchange = (x: Event) => {
+      Model.updateFieldContent(explainerId, ExplainerUpdate("headline", headlineTag.value))
+      false
+    }
+
+    val bodyTag = body(explainer.body).render
+    bodyTag.onchange = (x: Event) => {
+      Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value))
+      false
+    }
+
+    def setPresenceEnvelop(area: String, field: Element) = {
       field.onfocus = (x: FocusEvent) => {
         presenceClient.enter("explain-" + explainerId, area)
       }
@@ -82,37 +93,31 @@ object ExplainEditorJS {
 
       presenceClient.on("visitor-list-updated", { data: js.Object =>
         val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
-
         val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == area)
-
         dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
         ()
       })
 
       div(`class` := "presence-field-container") (
         fieldPresenceIndicator,
-        field
+        div(cls:="form-group")(
+          label(area),
+          field
+        )
       )
     }
 
-    val headlineTag = headline(value := explainer.headline).render
-    headlineTag.onchange = (x: Event) => {
-      Model.saveContent(explainerId, ExplainerUpdate("headline", headlineTag.value))
-      false
-    }
-
-    val bodyTag = body(explainer.body).render
-    bodyTag.onchange = (x: Event) => {
-      Model.saveContent(explainerId, ExplainerUpdate("body", bodyTag.value))
-      false
-    }
-
-    header(id:="header")(
+    div(id:="explainer-editor")(
       form()(
-        turnOnPresenceFor("headline",headlineTag),
-        turnOnPresenceFor("body",bodyTag)
+        div(id:="explainer-editor__headline-envelop")(
+          setPresenceEnvelop("headline",headlineTag)
+        ),
+        div(id:="explainer-editor__body-envelop")(
+          setPresenceEnvelop("body",bodyTag)
+        )
       )
     )
+
   }
 
   @JSExport
@@ -126,11 +131,9 @@ object ExplainEditorJS {
       presenceClient.subscribe(articleId)
     })
 
-    Model.init(explainerId).map { explainer: Explainer =>
+    Model.extractExplainer(explainerId).map { explainer: Explainer =>
       dom.document.getElementById("content").appendChild(
-        section(id:="Explainer Editor")(
-          templateHeader(explainerId, explainer)
-        ).render
+        ExplainEditor(explainerId, explainer).render
       )
     }
   }
