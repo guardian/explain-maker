@@ -37,4 +37,6 @@ class ApiController @Inject() (val publicSettingsService: PublicSettingsService)
 
   override def load(id: String): Future[Explainer] = ExplainerStore.load(id)
 
+  override def create(): Future[Explainer] = ExplainerStore.create()
+
 }

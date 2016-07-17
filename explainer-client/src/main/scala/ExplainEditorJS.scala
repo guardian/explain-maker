@@ -53,6 +53,10 @@ object ExplainEditorJS {
       Ajaxer[ExplainerApi].update(id, explainer.field, explainer.value).call()
     }
 
+    def createNewExplainer() = {
+      var explainer = Ajaxer[ExplainerApi].create().call()
+    }
+
   }
 
   def ExplainEditor(explainerId: String, explainer: Explainer) = {
@@ -136,6 +140,11 @@ object ExplainEditorJS {
         ExplainEditor(explainerId, explainer).render
       )
     }
+  }
+
+  @JSExport
+  def CreateNewExplainer() = {
+    Model.createNewExplainer()
   }
 
 }

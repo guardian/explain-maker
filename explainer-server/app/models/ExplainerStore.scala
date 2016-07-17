@@ -12,6 +12,9 @@ import shared.Explainer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+import org.joda.time.DateTime
+
+
 object ExplainerStore {
   val defaultCredentialsProvider = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider("composer"),
@@ -50,5 +53,14 @@ object ExplainerStore {
     }
     ScanamoAsync.exec(dynamoDBClient)(operations).map(_.flatMap(_.toOption).get)
   }
+
+  def create(): Future[Explainer] = {
+    val uuid = java.util.UUID.randomUUID.toString
+    val headline = "Default headline @ " + (new DateTime).toString
+    val explainer = new Explainer(uuid, headline, "-") // body field cannot be empty string
+    Scanamo.put(dynamoDBClient)("explainers-"+config.Config.stage)(explainer)
+    Future(explainer)
+  }
+
 }
 
