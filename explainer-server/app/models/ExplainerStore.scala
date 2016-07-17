@@ -22,7 +22,6 @@ object ExplainerStore {
 
   val explainersTable = Table[Explainer]("explainers-"+config.Config.stage)
 
-
   def all : Future[Seq[Explainer]] = {
 //    val operations = for {
 //      explainers: List[Xor[error.DynamoReadError, Explainer]] <- explainersTable.scan()
@@ -40,7 +39,6 @@ object ExplainerStore {
     }
     ScanamoAsync.exec(dynamoDBClient)(operations).map(_.flatMap(_.toOption).get)
   }
-
 
   def update(id: String, fieldSymbol: Symbol, value: String): Future[Explainer] = {
     assert(Set("headline","body").contains(fieldSymbol.name))
