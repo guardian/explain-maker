@@ -54,7 +54,7 @@ object ExplainEditorJS {
     }
 
     def createNewExplainer() = {
-      var explainer = Ajaxer[ExplainerApi].create().call()
+      Ajaxer[ExplainerApi].create().call()
     }
 
   }
@@ -144,7 +144,9 @@ object ExplainEditorJS {
 
   @JSExport
   def CreateNewExplainer() = {
-    Model.createNewExplainer()
+    Model.createNewExplainer().map{ explainer: Explainer =>
+      g.location.href = s"/explain/${explainer.id}"
+    }
   }
 
 }
