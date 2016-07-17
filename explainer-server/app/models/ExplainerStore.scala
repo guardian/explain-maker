@@ -39,7 +39,13 @@ object ExplainerStore {
   }
 
   def update(id: String, fieldSymbol: Symbol, value: String): Future[Explainer] = {
-    assert(Set("headline","body").contains(fieldSymbol.name))
+    val allowed_fields = Set(
+      "headline",
+      "body",
+      "headline_published",
+      "body_published"
+    )
+    assert(allowed_fields.contains(fieldSymbol.name))
     val operations = for {
       _ <- explainersTable.update('id -> id, set(fieldSymbol -> value))
       _ <- explainersTable.update('id -> id, set(Symbol("last_update_time_milli") -> (new DateTime).getMillis()))
@@ -53,8 +59,9 @@ object ExplainerStore {
   def create(): Future[Explainer] = {
     val uuid = java.util.UUID.randomUUID.toString
     val headline = "Default headline @ " + (new DateTime).toString
+    val body = "-" // body field cannot be empty string
     val updatetime = Some((new DateTime).getMillis())
-    val explainer = new Explainer(uuid, headline, "-",updatetime) // body field cannot be empty string
+    val explainer = new Explainer(uuid,headline,body,updatetime,None,None)
     Scanamo.put(dynamoDBClient)("explainers-"+config.Config.stage)(explainer)
     Future(explainer)
   }

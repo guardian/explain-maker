@@ -57,6 +57,48 @@ object ExplainEditorJS {
       Ajaxer[ExplainerApi].create().call()
     }
 
+    def publish(id: String): Future[Explainer] = {
+      Ajaxer[ExplainerApi].publish(id).call()
+    }
+
+  }
+
+  def presenceEnvelop(explainerId: String ,area: String, field: Element) = {
+    field.onfocus = (x: FocusEvent) => {
+      presenceClient.enter("explain-" + explainerId, area)
+    }
+
+    val indicatorId = s"presence-indicator-$area"
+    val fieldPresenceIndicator = div(`class` := "field-presence-indicator", id := indicatorId)()
+
+    presenceClient.on("visitor-list-updated", { data: js.Object =>
+      val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
+      val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == area)
+      dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
+      ()
+    })
+
+    div(`class` := "presence-field-container") (
+      fieldPresenceIndicator,
+      div(cls:="form-group")(
+        label(area),
+        field
+      )
+    )
+  }
+
+  def statusBar(explainer: Explainer) = {
+    val isDraftState =  !explainer.headline_published.isDefined || !explainer.body_published.isDefined || explainer.headline!=explainer.headline_published.get || explainer.body!=explainer.body_published.get
+    val status = if(isDraftState){
+      "Draft state: click on [Publish] to publish."
+    }else{
+      ""
+    }
+    div(id:="explainer-editor__ops-env__status-bar-env__status-bar",cls:="red")(status)
+  }
+
+  def republishStatusBar(explainer: Explainer) = {
+    dom.document.getElementById("explainer-editor__ops-env__status-bar-env").innerHTML = statusBar(explainer).render.innerHTML
   }
 
   def ExplainEditor(explainerId: String, explainer: Explainer) = {
@@ -68,6 +110,13 @@ object ExplainEditorJS {
       autofocus:=true
     )
 
+    val headlineTag = headline(value := explainer.headline).render
+    headlineTag.onchange = (x: Event) => {
+      Model.updateFieldContent(explainerId, ExplainerUpdate("headline", headlineTag.value)).map { explainer: Explainer =>
+        republishStatusBar(explainer)
+      }
+    }
+
     val body: TypedTag[TextArea] = textarea(
       id:="explainer-editor__body-envelop__input",
       cls:="explainer-input-field",
@@ -75,49 +124,35 @@ object ExplainEditorJS {
       placeholder:="body"
     )
 
-    val headlineTag = headline(value := explainer.headline).render
-    headlineTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("headline", headlineTag.value))
-      false
-    }
-
     val bodyTag = body(explainer.body).render
     bodyTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value))
-      false
+      Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map { explainer: Explainer =>
+        republishStatusBar(explainer)
+      }
     }
 
-    def setPresenceEnvelop(area: String, field: Element) = {
-      field.onfocus = (x: FocusEvent) => {
-        presenceClient.enter("explain-" + explainerId, area)
+    val publishButton = button(id:="explainer-editor__ops-env__publish-button")("Publish").render
+    publishButton.onclick = (x: Event) => {
+      g.console.log(s"Publish button clicked [${explainerId}]")
+      Model.publish(explainerId).map { explainer: Explainer =>
+        republishStatusBar(explainer)
       }
-
-      val indicatorId = s"presence-indicator-$area"
-      val fieldPresenceIndicator = div(`class` := "field-presence-indicator", id := indicatorId)()
-
-      presenceClient.on("visitor-list-updated", { data: js.Object =>
-        val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
-        val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == area)
-        dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
-        ()
-      })
-
-      div(`class` := "presence-field-container") (
-        fieldPresenceIndicator,
-        div(cls:="form-group")(
-          label(area),
-          field
-        )
-      )
     }
 
     div(id:="explainer-editor")(
+      div(id:="explainer-editor__ops-env")(
+        publishButton,
+        div(id:="explainer-editor__ops-env__status-bar-env")(
+          statusBar(explainer)
+        )
+      ),
+      hr,
       form()(
         div(id:="explainer-editor__headline-envelop")(
-          setPresenceEnvelop("headline",headlineTag)
+          presenceEnvelop(explainerId,"headline",headlineTag)
         ),
         div(id:="explainer-editor__body-envelop")(
-          setPresenceEnvelop("body",bodyTag)
+          presenceEnvelop(explainerId,"body",bodyTag)
         )
       )
     )

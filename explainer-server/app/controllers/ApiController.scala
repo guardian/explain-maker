@@ -32,11 +32,23 @@ class ApiController @Inject() (val publicSettingsService: PublicSettingsService)
     })
   }
 
-  override def update(id: String, fieldName: String, value: String): Future[Explainer] =
+  override def update(id: String, fieldName: String, value: String): Future[Explainer] = {
     ExplainerStore.update(id, Symbol(fieldName), value)
+  }
 
   override def load(id: String): Future[Explainer] = ExplainerStore.load(id)
 
   override def create(): Future[Explainer] = ExplainerStore.create()
+
+  override def publish(id: String) = {
+    for {
+      explainer <- load(id)
+      _ <- update(id, "headline_published", explainer.headline)
+      _ <- update(id, "body_published"    , explainer.body)
+      explainer <- load(id)
+    }yield{
+      explainer
+    }
+  }
 
 }
