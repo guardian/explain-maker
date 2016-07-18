@@ -89,6 +89,11 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
     #dashboard__body {
 
     }
+
+    #dashboard__body .heading {
+        font-weight: bold;
+    }
+
     #dashboard__body .title {
         width:500px;
         padding: 5px;
@@ -166,7 +171,6 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
         line-height: 1.4em;
         border:1px solid #DDDDDD;
     }
-
 
     #explainer-editor__headline-envelop {
         margin: 0px 0px 20px 0px;
