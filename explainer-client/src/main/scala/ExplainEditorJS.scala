@@ -112,9 +112,7 @@ object ExplainEditorJS {
 
     val headlineTag = headline(value := explainer.headline).render
     headlineTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("headline", headlineTag.value)).map { explainer: Explainer =>
-        republishStatusBar(explainer)
-      }
+      Model.updateFieldContent(explainerId, ExplainerUpdate("headline", headlineTag.value)).map(republishStatusBar)
     }
 
     val body: TypedTag[TextArea] = textarea(
@@ -126,17 +124,13 @@ object ExplainEditorJS {
 
     val bodyTag = body(explainer.body).render
     bodyTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map { explainer: Explainer =>
-        republishStatusBar(explainer)
-      }
+      Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
     }
 
     val publishButton = button(id:="explainer-editor__ops-env__publish-button")("Publish").render
     publishButton.onclick = (x: Event) => {
       g.console.log(s"Publish button clicked [${explainerId}]")
-      Model.publish(explainerId).map { explainer: Explainer =>
-        republishStatusBar(explainer)
-      }
+      Model.publish(explainerId).map(republishStatusBar)
     }
 
     div(id:="explainer-editor")(
