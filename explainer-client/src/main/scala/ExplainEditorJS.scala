@@ -94,11 +94,11 @@ object ExplainEditorJS {
     }else{
       ""
     }
-    div(id:="explainer-editor__ops-env__status-bar-env__status-bar",cls:="red")(status)
+    div(id:="explainer-editor__ops-wrapper__status-bar-env__status-bar",cls:="red")(status)
   }
 
   def republishStatusBar(explainer: ExplainerItem) = {
-    dom.document.getElementById("explainer-editor__ops-env__status-bar-env").innerHTML = statusBar(explainer).render.innerHTML
+    dom.document.getElementById("explainer-editor__ops-wrapper__status-bar-env").innerHTML = statusBar(explainer).render.innerHTML
   }
 
   def ExplainEditor(explainerId: String, explainer: ExplainerItem) = {
@@ -127,15 +127,15 @@ object ExplainEditorJS {
       Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
     }
 
-    val publishButton = button(id:="explainer-editor__ops-env__publish-button")("Publish").render
+    val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
     publishButton.onclick = (x: Event) => {
       Model.publish(explainerId).map(republishStatusBar)
     }
 
     div(id:="explainer-editor")(
-      div(id:="explainer-editor__ops-env")(
+      div(id:="explainer-editor__ops-wrapper")(
         publishButton,
-        div(id:="explainer-editor__ops-env__status-bar-env")(
+        div(id:="explainer-editor__ops-wrapper__status-bar-env")(
           statusBar(explainer)
         )
       ),
