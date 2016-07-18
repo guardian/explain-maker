@@ -43,9 +43,9 @@ object ExplainEditorJS {
   object Model {
     import org.scalajs.jquery.{jQuery => $}
 
-    val explainer = Var(Explainer)
+    val explainer = Var(ExplainerItem)
 
-    def extractExplainer(id: String): Future[Explainer] = {
+    def extractExplainer(id: String): Future[ExplainerItem] = {
       Ajaxer[ExplainerApi].load(id).call()
     }
 
@@ -57,7 +57,7 @@ object ExplainEditorJS {
       Ajaxer[ExplainerApi].create().call()
     }
 
-    def publish(id: String): Future[Explainer] = {
+    def publish(id: String): Future[ExplainerItem] = {
       Ajaxer[ExplainerApi].publish(id).call()
     }
 
@@ -87,8 +87,8 @@ object ExplainEditorJS {
     )
   }
 
-  def statusBar(explainer: Explainer) = {
-    val isDraftState =  !explainer.headline_published.isDefined || !explainer.body_published.isDefined || explainer.headline!=explainer.headline_published.get || explainer.body!=explainer.body_published.get
+  def statusBar(explainer: ExplainerItem) = {
+    val isDraftState =  !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
     val status = if(isDraftState){
       "Draft state: click on [Publish] to publish."
     }else{
@@ -97,39 +97,38 @@ object ExplainEditorJS {
     div(id:="explainer-editor__ops-env__status-bar-env__status-bar",cls:="red")(status)
   }
 
-  def republishStatusBar(explainer: Explainer) = {
+  def republishStatusBar(explainer: ExplainerItem) = {
     dom.document.getElementById("explainer-editor__ops-env__status-bar-env").innerHTML = statusBar(explainer).render.innerHTML
   }
 
-  def ExplainEditor(explainerId: String, explainer: Explainer) = {
+  def ExplainEditor(explainerId: String, explainer: ExplainerItem) = {
 
-    val headline: TypedTag[Input] = input(
-      id:="explainer-editor__headline-envelop__input",
+    val title: TypedTag[Input] = input(
+      id:="explainer-editor__title-wrapper__input",
       cls:="explainer-input-field",
-      placeholder:="headline",
+      placeholder:="title",
       autofocus:=true
     )
 
-    val headlineTag = headline(value := explainer.headline).render
-    headlineTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("headline", headlineTag.value)).map(republishStatusBar)
+    val titleTag = title(value := explainer.draft.title).render
+    titleTag.onchange = (x: Event) => {
+      Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
     }
 
     val body: TypedTag[TextArea] = textarea(
-      id:="explainer-editor__body-envelop__input",
+      id:="explainer-editor__body-wrapper__input",
       cls:="explainer-input-field",
       maxlength:=1800,
       placeholder:="body"
     )
 
-    val bodyTag = body(explainer.body).render
+    val bodyTag = body(explainer.draft.body).render
     bodyTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
     }
 
     val publishButton = button(id:="explainer-editor__ops-env__publish-button")("Publish").render
     publishButton.onclick = (x: Event) => {
-      g.console.log(s"Publish button clicked [${explainerId}]")
       Model.publish(explainerId).map(republishStatusBar)
     }
 
@@ -142,10 +141,10 @@ object ExplainEditorJS {
       ),
       hr,
       form()(
-        div(id:="explainer-editor__headline-envelop")(
-          presenceWrapper(explainerId,"headline",headlineTag)
+        div(id:="explainer-editor__title-wrapper")(
+          presenceWrapper(explainerId,"title",titleTag)
         ),
-        div(id:="explainer-editor__body-envelop")(
+        div(id:="explainer-editor__body-wrapper")(
           presenceWrapper(explainerId,"body",bodyTag)
         )
       )
@@ -164,7 +163,7 @@ object ExplainEditorJS {
       presenceClient.subscribe(articleId)
     })
 
-    Model.extractExplainer(explainerId).map { explainer: Explainer =>
+    Model.extractExplainer(explainerId).map { explainer: ExplainerItem =>
       dom.document.getElementById("content").appendChild(
         ExplainEditor(explainerId, explainer).render
       )
@@ -173,7 +172,7 @@ object ExplainEditorJS {
 
   @JSExport
   def CreateNewExplainer() = {
-    Model.createNewExplainer().map{ explainer: Explainer =>
+    Model.createNewExplainer().map{ explainer: ExplainerItem =>
       g.location.href = s"/explain/${explainer.id}"
     }
   }

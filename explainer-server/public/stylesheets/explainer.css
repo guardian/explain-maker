@@ -172,36 +172,36 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
         border:1px solid #DDDDDD;
     }
 
-    #explainer-editor__headline-envelop {
+    #explainer-editor__headline-wrapper {
         margin: 0px 0px 20px 0px;
     }
-        #explainer-editor__headline-envelop__input {
+        #explainer-editor__headline-wrapper__input {
             outline: none;
             padding: 6px;
         }
 
-    #explainer-editor__body-envelop {
+    #explainer-editor__body-wrapper {
 
     }
-        #explainer-editor__body-envelop__input {
+        #explainer-editor__body-wrapper__input {
             height:500px;
             padding: 6px;
         }
 
 
-    #explainer-editor__ops-env {
+    #explainer-editor__ops-wrapper {
         width:100%;
         height:30px;
     }
 
-        #explainer-editor__ops-env__publish-button {
+        #explainer-editor__ops-wrapper__publish-button {
             float: right;
         }
 
-        #explainer-editor__ops-env__status-bar-env {
+        #explainer-editor__ops-wrapper__status-bar-env {
             color:red;
         }
 
-            #explainer-editor__ops-env__status-bar-env__status-bar {
+            #explainer-editor__ops-wrapper__status-bar-env__status-bar {
 
             }
