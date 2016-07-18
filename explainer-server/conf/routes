@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET           /                            controllers.Application.index
+GET           /                            controllers.ExplainEditorController.all
 GET           /healthcheck                 controllers.Healthcheck.healthcheck
 
 GET           /explain/:id                 controllers.ExplainEditorController.get(id)
