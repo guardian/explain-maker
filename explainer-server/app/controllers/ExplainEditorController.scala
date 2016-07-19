@@ -16,7 +16,7 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
   val explainersTable = Table[ExplainerItem]("explainers")
 
   def get(id: String) = PandaAuthenticated { implicit request =>
-    Ok(views.html.explainEditor(id, "Explain Editor"))
+    Ok(views.html.explainEditor(id))
   }
 
   def all = PandaAuthenticated.async{ implicit request =>
