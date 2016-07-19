@@ -7,10 +7,12 @@ import com.amazonaws.regions.Regions._
 import com.amazonaws.services.dynamodbv2.{AmazonDynamoDBAsyncClient, AmazonDynamoDBClient}
 import com.gu.scanamo.{Table, _}
 import com.gu.scanamo.syntax._
-import shared.Explainer
+import shared._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import org.joda.time.DateTime
+
 
 object ExplainerStore {
   val defaultCredentialsProvider = new AWSCredentialsProviderChain(
@@ -20,19 +22,17 @@ object ExplainerStore {
 
   val dynamoDBClient: AmazonDynamoDBAsyncClient  = new AmazonDynamoDBAsyncClient(defaultCredentialsProvider).withRegion(EU_WEST_1)
 
-  val explainersTable = Table[Explainer]("explainers-"+config.Config.stage)
+  val explainersTable = Table[ExplainerItem]("explainers-"+config.Config.stage)
 
+  def store(explainer: ExplainerItem): Unit = {
+    Scanamo.put(dynamoDBClient)("explainers-"+config.Config.stage)(explainer)
+  }
 
-  def all : Future[Seq[Explainer]] = {
-//    val operations = for {
-//      explainers: List[Xor[error.DynamoReadError, Explainer]] <- explainersTable.scan()
-//    } yield {
-//      explainers
-//    }
+  def all : Future[Seq[ExplainerItem]] = {
     ScanamoAsync.exec(dynamoDBClient)(explainersTable.scan()).map(_.toList.flatMap(_.toOption))
   }
 
-  def load(id: String): Future[Explainer] = {
+  def load(id: String): Future[ExplainerItem] = {
     val operations = for {
       explainer <- explainersTable.get('id -> id)
     } yield {
@@ -41,16 +41,34 @@ object ExplainerStore {
     ScanamoAsync.exec(dynamoDBClient)(operations).map(_.flatMap(_.toOption).get)
   }
 
-
-  def update(id: String, fieldSymbol: Symbol, value: String): Future[Explainer] = {
-    assert(Set("headline","body").contains(fieldSymbol.name))
-    val operations = for {
-      _ <- explainersTable.update('id -> id, set(fieldSymbol -> value))
-      explainer <- explainersTable.get('id -> id)
-    } yield {
-      explainer
+  def update(id: String, fieldSymbol: Symbol, value: String): Future[ExplainerItem] = {
+    val allowed_fields = Set(
+      "title",
+      "body"
+    )
+    assert(allowed_fields.contains(fieldSymbol.name))
+    load(id).map{ explainer =>
+      val newdraft = fieldSymbol.name match {
+        case "title" => ExplainerFacet(value, explainer.draft.body, (new DateTime).getMillis())
+        case "body" => ExplainerFacet(explainer.draft.title, value, (new DateTime).getMillis())
+      }
+      val updatedExplainer = ExplainerItem(
+        explainer.id,
+        newdraft,
+        explainer.live
+      )
+      store(updatedExplainer)
+      updatedExplainer
     }
-    ScanamoAsync.exec(dynamoDBClient)(operations).map(_.flatMap(_.toOption).get)
   }
+
+  def create(): Future[ExplainerItem] = {
+    val uuid = java.util.UUID.randomUUID.toString
+    val draft = ExplainerFacet("Default title @ " + (new DateTime).toString,"-",(new DateTime).getMillis())
+    val explainer = new ExplainerItem(uuid,draft,None)
+    Scanamo.put(dynamoDBClient)("explainers-"+config.Config.stage)(explainer)
+    Future(explainer)
+  }
+
 }
 

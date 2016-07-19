@@ -43,76 +43,113 @@ object ExplainEditorJS {
   object Model {
     import org.scalajs.jquery.{jQuery => $}
 
-    val explainer = Var(Explainer)
+    val explainer = Var(ExplainerItem)
 
-    def init(id: String): Future[Explainer] = {
+    def extractExplainer(id: String): Future[ExplainerItem] = {
       Ajaxer[ExplainerApi].load(id).call()
     }
 
-    def saveContent(id: String, explainer: ExplainerUpdate) = {
+    def updateFieldContent(id: String, explainer: ExplainerUpdate) = {
       Ajaxer[ExplainerApi].update(id, explainer.field, explainer.value).call()
+    }
+
+    def createNewExplainer() = {
+      Ajaxer[ExplainerApi].create().call()
+    }
+
+    def publish(id: String): Future[ExplainerItem] = {
+      Ajaxer[ExplainerApi].publish(id).call()
     }
 
   }
 
-  val headline: TypedTag[Input] = input(
-    id:="new-atom",
-    placeholder:="headline",
-    autofocus:=true
-  )
+  def turnOnPresenceFor(explainerId: String ,area: String, field: Element) = {
+    field.onfocus = (x: FocusEvent) => {
+      presenceClient.enter("explain-" + explainerId, area)
+    }
 
-  val body: TypedTag[TextArea] = textarea(
-    id:="new-atom",
-    rows:=18,
-    cols:=50,
-    maxlength:=1800,
-    placeholder:="body",
-    autofocus:=true
-  )
+    val indicatorId = s"presence-indicator-$area"
+    val fieldPresenceIndicator = div(`class` := "field-presence-indicator", id := indicatorId)()
 
-  def templateHeader(explainerId: String, explainer: Explainer) = {
+    presenceClient.on("visitor-list-updated", { data: js.Object =>
+      val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
+      val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == area)
+      dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
+      ()
+    })
 
-    def turnOnPresenceFor(area: String, field: Element) = {
-      field.onfocus = (x: FocusEvent) => {
-        presenceClient.enter("explain-" + explainerId, area)
-      }
-
-      val indicatorId = s"presence-indicator-$area"
-      val fieldPresenceIndicator = div(`class` := "field-presence-indicator", id := indicatorId)()
-
-      presenceClient.on("visitor-list-updated", { data: js.Object =>
-        val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
-
-        val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == area)
-
-        dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
-        ()
-      })
-
-      div(`class` := "presence-field-container") (
-        fieldPresenceIndicator,
+    div(`class` := "presence-field-container") (
+      fieldPresenceIndicator,
+      div(cls:="form-group")(
+        label(area),
         field
       )
+    )
+  }
+
+  def statusBar(explainer: ExplainerItem) = {
+    val isDraftState =  !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
+    val status = if(isDraftState){
+      "Draft state: click on [Publish] to publish."
+    }else{
+      ""
+    }
+    div(id:="explainer-editor__ops-wrapper__status-bar-wrapper__status-bar",cls:="red")(status)
+  }
+
+  def republishStatusBar(explainer: ExplainerItem) = {
+    dom.document.getElementById("explainer-editor__ops-wrapper__status-bar-wrapper").innerHTML = statusBar(explainer).render.innerHTML
+  }
+
+  def ExplainEditor(explainerId: String, explainer: ExplainerItem) = {
+
+    val title: TypedTag[Input] = input(
+      id:="explainer-editor__title-wrapper__input",
+      cls:="explainer-input-field",
+      placeholder:="title",
+      autofocus:=true
+    )
+
+    val titleTag = title(value := explainer.draft.title).render
+    titleTag.onchange = (x: Event) => {
+      Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
     }
 
-    val headlineTag = headline(value := explainer.headline).render
-    headlineTag.onchange = (x: Event) => {
-      Model.saveContent(explainerId, ExplainerUpdate("headline", headlineTag.value))
-      false
-    }
+    val body: TypedTag[TextArea] = textarea(
+      id:="explainer-editor__body-wrapper__input",
+      cls:="explainer-input-field",
+      maxlength:=1800,
+      placeholder:="body"
+    )
 
-    val bodyTag = body(explainer.body).render
+    val bodyTag = body(explainer.draft.body).render
     bodyTag.onchange = (x: Event) => {
-      Model.saveContent(explainerId, ExplainerUpdate("body", bodyTag.value))
-      false
+      Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
     }
 
-    header(id:="header")(
+    val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
+    publishButton.onclick = (x: Event) => {
+      Model.publish(explainerId).map(republishStatusBar)
+    }
+
+    div(id:="explainer-editor")(
+      div(id:="explainer-editor__ops-wrapper")(
+        publishButton,
+        div(id:="explainer-editor__ops-wrapper__status-bar-wrapper")(
+          statusBar(explainer)
+        )
+      ),
+      hr,
       form()(
-        turnOnPresenceFor("headline",headlineTag),
-        turnOnPresenceFor("body",bodyTag)
+        div(id:="explainer-editor__title-wrapper")(
+          turnOnPresenceFor(explainerId,"title",titleTag)
+        ),
+        div(id:="explainer-editor__body-wrapper")(
+          turnOnPresenceFor(explainerId,"body",bodyTag)
+        )
       )
     )
+
   }
 
   @JSExport
@@ -126,12 +163,17 @@ object ExplainEditorJS {
       presenceClient.subscribe(articleId)
     })
 
-    Model.init(explainerId).map { explainer: Explainer =>
+    Model.extractExplainer(explainerId).map { explainer: ExplainerItem =>
       dom.document.getElementById("content").appendChild(
-        section(id:="Explainer Editor")(
-          templateHeader(explainerId, explainer)
-        ).render
+        ExplainEditor(explainerId, explainer).render
       )
+    }
+  }
+
+  @JSExport
+  def CreateNewExplainer() = {
+    Model.createNewExplainer().map{ explainer: ExplainerItem =>
+      g.location.href = s"/explain/${explainer.id}"
     }
   }
 

@@ -3,15 +3,14 @@
 # ~~~~
 
 # Home page
-GET           /                            controllers.Application.index
+GET           /                            controllers.ExplainEditorController.all
 GET           /healthcheck                 controllers.Healthcheck.healthcheck
 
 GET           /explain/:id                 controllers.ExplainEditorController.get(id)
 GET           /explain                     controllers.ExplainEditorController.all
 
 # Autowire calls
-POST    /api/*path                        controllers.ApiController.autowireApi(path: String)
-
+POST          /api/*path                   controllers.ApiController.autowireApi(path: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                controllers.Assets.at(path="/public", file)
