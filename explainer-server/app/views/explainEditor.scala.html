@@ -1,8 +1,25 @@
-@(id: String)(implicit request: RequestHeader)
+@(id: String, user: com.gu.pandomainauth.model.AuthenticatedUser)(implicit request: RequestHeader)
 
 @header = {
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
 }
-@templates.main("Explainer Editor", header){
+@toolbar = {
+    <header class="top-toolbar">
+        <a class="top-toolbar__title back-to-dashboard" href="/">
+            <div class="top-toolbar__letter"></div>
+            <div class="top-toolbar__page-title"></div>
+        </a>
+        <div class="header__children">
+            <ul class="links">
+            </ul>
+        </div>
+        <div class="top-toolbar__right-align">
+            <div class="top-toolbar__user top-toolbar__item">
+                <span class="user__name">@{user.user.email}</span>
+            </div>
+        </div>
+    </header>
+}
+@templates.main("Explainer Editor", header, toolbar){
     <script>ExplainEditorJS().main("@id")</script>
 }
