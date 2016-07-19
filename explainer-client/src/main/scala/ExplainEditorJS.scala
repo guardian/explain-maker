@@ -63,7 +63,7 @@ object ExplainEditorJS {
 
   }
 
-  def presenceWrapper(explainerId: String ,area: String, field: Element) = {
+  def turnOnPresenceFor(explainerId: String ,area: String, field: Element) = {
     field.onfocus = (x: FocusEvent) => {
       presenceClient.enter("explain-" + explainerId, area)
     }
@@ -142,10 +142,10 @@ object ExplainEditorJS {
       hr,
       form()(
         div(id:="explainer-editor__title-wrapper")(
-          presenceWrapper(explainerId,"title",titleTag)
+          turnOnPresenceFor(explainerId,"title",titleTag)
         ),
         div(id:="explainer-editor__body-wrapper")(
-          presenceWrapper(explainerId,"body",bodyTag)
+          turnOnPresenceFor(explainerId,"body",bodyTag)
         )
       )
     )
