@@ -42,6 +42,21 @@
           }
         })
     </script>
+    <script type="text/javascript">
+        /*
+         * Note: there doesn't seem to be a way to acheive the update with an event (for instance onkeypress) on
+         * #explainer-editor__body-wrapper__input
+         * This explains the choice of setInterval
+         */
+        function updateWordCountDisplay(){
+            var contents = $.trim($("#explainer-editor__body-wrapper__input").val())
+            var wordCount = contents.split(" ").length;
+            $("#explainer-editor__word-count-wrapper__count").text(wordCount)
+        }
+        setInterval(function(){
+            updateWordCountDisplay();
+        },100);
+    </script>
     @playscalajs.html.scripts("explainerClient", "/assets")
     @javascripts
 
