@@ -212,11 +212,11 @@ body {
   border-left: 1px solid #bdbdbd;
 }
 
-#explainer-editor__word-count-wrapper {
+#top-toolbar__word-count-wrapper {
   border-left: 1px solid #bdbdbd;
   padding:0px 15px 0px 15px;
 }
 
-#explainer-editor__word-count-wrapper__count {
+#top-toolbar__word-count-wrapper__count {
   font-weight:bold;
 }
