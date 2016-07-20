@@ -87,7 +87,6 @@ body {
 .top-toolbar__title {
   flex: 0 0 120px;
   position: relative;
-  font-size: 18px;
   line-height: 50px;
   margin: 0;
   display: flex;
@@ -95,24 +94,36 @@ body {
   color: black;
 }
 
-.back-to-dashboard:after {
+.top-toolbar__title__hover-state {
+  font-family: "GuardianTitlepieceWeb", Georgia, serif;
+  visibility:hidden;
   position: absolute;
   left: 0;
   top: 0;
-  background: #000;
-  content: "Back to dashboard";
-  color: #FFF;
+  width: 100%;
   height: 100%;
-  font-size:12px;
-  display: block;
-  visibility: hidden;
-  width:120px;
-  text-align:center;
-  font-weight:bold;
+  background-color: #333333;
+  line-height: 21px;
+  padding-left: 10px;
+  padding-top: 2px;
+  z-index:2;
+  color:white;
 }
 
-.top-toolbar__title:hover:after {
-  visibility: visible;
+.top-toolbar__title:hover .top-toolbar__title__hover-state {
+  visibility:visible;
+}
+
+.top-toolbar__title__hover-state__subtitle {
+  font-weight:bold;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.top-toolbar__title__hover-state__title {
+  font-weight:bold;
+  font-size: 18px;
+  line-height: 23px;
 }
 
 .top-toolbar__logo, .top-toolbar__page-icon {
@@ -123,7 +134,7 @@ body {
 
 .top-toolbar__title .top-toolbar__logo {
   flex: 0 0 60px;
-  background: no-repeat center url(/assets/images/icons/explain-logo-q.svg) #7D0068;
+  background: no-repeat center url(/assets/images/icons/explain-logo.svg) #7D0068;
 }
 
 .top-toolbar__page-icon {
