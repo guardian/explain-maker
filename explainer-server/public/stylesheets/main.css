@@ -115,26 +115,26 @@ body {
   visibility: visible;
 }
 
-.top-toolbar__letter, .top-toolbar__page-title {
+.top-toolbar__logo, .top-toolbar__page-icon {
   display: inline-block;
   text-align: center;
   line-height: 55px;
 }
 
-.top-toolbar__title .top-toolbar__letter {
+.top-toolbar__title .top-toolbar__logo {
   flex: 0 0 60px;
   background: no-repeat center url(/assets/images/icons/explain-logo-q.svg) #7D0068;
 }
 
-.top-toolbar__page-title {
+.top-toolbar__page-icon {
   display: inline-block;
   text-align: center;
   line-height: 55px;
 }
 
-.top-toolbar__title .top-toolbar__page-title {
+.top-toolbar__title .top-toolbar__page-icon {
   flex: 0 0 60px;
-  background: no-repeat center url(/assets/images/icons/explain-logo.svg) #BB3A7F;
+  background: no-repeat center #BB3A7F;
 }
 
 .top-toolbar .header__children {
