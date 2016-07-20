@@ -1,4 +1,4 @@
-@(title: String, header: Html = Html(""), content: Html = Html(""))(javascripts: Html)(implicit request: RequestHeader)
+@(title: String, header: Html = Html(""), content: Html = Html(""), toolbar: Html = Html(""))(javascripts: Html)(implicit request: RequestHeader)
 @import play.api.Play
 <!DOCTYPE html>
 
@@ -13,34 +13,7 @@
     @header
   </head>
   <body>
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/explain">Explain Maker</a>
-        </div>
-        <!--
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="http://www.scala-lang.org/" target="_blank">Scala</a></li>
-            <li><a href="http://www.scala-js.org/" target="_blank">Scala.js</a></li>
-            <li><a href="http://www.playframework.com/" target="_blank">Play!</a></li>
-          </ul>
-          <form class="navbar-form navbar-right" action="https://github.com/search" method="GET" target="_blank">
-            <input type="hidden" name="nwo" value="hussachai/play-scalajs-showcase" />
-            <input type="hidden" name="search_target" value="repository" />
-            <input type="hidden" name="ref" value="cmdform" />
-            <input type="text" name="q" class="form-control" placeholder="Search...Repo" />
-          </form>
-        </div>
-        -->
-      </div>
-    </div>
+    @toolbar
     <div id="content">
     @content
     </div>
