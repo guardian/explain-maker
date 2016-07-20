@@ -78,8 +78,7 @@ body {
   left: 0;
   width: 100%;
   display: flex;
-  min-height: 50px;
-  max-height: 50px;
+  height: 50px;
   background-color: #dee2e3;
   z-index: 2;
   line-height: 50px;
