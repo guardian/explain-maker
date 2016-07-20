@@ -74,7 +74,7 @@ object ExplainEditorJS {
     presenceClient.on("visitor-list-updated", { data: js.Object =>
       val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
       val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == area)
-      dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
+      //dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
       ()
     })
 
