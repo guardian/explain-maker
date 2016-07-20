@@ -20,7 +20,6 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
   }
 
   def all = PandaAuthenticated.async{ implicit request =>
-
     ExplainerStore.all.map{ r =>
         def sorting(e1: ExplainerItem, e2: ExplainerItem): Boolean = {
           val time1:Long = e1.draft.last_modified_time
