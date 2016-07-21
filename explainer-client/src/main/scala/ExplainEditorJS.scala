@@ -8,8 +8,6 @@ import presence.StateChange.State
 import presence.{Person, PresenceGlobalScope, StateChange}
 import rx._
 import shared._
-import shared.util.ExplainerAtomImplicits
-import shared.util.JsonConversions._
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -38,7 +36,7 @@ object Ajaxer extends autowire.Client[Js.Value, Reader, Writer]{
 }
 
 @JSExport
-object ExplainEditorJS extends ExplainerAtomImplicits {
+object ExplainEditorJS {
 
   val endpoint = "wss://presence.code.dev-gutools.co.uk/socket"
   val person = new Person("A","Nother","a.nother.@guardian.co.uk")

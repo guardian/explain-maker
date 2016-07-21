@@ -2,7 +2,6 @@ package shared.models
 
 import com.gu.contentatom.thrift._
 import contentatom.explainer.{DisplayType, ExplainerAtom}
-import play.api.libs.json.Json
 import shared.util.ExplainerAtomImplicits
 
 
@@ -20,20 +19,7 @@ object CsExplainerAtom {
     }
   }
 
-//  implicit val csExplainerAtomFormats = Json.format[CsExplainerAtom]
 }
-
-//object CsUser {
-//  implicit val csUserFormats = Json.format[CsUser]
-//}
-//
-//object CsChangeRecord {
-//  implicit val csChangeRecordFormats = Json.format[CsChangeRecord]
-//}
-//
-//object CsContentChangeDetails {
-//  implicit val csUserFormats = Json.format[CsContentChangeDetails]
-//}
 
 
 
@@ -58,5 +44,12 @@ object CsAtom extends ExplainerAtomImplicits {
       data = AtomData.Explainer(explainerAtom), contentChangeDetails = csAtom.contentChangeDetails)
   }
 
-//  implicit val csAtomFormats = Json.format[CsAtom]
 }
+
+// play json converters - not currently needed
+
+//  implicit val csUserFormats = Json.format[CsContentChangeDetails]
+
+//  implicit val csChangeRecordFormats = Json.format[CsChangeRecord]
+//  implicit val csExplainerAtomFormats = Json.format[CsExplainerAtom]
+//  implicit val csAtomFormats = Json.format[CsAtom]
