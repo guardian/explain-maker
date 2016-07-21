@@ -8,8 +8,8 @@ import presence.StateChange.State
 import presence.{Person, PresenceGlobalScope, StateChange}
 import rx._
 import shared._
-import upickle.Js
-import upickle.default._
+import shared.util.ExplainerAtomImplicits
+import shared.util.JsonConversions._
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -19,22 +19,27 @@ import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom._
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2.section
+import play.api.libs.json._
+import shared.models.CsAtom
+import shared.models.CsAtom._
 
-object Ajaxer extends autowire.Client[Js.Value, Reader, Writer]{
-  override def doCall(req: Request): Future[Js.Value] = {
+object Ajaxer extends autowire.Client[JsValue, play.api.libs.json.Reads, play.api.libs.json.Writes]{
+  override def doCall(req: Request): Future[JsValue] = {
+    val args = req.args.toSeq
+    val js: JsValue = JsObject(args)
     Ajax.postAsJson(
       "/api/" + req.path.mkString("/"),
-      upickle.json.write(Js.Obj(req.args.toSeq:_*))
+    js.toString
     ).map(_.responseText)
-      .map(upickle.json.read)
+      .map(Json.parse)
   }
 
-  def read[Result: Reader](p: Js.Value) = readJs[Result](p)
-  def write[Result: Writer](r: Result) = writeJs(r)
+  def read[Result: play.api.libs.json.Reads](p: JsValue) = p.validate[Result].get
+  def write[Result: play.api.libs.json.Writes](r: Result) = Json.toJson(r)
 }
 
 @JSExport
-object ExplainEditorJS {
+object ExplainEditorJS extends ExplainerAtomImplicits {
 
   val endpoint = "wss://presence.code.dev-gutools.co.uk/socket"
   val person = new Person("A","Nother","a.nother.@guardian.co.uk")
@@ -43,9 +48,9 @@ object ExplainEditorJS {
   object Model {
     import org.scalajs.jquery.{jQuery => $}
 
-    val explainer = Var(ExplainerItem)
+    val explainer = Var(CsAtom)
 
-    def extractExplainer(id: String): Future[ExplainerItem] = {
+    def extractExplainer(id: String): Future[CsAtom] = {
       Ajaxer[ExplainerApi].load(id).call()
     }
 
@@ -57,7 +62,7 @@ object ExplainEditorJS {
       Ajaxer[ExplainerApi].create().call()
     }
 
-    def publish(id: String): Future[ExplainerItem] = {
+    def publish(id: String): Future[CsAtom] = {
       Ajaxer[ExplainerApi].publish(id).call()
     }
 
@@ -87,8 +92,8 @@ object ExplainEditorJS {
     )
   }
 
-  def statusBar(explainer: ExplainerItem) = {
-    val isDraftState =  !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
+  def statusBar(explainer: CsAtom) = {
+    val isDraftState =  true // !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
     val status = if(isDraftState){
       "Draft state: click on [Publish] to publish."
     }else{
@@ -97,11 +102,11 @@ object ExplainEditorJS {
     div(id:="explainer-editor__ops-wrapper__status-bar-wrapper__status-bar",cls:="red")(status)
   }
 
-  def republishStatusBar(explainer: ExplainerItem) = {
+  def republishStatusBar(explainer: CsAtom) = {
     dom.document.getElementById("explainer-editor__ops-wrapper__status-bar-wrapper").innerHTML = statusBar(explainer).render.innerHTML
   }
 
-  def ExplainEditor(explainerId: String, explainer: ExplainerItem) = {
+  def ExplainEditor(explainerId: String, explainer: CsAtom) = {
 
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
@@ -110,7 +115,7 @@ object ExplainEditorJS {
       autofocus:=true
     )
 
-    val titleTag = title(value := explainer.draft.title).render
+    val titleTag = title(value := explainer.data.title).render
     titleTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
     }
@@ -122,7 +127,7 @@ object ExplainEditorJS {
       placeholder:="body"
     )
 
-    val bodyTag = body(explainer.draft.body).render
+    val bodyTag = body(explainer.data.body).render
     bodyTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
     }
@@ -163,7 +168,7 @@ object ExplainEditorJS {
       presenceClient.subscribe(articleId)
     })
 
-    Model.extractExplainer(explainerId).map { explainer: ExplainerItem =>
+    Model.extractExplainer(explainerId).map { explainer: CsAtom =>
       dom.document.getElementById("content").appendChild(
         ExplainEditor(explainerId, explainer).render
       )
@@ -172,7 +177,7 @@ object ExplainEditorJS {
 
   @JSExport
   def CreateNewExplainer() = {
-    Model.createNewExplainer().map{ explainer: ExplainerItem =>
+    Model.createNewExplainer().map{ explainer: CsAtom =>
       g.location.href = s"/explain/${explainer.id}"
     }
   }

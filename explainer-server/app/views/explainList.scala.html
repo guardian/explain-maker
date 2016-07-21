@@ -1,4 +1,6 @@
-@(explainers: Seq[shared.ExplainerItem])(implicit request: RequestHeader)
+@import com.gu.contentatom.thrift.Atom
+@import shared.util.ExplainerAtomImplicits
+@(explainers: Seq[Atom])(implicit request: RequestHeader)
 
 @import org.joda.time.DateTime
 @import org.joda.time.format.DateTimeFormat
@@ -22,9 +24,9 @@
             <div id="dashboard__body__listing">
             @for(e <- explainers) {
                 <div class="dashboard__body__listing__item">
-                    <div class="title"><a href="/explain/@e.id">@e.draft.title</a></div>
+                    <div class="title"><a href="/explain/@e.id">@ExplainerAtomImplicits.AtomWithData(e).tdata.title</a></div>
                     <div class="last_modified">@{
-                        val time:Long = e.draft.last_modified_time
+                        val time:Long = e.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
                         val datetime = new DateTime(time)
                         val fmt = DateTimeFormat.forPattern("MM/dd/YYYY HH:MM");
                         fmt.print(datetime);
