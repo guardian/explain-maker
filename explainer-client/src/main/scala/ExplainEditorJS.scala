@@ -126,6 +126,9 @@ object ExplainEditorJS {
     bodyTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
     }
+    bodyTag.oninput = (x: Event) => {
+      g.updateWordCountDisplay()
+    }
 
     val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
     publishButton.onclick = (x: Event) => {
