@@ -87,18 +87,18 @@ object ExplainEditorJS {
     )
   }
 
-  def statusBar(explainer: ExplainerItem) = {
+  def statusBarText(explainer: ExplainerItem) = {
     val isDraftState =  !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
     val status = if(isDraftState){
-      "Draft state: click on [Publish] to publish."
+      "Draft State"
     }else{
       ""
     }
-    div(id:="explainer-editor__ops-wrapper__status-bar-wrapper__status-bar",cls:="red")(status)
+    status
   }
 
   def republishStatusBar(explainer: ExplainerItem) = {
-    dom.document.getElementById("explainer-editor__ops-wrapper__status-bar-wrapper").innerHTML = statusBar(explainer).render.innerHTML
+    g.updateStatusBar(statusBarText(explainer))
   }
 
   def ExplainEditor(explainerId: String, explainer: ExplainerItem) = {
@@ -137,10 +137,7 @@ object ExplainEditorJS {
 
     div(id:="explainer-editor")(
       div(id:="explainer-editor__ops-wrapper")(
-        publishButton,
-        div(id:="explainer-editor__ops-wrapper__status-bar-wrapper")(
-          statusBar(explainer)
-        )
+        publishButton
       ),
       hr,
       form()(

@@ -17,6 +17,9 @@
             <ul class="links">
             </ul>
         </div>
+        <div class="top-toolbar__status-bar-wrapper">
+            <div class="top-toolbar__status-bar-inner"></div>
+        </div>
         <div class="top-toolbar__word-count-wrapper" class="top-toolbar__right-align">
             word count:&nbsp;<span class="top-toolbar__word-count-wrapper__count"></span>
             <span class="top-toolbar__word-count-wrapper__warning-outer">
@@ -48,11 +51,20 @@
         function updateWordCountDisplay(){
             $(".top-toolbar__word-count-wrapper__count").text(getBodyWordCount())
         }
-        function updateWordCountWarningDisplay(){
-            if(getBodyWordCount()>maxWordCount){
+        function updateWordCountWarningDisplay() {
+            if (getBodyWordCount() > maxWordCount) {
                 $(".top-toolbar__word-count-wrapper__warning-outer").show();
-            }else{
+            } else {
                 $(".top-toolbar__word-count-wrapper__warning-outer").hide();
+            }
+        }
+
+        function updateStatusBar(message){
+            if(message.length>0){
+                $(".top-toolbar__status-bar-wrapper").show();
+                $(".top-toolbar__status-bar-inner").text(message);
+            }else{
+                $(".top-toolbar__status-bar-wrapper").hide();
             }
         }
 
