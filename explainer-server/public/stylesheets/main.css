@@ -220,3 +220,14 @@ body {
 .top-toolbar__word-count-wrapper__count {
   font-weight:bold;
 }
+
+.top-toolbar__status-bar-wrapper {
+
+}
+
+.top-toolbar__status-bar-inner {
+  border-left: 1px solid #bdbdbd;
+  padding: 0 15px;
+  color:red;
+  font-family: "GuardianTitlepieceWeb", Georgia, serif;
+}
