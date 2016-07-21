@@ -4,13 +4,12 @@ import com.gu.contentatom.thrift._
 import com.gu.contentatom.thrift.atom.media.{Asset, MediaAtom}
 import com.twitter.scrooge.ThriftEnum
 import contentatom.explainer.DisplayType
-import org.joda.time.DateTime
 import contentatom.explainer.ExplainerAtom
-import org.apache.thrift.TSerializer
-import org.apache.thrift.protocol.TSimpleJSONProtocol
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
+
+// play json conversions for thrift objects NOTE: not currently used in the application
 object JsonConversions {
 
 
@@ -157,70 +156,4 @@ object JsonConversions {
 
 
 
-//  implicit val contentChangeDetailsWrites = Writes[ContentChangeDetails](ccd => Json.toJson(ccd))
 
-  // atom
-
-
-
-
-
-
-
-
-
-
-//
-//  implicit val atomFormats: Format[Atom] = (
-//    (__ \ "id").format[String] and
-//      (__ \ "type").format[AtomType] and
-//      (__ \ "labels").format[Seq[String]] and
-//      (__ \ "defaultHtml").format[String] and
-//      (__ \ "data").format[AtomData] and
-//      (__ \ "contentChangeDetails").format[ContentChangeDetails] and
-//      (__ \ "flags").formatNullable[Flags]
-//    )(Atom.apply, unlift(Atom.unapply))
-
-
-
-//  implicit val userFormats = Json.format[User]
-//  implicit val changeRecordFormats = Json.format[ChangeRecord]
-
-
-
-
-
-  //  implicit val explainerAliasFormats = Json.format[AtomData.Explainer]
-  //
-  //  implicit val explainerAtomReads: Reads[AtomData.Explainer] = (
-  //    (__ \ "title").read[String] and
-  //    (__ \ "body").read[String] and
-  //      (__ \ "displayType").read[DisplayType]
-  //  )(p => AtomData.Explainer(ExplainerAtom.apply(p._1, p._2, p._3)))
-  //
-  //  implicit val explainerAtomWrites = Json.writes[AtomData.Explainer]
-
-  //  implicit val atomFormats = Json.format[Atom]
-
-  //  implicit val flagFormats: Format[Flags] = (
-  //    (__ \ "suppressFurniture").formatNullable[Boolean]
-  //    )(Flags.apply, unlift(Flags.unapply))
-  //
-  //  implicit val userFormats: Format[User] = (
-  //    (__ \ "email").format[String] and
-  //      (__ \ "firstName").formatNullable[String] and
-  //      (__ \ "lastName").formatNullable[String]
-  //    )(User.apply, unlift(User.unapply))
-  //
-  //  implicit val changeRecordFormats: Format[ChangeRecord] = (
-  //    (__ \ "date").format[DateTime] and
-  //      (__ \ "user").format[User]
-  //    )(ChangeRecord.apply, unlift(ChangeRecord.unapply))
-  //
-  //  implicit val contentChangeDetailsFormats: Format[ContentChangeDetails] = (
-  //    (__ \ "lastModified").formatNullable[ChangeRecord] and
-  //      (__ \ "lastModified").formatNullable[ChangeRecord] and
-  //      (__ \ "lastModified").formatNullable[ChangeRecord] and
-  //      (__ \ "revision").format[Long]
-  //    )(ContentChangeDetails.apply, unlift(ContentChangeDetails.unapply))
-}

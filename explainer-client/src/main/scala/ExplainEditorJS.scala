@@ -19,9 +19,8 @@ import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom._
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2.section
-import shared.models.CsAtom
+import shared.models.{CsAtom, ExplainerUpdate}
 import shared.models.CsAtom._
-
 import upickle.Js
 import upickle.default._
 
