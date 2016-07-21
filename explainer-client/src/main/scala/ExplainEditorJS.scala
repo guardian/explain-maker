@@ -19,23 +19,23 @@ import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom._
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2.section
-import play.api.libs.json._
 import shared.models.CsAtom
 import shared.models.CsAtom._
 
-object Ajaxer extends autowire.Client[JsValue, play.api.libs.json.Reads, play.api.libs.json.Writes]{
-  override def doCall(req: Request): Future[JsValue] = {
-    val args = req.args.toSeq
-    val js: JsValue = JsObject(args)
+import upickle.Js
+import upickle.default._
+
+object Ajaxer extends autowire.Client[Js.Value, Reader, Writer]{
+  override def doCall(req: Request): Future[Js.Value] = {
     Ajax.postAsJson(
       "/api/" + req.path.mkString("/"),
-    js.toString
+      upickle.json.write(Js.Obj(req.args.toSeq:_*))
     ).map(_.responseText)
-      .map(Json.parse)
+      .map(upickle.json.read)
   }
 
-  def read[Result: play.api.libs.json.Reads](p: JsValue) = p.validate[Result].get
-  def write[Result: play.api.libs.json.Writes](r: Result) = Json.toJson(r)
+  def read[Result: Reader](p: Js.Value) = readJs[Result](p)
+  def write[Result: Writer](r: Result) = writeJs(r)
 }
 
 @JSExport
@@ -62,9 +62,9 @@ object ExplainEditorJS extends ExplainerAtomImplicits {
       Ajaxer[ExplainerApi].create().call()
     }
 
-    def publish(id: String): Future[CsAtom] = {
-      Ajaxer[ExplainerApi].publish(id).call()
-    }
+//    def publish(id: String): Future[CsAtom] = {
+//      Ajaxer[ExplainerApi].publish(id).call()
+//    }
 
   }
 
@@ -134,7 +134,7 @@ object ExplainEditorJS extends ExplainerAtomImplicits {
 
     val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
     publishButton.onclick = (x: Event) => {
-      Model.publish(explainerId).map(republishStatusBar)
+//      Model.publish(explainerId).map(republishStatusBar)
     }
 
     div(id:="explainer-editor")(

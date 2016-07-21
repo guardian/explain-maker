@@ -14,28 +14,27 @@ import play.api.mvc.Controller
 import services.PublicSettingsService
 import shared._
 import shared.models.CsAtom
-import shared.util.JsonConversions._
+import upickle.Js
+import upickle.default._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object AutowireServer extends autowire.Server[JsValue, play.api.libs.json.Reads, play.api.libs.json.Writes]{
-
-  def read[Result: play.api.libs.json.Reads](p: JsValue) = p.validate[Result].get
-  def write[Result: play.api.libs.json.Writes](r: Result) = Json.toJson(r)
+object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
+  def read[Result: Reader](p: Js.Value) = upickle.default.readJs[Result](p)
+  def write[Result: Writer](r: Result) = upickle.default.writeJs(r)
 }
 
 class ApiController @Inject() (val publicSettingsService: PublicSettingsService) extends Controller with ExplainerApi with AuthActions  {
 
   def autowireApi(path: String) = PandaAuthenticated.async(parse.json) { implicit request =>
-    val autowireRequest: Request[JsValue] = autowire.Core.Request[JsValue](
+    val autowireRequest: Request[Js.Value] = autowire.Core.Request(
       path.split("/"),
-
-      Map("data" -> request.body)
+      upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
     )
 
     AutowireServer.route[ExplainerApi](this)(autowireRequest).map(responseJS => {
-      Ok(responseJS.toString)
+      Ok(upickle.json.write(responseJS))
     })
   }
 
@@ -47,17 +46,17 @@ class ApiController @Inject() (val publicSettingsService: PublicSettingsService)
 
   override def create(): Future[CsAtom] = ExplainerStore.create().map(CsAtom.atomToCsAtom)
 
-  override def publish(id: String): Future[CsAtom] = {
-//    load(id).map( explainer => ExplainerStore.store(
-//      ExplainerItem(
-//        explainer.id,
-//        explainer.draft,
-//        Some(
-//          ExplainerAtom(explainer.draft.title,explainer.draft.body,explainer.draft.displayType)
-//        )
-//      )
-//    ))
-    load(id)
-  }
+//  override def publish(id: String): Future[CsAtom] = {
+////    load(id).map( explainer => ExplainerStore.store(
+////      ExplainerItem(
+////        explainer.id,
+////        explainer.draft,
+////        Some(
+////          ExplainerAtom(explainer.draft.title,explainer.draft.body,explainer.draft.displayType)
+////        )
+////      )
+////    ))
+//    load(id).map(CsAtom.atomToCsAtom)
+//  }
 
 }

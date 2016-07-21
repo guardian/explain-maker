@@ -20,20 +20,20 @@ object CsExplainerAtom {
     }
   }
 
-  implicit val csExplainerAtomFormats = Json.format[CsExplainerAtom]
+//  implicit val csExplainerAtomFormats = Json.format[CsExplainerAtom]
 }
 
-object CsUser {
-  implicit val csUserFormats = Json.format[CsUser]
-}
-
-object CsChangeRecord {
-  implicit val csChangeRecordFormats = Json.format[CsChangeRecord]
-}
-
-object CsContentChangeDetails {
-  implicit val csUserFormats = Json.format[CsContentChangeDetails]
-}
+//object CsUser {
+//  implicit val csUserFormats = Json.format[CsUser]
+//}
+//
+//object CsChangeRecord {
+//  implicit val csChangeRecordFormats = Json.format[CsChangeRecord]
+//}
+//
+//object CsContentChangeDetails {
+//  implicit val csUserFormats = Json.format[CsContentChangeDetails]
+//}
 
 
 
@@ -58,5 +58,5 @@ object CsAtom extends ExplainerAtomImplicits {
       data = AtomData.Explainer(explainerAtom), contentChangeDetails = csAtom.contentChangeDetails)
   }
 
-  implicit val csAtomFormats = Json.format[CsAtom]
+//  implicit val csAtomFormats = Json.format[CsAtom]
 }
