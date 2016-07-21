@@ -212,7 +212,7 @@ body {
   border-left: 1px solid #bdbdbd;
 }
 
-#top-toolbar__word-count-wrapper {
+.top-toolbar__word-count-wrapper {
   border-left: 1px solid #bdbdbd;
   padding: 0 15px
 }

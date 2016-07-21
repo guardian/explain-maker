@@ -170,6 +170,7 @@ object ExplainEditorJS {
       dom.document.getElementById("content").appendChild(
         ExplainEditor(explainerId, explainer).render
       )
+      g.updateWordCountDisplay()
     }
   }
 
