@@ -127,6 +127,7 @@ object ExplainEditorJS {
     }
     bodyTag.oninput = (x: Event) => {
       g.updateWordCountDisplay()
+      g.updateWordCountWarningDisplay()
     }
 
     val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
@@ -170,6 +171,7 @@ object ExplainEditorJS {
         ExplainEditor(explainerId, explainer).render
       )
       g.updateWordCountDisplay()
+      g.updateWordCountWarningDisplay()
     }
   }
 
