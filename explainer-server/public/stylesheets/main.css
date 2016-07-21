@@ -217,6 +217,6 @@ body {
   padding:0px 15px 0px 15px;
 }
 
-#top-toolbar__word-count-wrapper__count {
+.top-toolbar__word-count-wrapper__count {
   font-weight:bold;
 }
