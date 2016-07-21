@@ -116,8 +116,7 @@ object ExplainEditorJS {
     }
 
     val body: TypedTag[TextArea] = textarea(
-      id:="explainer-editor__body-wrapper__input",
-      cls:="explainer-input-field",
+      cls:="explainer-editor__body-wrapper__input explainer-input-field",
       maxlength:=1800,
       placeholder:="body"
     )
