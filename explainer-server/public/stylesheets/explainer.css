@@ -183,7 +183,7 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
     #explainer-editor__body-wrapper {
 
     }
-        #explainer-editor__body-wrapper__input {
+        .explainer-editor__body-wrapper__input {
             height:500px;
             padding: 6px;
         }
