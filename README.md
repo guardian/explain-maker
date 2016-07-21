@@ -19,11 +19,21 @@ $ cat /etc/gu/explainer.stage.conf
 stage=DEV
 ```
 
-### Run the application
+Configure the composer route in nginx:
+
 ```
-$ sbt
-> run
-$ open http://localhost:9000
+cd <path_of_dev_nginx>
+sudo ./setup-app.rb <path_of_explainer>/nginx/nginx-mapping.yml
 ```
 
-Main user interface can then be found at [http://localhost:9000/explain](http://localhost:9000/explain).
+### Run the application
+```
+$ sbt run
+```
+
+### Access the User Interface
+
+Explain Maker should now be found at [https://explainer.local.dev-gutools.co.uk/](https://explainer.local.dev-gutools.co.uk/).
+
+In order to get the Panda authentication cookie needed to access Explain Maker, you might want to, for instance, first visit your local instance of Composer: [https://composer.local.dev-gutools.co.uk/](https://composer.local.dev-gutools.co.uk/).
+

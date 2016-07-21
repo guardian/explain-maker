@@ -16,7 +16,7 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
 
 
   def get(id: String) = PandaAuthenticated { implicit request =>
-    Ok(views.html.explainEditor(id, "Explain Editor"))
+    Ok(views.html.explainEditor(id,request.user))
   }
 
   def all = PandaAuthenticated.async{ implicit request =>
@@ -27,7 +27,7 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
           val time2:Long = e2.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
           time1 > time2
         }
-        Ok(views.html.explainList(r.sortWith(sorting)))
+        Ok(views.html.explainList(r.sortWith(sorting),request.user))
     }.recover{ case err =>
       InternalServerError(err.getMessage)
     }

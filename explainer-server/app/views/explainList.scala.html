@@ -1,19 +1,43 @@
 @import com.gu.contentatom.thrift.Atom
 @import shared.util.ExplainerAtomImplicits
-@(explainers: Seq[Atom])(implicit request: RequestHeader)
-
 @import org.joda.time.DateTime
 @import org.joda.time.format.DateTimeFormat
+
+@(explainers: Seq[Atom], user: com.gu.pandomainauth.model.AuthenticatedUser)(implicit request: RequestHeader)
 
 @header = {
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
 }
-@templates.main("Explainers", header){
+@toolbar = {
+    <header class="top-toolbar">
+        <a class="top-toolbar__title" href="/">
+            <div class="top-toolbar__logo"></div>
+            <div class="top-toolbar__page-icon"></div>
+            <div class="top-toolbar__title__hover-state">
+                <span class="top-toolbar__title__hover-state__subtitle">Back to</span><br />
+                <span class="top-toolbar__title__hover-state__title">Dashboard</span>
+            </div>
+        </a>
+        <div class="header__children">
+            <ul class="links">
+                <li class="links__item top-toolbar__item top-toolbar__item--btn">
+                    <i class="i-new-explain"></i>
+                    <div id="new-explainer-activator-wrapper">
+                        <a href="#" onclick="ExplainEditorJS().CreateNewExplainer()">Create New</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="top-toolbar__right-align">
+            <div class="top-toolbar__user top-toolbar__item">
+                <span class="user__name">@{user.user.firstName} @{user.user.lastName}</span>
+            </div>
+        </div>
+    </header>
+}
+@templates.main("Explainers", header, toolbar){
     <div id="dashboard">
         <div id="dashboard__title"><h2>Explainers</h2></div>
-        <div id="dashboard__header">
-            <button onclick="ExplainEditorJS().CreateNewExplainer()">Create New</button>
-        </div>
         <div id="dashboard__body">
             <div id="dashboard__body__header">
                 <div class="title heading">Title</div>

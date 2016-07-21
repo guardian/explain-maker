@@ -1,0 +1,5 @@
+name: explainer
+mappings:
+  - prefix: explainer
+    port: 9000
+    path: /

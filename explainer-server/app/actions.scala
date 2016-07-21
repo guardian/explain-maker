@@ -23,20 +23,10 @@ trait AuthActions {
     publicKey <- publicSettingsService.publicSettings.publicKey
     cookie <- req.cookies.get(publicSettingsService.publicSettings.assymCookieName)
   } yield PanDomain.authStatus(cookie.value, PublicKey(publicKey))
-
-
-  // TODO Remove code used only by Lazy devs! Editorial tools team, feel free to get rid of this
-  val FallbackUserForDevOnly = if (Config.stage=="DEV") Some(AuthenticatedUser(
-    user = com.gu.pandomainauth.model.User("Dev", System.getProperty("user.name"), System.getProperty("user.name"), None),
-    authenticatingSystem = System.getenv("HOSTNAME"),
-    authenticatedIn = Set.empty,
-    expires = Long.MaxValue,
-    multiFactor = true
-  )) else None
-
+  
   object PandaAuthenticated extends AuthenticatedBuilder(req => userAuthStatusOptFor(req) match {
     case Some(Authenticated(u)) => Some(u)
-    case _ => FallbackUserForDevOnly
+    case _ => None
   }, onUnauthorized = req => {
     val requestUrl = s"https://${req.host}/${req.path}"
     val loginRedirect = Redirect(s"https://login.${Config.pandaDomain}/login", Map("returnUrl" -> Seq(requestUrl)))

@@ -76,7 +76,7 @@ object ExplainEditorJS {
     presenceClient.on("visitor-list-updated", { data: js.Object =>
       val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
       val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == area)
-      dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
+      //dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
       ()
     })
 
@@ -89,18 +89,19 @@ object ExplainEditorJS {
     )
   }
 
-  def statusBar(explainer: CsAtom) = {
-    val isDraftState =  true // !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
+  def statusBarText(explainer: CsAtom) = {
+    val isDraftState =  true// !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
     val status = if(isDraftState){
-      "Draft state: click on [Publish] to publish."
+      "Draft State"
     }else{
       ""
     }
-    div(id:="explainer-editor__ops-wrapper__status-bar-wrapper__status-bar",cls:="red")(status)
+    status
   }
 
+
   def republishStatusBar(explainer: CsAtom) = {
-    dom.document.getElementById("explainer-editor__ops-wrapper__status-bar-wrapper").innerHTML = statusBar(explainer).render.innerHTML
+    g.updateStatusBar(statusBarText(explainer))
   }
 
   def ExplainEditor(explainerId: String, explainer: CsAtom) = {
@@ -118,8 +119,7 @@ object ExplainEditorJS {
     }
 
     val body: TypedTag[TextArea] = textarea(
-      id:="explainer-editor__body-wrapper__input",
-      cls:="explainer-input-field",
+      cls:="explainer-editor__body-wrapper__input explainer-input-field",
       maxlength:=1800,
       placeholder:="body"
     )
@@ -127,6 +127,10 @@ object ExplainEditorJS {
     val bodyTag = body(explainer.data.body).render
     bodyTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
+    }
+    bodyTag.oninput = (x: Event) => {
+      g.updateWordCountDisplay()
+      g.updateWordCountWarningDisplay()
     }
 
     val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
@@ -136,10 +140,7 @@ object ExplainEditorJS {
 
     div(id:="explainer-editor")(
       div(id:="explainer-editor__ops-wrapper")(
-        publishButton,
-        div(id:="explainer-editor__ops-wrapper__status-bar-wrapper")(
-          statusBar(explainer)
-        )
+        publishButton
       ),
       hr,
       form()(
@@ -169,6 +170,8 @@ object ExplainEditorJS {
       dom.document.getElementById("content").appendChild(
         ExplainEditor(explainerId, explainer).render
       )
+      g.updateWordCountDisplay()
+      g.updateWordCountWarningDisplay()
     }
   }
 
