@@ -18,7 +18,7 @@ object Config {
     new InstanceProfileCredentialsProvider
   )
 
-  val tableName = s"explain-maker-preview-$stage-PHIL"
+  val tableName = s"explain-maker-preview-$stage"
 
 
 
