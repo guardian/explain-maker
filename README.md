@@ -19,11 +19,18 @@ $ cat /etc/gu/explainer.stage.conf
 stage=DEV
 ```
 
+Configure the composer route in nginx:
+
+```
+cd <path_of_dev_nginx>
+sudo ./setup-app.rb <path_of_explainer>/nginx/nginx-mapping.yml
+```
+
 ### Run the application
 ```
 $ sbt
 > run
-$ open http://localhost:9000
+$ open https://explainer.local.dev-gutools.co.uk/
 ```
 
-Main user interface can then be found at [http://localhost:9000/explain](http://localhost:9000/explain).
+
