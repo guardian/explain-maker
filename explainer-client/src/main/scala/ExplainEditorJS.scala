@@ -116,8 +116,7 @@ object ExplainEditorJS {
     }
 
     val body: TypedTag[TextArea] = textarea(
-      id:="explainer-editor__body-wrapper__input",
-      cls:="explainer-input-field",
+      cls:="explainer-editor__body-wrapper__input explainer-input-field",
       maxlength:=1800,
       placeholder:="body"
     )
@@ -125,6 +124,9 @@ object ExplainEditorJS {
     val bodyTag = body(explainer.draft.body).render
     bodyTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
+    }
+    bodyTag.oninput = (x: Event) => {
+      g.updateWordCountDisplay()
     }
 
     val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
@@ -167,6 +169,7 @@ object ExplainEditorJS {
       dom.document.getElementById("content").appendChild(
         ExplainEditor(explainerId, explainer).render
       )
+      g.updateWordCountDisplay()
     }
   }
 
