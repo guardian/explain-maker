@@ -205,3 +205,10 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
             #explainer-editor__ops-wrapper__status-bar-wrapper__status-bar {
 
             }
+    .top-toolbar__word-count-wrapper__warning-outer {
+        display:none;
+    }
+    .top-toolbar__word-count-wrapper__warning-inner {
+        color:red;
+        font-weight: bold;
+    }
