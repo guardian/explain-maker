@@ -13,6 +13,7 @@ import config.Config
 import db.ExplainerDB
 import models.ExplainerStore
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Controller
 import services.PublicSettingsService
@@ -29,7 +30,7 @@ object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
   def write[Result: Writer](r: Result) = upickle.default.writeJs(r)
 }
 
-class ApiController @Inject() (config: Config) (
+class ApiController @Inject() (config: Config, previewAtomPublisher: PreviewAtomPublisher) (
   val publicSettingsService: PublicSettingsService,
   val livePublisher: LiveAtomPublisher, val previewPublisher: PreviewAtomPublisher) extends Controller with ExplainerApi with AuthActions  {
 
@@ -56,14 +57,14 @@ class ApiController @Inject() (config: Config) (
   override def load(id: String): Future[CsAtom] = explainerDB.load(id).map(CsAtom.atomToCsAtom)
 
   override def create(): Future[CsAtom] = {
-//    val newExplainer = ExplainerStore.create()
-//    val event = newExplainer.map(ContentAtomEvent(_, EventType.Update, DateTime.now.getMillis))
-//    previewPublisher.publishAtomEvent(event) match {
-//      case Success(_) => NoContent
-//      case Failure(err) => InternalServerError(jsonError(s"could not publish: ${err.toString}"))
-//    }
+    val newExplainer = explainerStore.create()
+    val event = newExplainer.map(ContentAtomEvent(_, EventType.Update, DateTime.now.getMillis))
+    event.map(e => previewAtomPublisher.publishAtomEvent(e) match {
+      case Success(_) => Logger.info("Successfully pushed new atom to kinesis")
+      case Failure(err) => Logger.error(s"Failed to push atom to kinesis")
+    })
 
-    explainerStore.create().map(CsAtom.atomToCsAtom)
+    newExplainer.map(e => CsAtom.atomToCsAtom(e))
 
   }
 
