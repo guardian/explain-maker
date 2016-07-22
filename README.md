@@ -28,12 +28,12 @@ sudo ./setup-app.rb <path_of_explainer>/nginx/nginx-mapping.yml
 
 ### Run the application
 ```
-$ sbt run
+$ sbt "run 9035"
 ```
 
 ### Access the User Interface
 
 Explain Maker should now be found at [https://explainer.local.dev-gutools.co.uk/](https://explainer.local.dev-gutools.co.uk/).
 
-In order to get the Panda authentication cookie needed to access Explain Maker, you might want to, for instance, first visit your local instance of Composer: [https://composer.local.dev-gutools.co.uk/](https://composer.local.dev-gutools.co.uk/).
+In order to get the Panda authentication cookie needed to access Explain Maker, you might want to, for instance, first visit your local instance of Composer or Workflow. Alternatively (better option) you can run [login.gutools](https://github.com/guardian/login.gutools) for a seamless experience.
 
