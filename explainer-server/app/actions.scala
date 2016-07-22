@@ -28,7 +28,7 @@ trait AuthActions {
     case Some(Authenticated(u)) => Some(u)
     case _ => None
   }, onUnauthorized = req => {
-    val requestUrl = s"https://${req.host}/${req.path}"
+    val requestUrl = s"https://explainer.${Config.pandaDomain}/${req.path}"
     val loginRedirect = Redirect(s"https://login.${Config.pandaDomain}/login", Map("returnUrl" -> Seq(requestUrl)))
       userAuthStatusOptFor(req).map {
         case NotAuthorized(u) => Forbidden(s"Sorry, ${u.user.emailDomain} is not authorized to use this tool")
