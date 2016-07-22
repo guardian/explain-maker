@@ -24,12 +24,12 @@ trait AuthActions {
     cookie <- req.cookies.get(publicSettingsService.publicSettings.assymCookieName)
   } yield PanDomain.authStatus(cookie.value, PublicKey(publicKey))
   
-  object PandaAuthenticated extends AuthenticatedBuilder(req => userAuthStatusOptFor(req) match {
+  class PandaAuthenticated @Inject() (config: Config) extends AuthenticatedBuilder(req => userAuthStatusOptFor(req) match {
     case Some(Authenticated(u)) => Some(u)
     case _ => None
   }, onUnauthorized = req => {
     val requestUrl = s"https://${req.host}/${req.path}"
-    val loginRedirect = Redirect(s"https://login.${Config.pandaDomain}/login", Map("returnUrl" -> Seq(requestUrl)))
+    val loginRedirect = Redirect(s"https://login.${config.pandaDomain}/login", Map("returnUrl" -> Seq(requestUrl)))
       userAuthStatusOptFor(req).map {
         case NotAuthorized(u) => Forbidden(s"Sorry, ${u.user.emailDomain} is not authorized to use this tool")
         case _ => loginRedirect

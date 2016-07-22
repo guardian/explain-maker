@@ -86,10 +86,7 @@
                       "#!/bin/bash -ev",
                       "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
                       "mkdir /etc/gu",
-                      "cat >/etc/gu/explainer.stage.conf << EOF",
-                      { "Fn::Join": [ "", [ "stage=", { "Ref": "Stage"} ] ] },
-                      "EOF",
-
+                      "wget https://s3-eu-west-1.amazonaws.com/explainer-config/application.secrets.conf > /etc/gu/explainer.secrets.conf",
                       {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/composer-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "explain-maker/explainerserver_0.1-SNAPSHOT_all.deb"]]},
                       "dpkg -i explainerserver_0.1-SNAPSHOT_all.deb"
                     ]]

@@ -1,11 +1,15 @@
 package controllers
 
+import java.util.Date
 import javax.inject.Inject
 
 import actions.AuthActions
+
+import scala.util.{Failure, Success}
 import autowire.Core.Request
-import com.gu.contentatom.thrift.Atom
-import contentatom.explainer.ExplainerAtom
+import com.gu.atom.publish.{LiveAtomPublisher, PreviewAtomPublisher}
+import com.gu.contentatom.thrift.{ContentAtomEvent, EventType}
+import config.Config
 import db.ExplainerDB
 import models.ExplainerStore
 import org.joda.time.DateTime
@@ -25,9 +29,16 @@ object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
   def write[Result: Writer](r: Result) = upickle.default.writeJs(r)
 }
 
-class ApiController @Inject() (val publicSettingsService: PublicSettingsService) extends Controller with ExplainerApi with AuthActions  {
+class ApiController @Inject() (config: Config) (
+  val publicSettingsService: PublicSettingsService,
+  val livePublisher: LiveAtomPublisher, val previewPublisher: PreviewAtomPublisher) extends Controller with ExplainerApi with AuthActions  {
 
-  def autowireApi(path: String) = PandaAuthenticated.async(parse.json) { implicit request =>
+  val explainerDB = new ExplainerDB(config)
+  val explainerStore = new ExplainerStore(config)
+
+  val pandaAuthenticated = new PandaAuthenticated(config)
+
+  def autowireApi(path: String) = pandaAuthenticated.async(parse.json) { implicit request =>
     val autowireRequest: Request[Js.Value] = autowire.Core.Request(
       path.split("/"),
       upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
@@ -39,12 +50,22 @@ class ApiController @Inject() (val publicSettingsService: PublicSettingsService)
   }
 
   override def update(id: String, fieldName: String, value: String): Future[CsAtom] = {
-    ExplainerStore.update(id, Symbol(fieldName), value).map(CsAtom.atomToCsAtom)
+    explainerStore.update(id, Symbol(fieldName), value).map(CsAtom.atomToCsAtom)
   }
 
-  override def load(id: String): Future[CsAtom] = ExplainerDB.load(id).map(CsAtom.atomToCsAtom)
+  override def load(id: String): Future[CsAtom] = explainerDB.load(id).map(CsAtom.atomToCsAtom)
 
-  override def create(): Future[CsAtom] = ExplainerStore.create().map(CsAtom.atomToCsAtom)
+  override def create(): Future[CsAtom] = {
+//    val newExplainer = ExplainerStore.create()
+//    val event = newExplainer.map(ContentAtomEvent(_, EventType.Update, DateTime.now.getMillis))
+//    previewPublisher.publishAtomEvent(event) match {
+//      case Success(_) => NoContent
+//      case Failure(err) => InternalServerError(jsonError(s"could not publish: ${err.toString}"))
+//    }
+
+    explainerStore.create().map(CsAtom.atomToCsAtom)
+
+  }
 
 //  override def publish(id: String): Future[CsAtom] = {
 ////    load(id).map( explainer => ExplainerStore.store(
