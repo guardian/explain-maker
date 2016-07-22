@@ -8,8 +8,6 @@ import presence.StateChange.State
 import presence.{Person, PresenceGlobalScope, StateChange}
 import rx._
 import shared._
-import upickle.Js
-import upickle.default._
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -19,6 +17,10 @@ import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom._
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2.section
+import shared.models.{CsAtom, ExplainerUpdate}
+import shared.models.CsAtom._
+import upickle.Js
+import upickle.default._
 
 object Ajaxer extends autowire.Client[Js.Value, Reader, Writer]{
   override def doCall(req: Request): Future[Js.Value] = {
@@ -43,9 +45,9 @@ object ExplainEditorJS {
   object Model {
     import org.scalajs.jquery.{jQuery => $}
 
-    val explainer = Var(ExplainerItem)
+    val explainer = Var(CsAtom)
 
-    def extractExplainer(id: String): Future[ExplainerItem] = {
+    def extractExplainer(id: String): Future[CsAtom] = {
       Ajaxer[ExplainerApi].load(id).call()
     }
 
@@ -57,9 +59,9 @@ object ExplainEditorJS {
       Ajaxer[ExplainerApi].create().call()
     }
 
-    def publish(id: String): Future[ExplainerItem] = {
-      Ajaxer[ExplainerApi].publish(id).call()
-    }
+//    def publish(id: String): Future[CsAtom] = {
+//      Ajaxer[ExplainerApi].publish(id).call()
+//    }
 
   }
 
@@ -87,8 +89,8 @@ object ExplainEditorJS {
     )
   }
 
-  def statusBarText(explainer: ExplainerItem) = {
-    val isDraftState =  !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
+  def statusBarText(explainer: CsAtom) = {
+    val isDraftState =  true// !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
     val status = if(isDraftState){
       "Draft State"
     }else{
@@ -97,11 +99,12 @@ object ExplainEditorJS {
     status
   }
 
-  def republishStatusBar(explainer: ExplainerItem) = {
+
+  def republishStatusBar(explainer: CsAtom) = {
     g.updateStatusBar(statusBarText(explainer))
   }
 
-  def ExplainEditor(explainerId: String, explainer: ExplainerItem) = {
+  def ExplainEditor(explainerId: String, explainer: CsAtom) = {
 
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
@@ -110,7 +113,7 @@ object ExplainEditorJS {
       autofocus:=true
     )
 
-    val titleTag = title(value := explainer.draft.title).render
+    val titleTag = title(value := explainer.data.title).render
     titleTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
     }
@@ -121,7 +124,7 @@ object ExplainEditorJS {
       placeholder:="body"
     )
 
-    val bodyTag = body(explainer.draft.body).render
+    val bodyTag = body(explainer.data.body).render
     bodyTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
     }
@@ -132,7 +135,7 @@ object ExplainEditorJS {
 
     val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
     publishButton.onclick = (x: Event) => {
-      Model.publish(explainerId).map(republishStatusBar)
+//      Model.publish(explainerId).map(republishStatusBar)
     }
 
     div(id:="explainer-editor")(
@@ -163,7 +166,7 @@ object ExplainEditorJS {
       presenceClient.subscribe(articleId)
     })
 
-    Model.extractExplainer(explainerId).map { explainer: ExplainerItem =>
+    Model.extractExplainer(explainerId).map { explainer: CsAtom =>
       dom.document.getElementById("content").appendChild(
         ExplainEditor(explainerId, explainer).render
       )
@@ -174,7 +177,7 @@ object ExplainEditorJS {
 
   @JSExport
   def CreateNewExplainer() = {
-    Model.createNewExplainer().map{ explainer: ExplainerItem =>
+    Model.createNewExplainer().map{ explainer: CsAtom =>
       g.location.href = s"/explain/${explainer.id}"
     }
   }

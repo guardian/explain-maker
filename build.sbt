@@ -27,7 +27,10 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
     "org.webjars" %% "webjars-play" % "2.5.0",
     "org.webjars" % "bootstrap" % "3.3.5",
     "org.webjars" % "jquery" % "2.1.4",
-    "org.webjars" % "font-awesome" % "4.4.0"
+    "org.webjars" % "font-awesome" % "4.4.0",
+    "com.gu" %% "atom-publisher-lib" % "1.0.0-SNAPSHOT",
+    "com.twitter" %% "scrooge-core" % "4.5.0",
+    "com.gu" %% "scanamo-scrooge" % "0.1.1"
   ),
   sources in (Compile,doc) := Seq.empty, publishArtifact in (Compile, packageDoc) := false, // Don't do slow ScalaDoc step for anything but a library!
   serverLoading in Debian := Systemd,
@@ -82,8 +85,11 @@ lazy val explainerClient = (project in file("explainer-client")).settings(
   .dependsOn(explainerSharedJs)
 
 lazy val explainerShared = (crossProject.crossType(CrossType.Pure) in file("explainer-shared")).
-  settings(scalaVersion := scalaV).
-  jsConfigure(_ enablePlugins ScalaJSPlay)
+  settings(scalaVersion := scalaV,
+    libraryDependencies ++= Seq(
+      "com.gu" %% "content-atom-model" % "2.2.1-SNAPSHOT"
+    ))
+    .jsConfigure(_ enablePlugins ScalaJSPlay)
 
 lazy val explainerSharedJvm = explainerShared.jvm
 lazy val explainerSharedJs = explainerShared.js

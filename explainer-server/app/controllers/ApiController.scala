@@ -4,11 +4,16 @@ import javax.inject.Inject
 
 import actions.AuthActions
 import autowire.Core.Request
+import com.gu.contentatom.thrift.Atom
+import contentatom.explainer.ExplainerAtom
+import db.ExplainerDB
 import models.ExplainerStore
 import org.joda.time.DateTime
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Controller
 import services.PublicSettingsService
 import shared._
+import shared.models.CsAtom
 import upickle.Js
 import upickle.default._
 
@@ -33,23 +38,25 @@ class ApiController @Inject() (val publicSettingsService: PublicSettingsService)
     })
   }
 
-  override def update(id: String, fieldName: String, value: String): Future[ExplainerItem] = {
-    ExplainerStore.update(id, Symbol(fieldName), value)
+  override def update(id: String, fieldName: String, value: String): Future[CsAtom] = {
+    ExplainerStore.update(id, Symbol(fieldName), value).map(CsAtom.atomToCsAtom)
   }
 
-  override def load(id: String): Future[ExplainerItem] = ExplainerStore.load(id)
+  override def load(id: String): Future[CsAtom] = ExplainerDB.load(id).map(CsAtom.atomToCsAtom)
 
-  override def create(): Future[ExplainerItem] = ExplainerStore.create()
+  override def create(): Future[CsAtom] = ExplainerStore.create().map(CsAtom.atomToCsAtom)
 
-  override def publish(id: String) = {
-    load(id).map( explainer => ExplainerStore.store(
-      ExplainerItem(
-        explainer.id,
-        explainer.draft,
-        Some(ExplainerFacet(explainer.draft.title,explainer.draft.body,(new DateTime).getMillis()))
-      )
-    ))
-    load(id)
-  }
+//  override def publish(id: String): Future[CsAtom] = {
+////    load(id).map( explainer => ExplainerStore.store(
+////      ExplainerItem(
+////        explainer.id,
+////        explainer.draft,
+////        Some(
+////          ExplainerAtom(explainer.draft.title,explainer.draft.body,explainer.draft.displayType)
+////        )
+////      )
+////    ))
+//    load(id).map(CsAtom.atomToCsAtom)
+//  }
 
 }
