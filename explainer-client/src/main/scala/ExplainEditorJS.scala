@@ -140,10 +140,20 @@ object ExplainEditorJS {
 //      Model.publish(explainerId).map(republishStatusBar)
     }
 
+    val checkbox: TypedTag[Input] = input(
+      id:="mychecbbox",
+      `type`:="checkbox"
+    )
+    val check = checkbox.render
+    check.onchange = (e: dom.Event) => {
+      g.console.log( check.value )
+    }
+
     div(id:="explainer-editor")(
       div(id:="explainer-editor__ops-wrapper")(
         publishButton
       ),
+      check,
       hr,
       div(cls:="explainer-editor__displayType-wrapper")(
         div(cls:="explainer-editor__displayType-inner")("")
