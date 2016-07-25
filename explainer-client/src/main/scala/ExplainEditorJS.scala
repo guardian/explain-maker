@@ -1,8 +1,9 @@
+import autowire.Macros.Check
 import autowire._
 import common.ExtAjax._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
-import org.scalajs.dom.html.{Element, Input, TextArea}
+import org.scalajs.dom.html.{Element, Input, TextArea, Option}
 import org.scalajs.dom.{Event, FocusEvent}
 import presence.StateChange.State
 import presence.{Person, PresenceGlobalScope, StateChange}
@@ -43,6 +44,7 @@ object ExplainEditorJS {
   val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
 
   object Model {
+
     import org.scalajs.jquery.{jQuery => $}
 
     val explainer = Var(CsAtom)
@@ -143,6 +145,9 @@ object ExplainEditorJS {
         publishButton
       ),
       hr,
+      div(cls:="explainer-editor__displayType-wrapper")(
+        div(cls:="explainer-editor__displayType-inner")("")
+      ),
       form()(
         div(id:="explainer-editor__title-wrapper")(
           turnOnPresenceFor(explainerId,"title",titleTag)
@@ -172,6 +177,7 @@ object ExplainEditorJS {
       )
       g.updateWordCountDisplay()
       g.updateWordCountWarningDisplay()
+      g.installDisplayTypeTickBox(explainer.data.displayType)
     }
   }
 
@@ -180,6 +186,11 @@ object ExplainEditorJS {
     Model.createNewExplainer().map{ explainer: CsAtom =>
       g.location.href = s"/explain/${explainer.id}"
     }
+  }
+
+  @JSExport
+  def setDisplayType(explainerId: String, displayType: String) = {
+    Model.updateFieldContent(explainerId, ExplainerUpdate("displayType", displayType))
   }
 
 }

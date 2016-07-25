@@ -46,7 +46,6 @@
             var contents = $.trim($(".explainer-editor__body-wrapper__input").val())
             return contents.split(" ").length;
         }
-
         var maxWordCount = 150;
         function updateWordCountDisplay(){
             $(".top-toolbar__word-count-wrapper__count").text(getBodyWordCount())
@@ -58,7 +57,6 @@
                 $(".top-toolbar__word-count-wrapper__warning-outer").hide();
             }
         }
-
         function updateStatusBar(message){
             if(message.length>0){
                 $(".top-toolbar__status-bar-wrapper").show();
@@ -67,6 +65,24 @@
                 $(".top-toolbar__status-bar-wrapper").hide();
             }
         }
+
+        /*
+         * This function (and the accompanying handler) exists because there doesn't seem to exist a way
+         * to generate a checkbox using ScalaTags (ScalaJS's HTML generation library)
+         */
+        function installDisplayTypeTickBox(displayType){
+            console.log(displayType);
+            var checkedstring = displayType=='Expandable' ? ' checked ' : ''
+            $(".explainer-editor__displayType-inner").html('<input class="explainer-editor__displayType-checkbox" type="checkbox" name="displayType" value="long" '+checkedstring+'> Long explainer')
+        }
+        $(document).delegate(".explainer-editor__displayType-checkbox", 'click', function() {
+            var $this = $(this);
+            if ($this.is(':checked')) {
+                ExplainEditorJS().setDisplayType("@id","Expandable")
+            } else {
+                ExplainEditorJS().setDisplayType("@id","Flat")
+            }
+        });
 
     </script>
 
