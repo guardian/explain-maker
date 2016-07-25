@@ -30,8 +30,10 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
     new InstanceProfileCredentialsProvider
   )
 
-  val previewKinesisStreamName = configValueForStage("kinesis.streamName.preview").get
-  val liveKinesisStreamName = configValueForStage("kinesis.streamName.live").get
+  val publishToKinesis = conf.getBoolean("enable.kinesis.publishing") getOrElse true
+
+  val previewKinesisStreamName = if (publishToKinesis) configValueForStage("kinesis.streamName.preview").get else ""
+  val liveKinesisStreamName = if (publishToKinesis) configValueForStage("kinesis.streamName.live").get else ""
 
   lazy val kinesisClient = region.createClient(
     classOf[AmazonKinesisClient],
@@ -42,7 +44,7 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val tableName = s"explain-maker-preview-$stage"
 
-  val publishToKinesis = conf.getBoolean("enable.kinesis.publishing") getOrElse true
+
 
 
 
