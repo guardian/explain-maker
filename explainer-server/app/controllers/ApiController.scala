@@ -51,11 +51,17 @@ class ApiController @Inject() (config: Config, previewAtomPublisher: PreviewAtom
   }
 
   def publishExplainerToKinesis(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher) = {
-    val event = ContentAtomEvent(explainer, EventType.Update, DateTime.now.getMillis)
-    atomPublisher.publishAtomEvent(event) match {
-      case Success(_) => Logger.info(s"$actionMessage succeeded")
-      case Failure(err) => Logger.error(s"$actionMessage failed", err)
+    if (config.publishToKinesis) {
+      val event = ContentAtomEvent(explainer, EventType.Update, DateTime.now.getMillis)
+      atomPublisher.publishAtomEvent(event) match {
+        case Success(_) => Logger.info(s"$actionMessage succeeded")
+        case Failure(err) => Logger.error(s"$actionMessage failed", err)
+      }
     }
+    else {
+      Logger.info(s"Not $actionMessage - kinesis publishing disabled in config")
+    }
+
   }
 
   override def update(id: String, fieldName: String, value: String): Future[CsAtom] = {

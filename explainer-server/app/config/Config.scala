@@ -42,6 +42,8 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val tableName = s"explain-maker-preview-$stage"
 
+  val publishToKinesis = conf.getBoolean("enable.kinesis.publishing") getOrElse true
+
 
 
 }
