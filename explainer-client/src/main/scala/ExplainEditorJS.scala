@@ -140,23 +140,32 @@ object ExplainEditorJS {
 //      Model.publish(explainerId).map(republishStatusBar)
     }
 
-    val checkbox: TypedTag[Input] = input(
-      id:="mychecbbox",
-      `type`:="checkbox"
-    )
-    val check = checkbox.render
-    check.onchange = (e: dom.Event) => {
-      g.console.log( check.value )
+
+    val checkbox: TypedTag[Input] = explainer.data.displayType match {
+      case "Expandable" => {
+        input(
+          cls:="explainer-editor__displayType-checkbox",
+          `type`:="checkbox",
+          `checked`:= "checked"
+        )
+      }
+      case "Flat" => {
+        input(
+          cls:="explainer-editor__displayType-checkbox",
+          `type`:="checkbox"
+        )
+      }
     }
 
     div(id:="explainer-editor")(
       div(id:="explainer-editor__ops-wrapper")(
         publishButton
       ),
-      check,
       hr,
       div(cls:="explainer-editor__displayType-wrapper")(
-        div(cls:="explainer-editor__displayType-inner")("")
+        div(cls:="explainer-editor__displayType-inner")(
+          checkbox.render, " Long explainer"
+        )
       ),
       form()(
         div(id:="explainer-editor__title-wrapper")(
@@ -187,7 +196,6 @@ object ExplainEditorJS {
       )
       g.updateWordCountDisplay()
       g.updateWordCountWarningDisplay()
-      g.installDisplayTypeTickBox(explainer.data.displayType)
     }
   }
 
