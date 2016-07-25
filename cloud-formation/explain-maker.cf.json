@@ -86,7 +86,7 @@
                       "#!/bin/bash -ev",
                       "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
                       "mkdir /etc/gu",
-                      "wget https://s3-eu-west-1.amazonaws.com/explainer-config/application.secrets.conf > /etc/gu/explainer.secrets.conf",
+                      "aws s3 cp s3://explainer-config/application.secrets.conf /etc/gu/explainer.secrets.conf",
                       {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/composer-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "explain-maker/explainerserver_0.1-SNAPSHOT_all.deb"]]},
                       "dpkg -i explainerserver_0.1-SNAPSHOT_all.deb"
                     ]]
@@ -158,7 +158,25 @@
                         }
                         ]
                     }
-                }]
+                },
+                    {
+                        "PolicyName": "FetchConfig",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": ["s3:GetObject"],
+                                    "Resource": ["arn:aws:s3:::explainer-config/*"]
+                                },
+                                {
+                                    "Effect":"Allow",
+                                    "Action": ["s3:ListBucket"],
+                                    "Resource":"arn:aws:s3:::explainer-config"
+                                }
+                            ]
+                        }
+                    }]
             }
         },
         "AppInstanceProfile": {
