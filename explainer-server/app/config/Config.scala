@@ -15,7 +15,7 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val stage = readTag("Stage") getOrElse "DEV"
 
-  def configValueForStage(value: String) = conf.getString(s"$stage.$value")
+  def configValueForStage(path: String) = conf.getString(s"$stage.$path")
 
   val pandaDomain = configValueForStage("pandomain.domain").get
 
@@ -32,8 +32,12 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val publishToKinesis = conf.getBoolean("enable.kinesis.publishing") getOrElse true
 
-  val previewKinesisStreamName = if (publishToKinesis) configValueForStage("kinesis.streamName.preview").get else ""
-  val liveKinesisStreamName = if (publishToKinesis) configValueForStage("kinesis.streamName.live").get else ""
+  val previewKinesisStreamName = if (publishToKinesis) {
+     configValueForStage("kinesis.streamName.preview").getOrElse(sys.error("preview stream name required when kinesis publishing enabled"))
+  } else ""
+  val liveKinesisStreamName = if (publishToKinesis) {
+    configValueForStage("kinesis.streamName.live").getOrElse(sys.error("preview stream name required when kinesis publishing enabled"))
+  } else ""
 
   lazy val kinesisClient = region.createClient(
     classOf[AmazonKinesisClient],
