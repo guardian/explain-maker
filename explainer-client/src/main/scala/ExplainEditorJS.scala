@@ -140,21 +140,25 @@ object ExplainEditorJS {
 //      Model.publish(explainerId).map(republishStatusBar)
     }
 
-
+    val checkboxClassName: String = "explainer-editor__displayType-checkbox"
     val checkbox: TypedTag[Input] = explainer.data.displayType match {
       case "Expandable" => {
         input(
-          cls:="explainer-editor__displayType-checkbox",
+          cls:=checkboxClassName,
           `type`:="checkbox",
           `checked`:= "checked"
         )
       }
       case "Flat" => {
         input(
-          cls:="explainer-editor__displayType-checkbox",
+          cls:=checkboxClassName,
           `type`:="checkbox"
         )
       }
+    }
+    val checkboxTag = checkbox.render
+    checkboxTag.onchange = (x: Event) => {
+      g.updateCheckboxState()
     }
 
     div(id:="explainer-editor")(
@@ -164,7 +168,7 @@ object ExplainEditorJS {
       hr,
       div(cls:="explainer-editor__displayType-wrapper")(
         div(cls:="explainer-editor__displayType-inner")(
-          checkbox.render, " Long explainer"
+          checkboxTag, " Expandable explainer"
         )
       ),
       form()(
