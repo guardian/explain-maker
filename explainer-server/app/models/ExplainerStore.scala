@@ -37,7 +37,12 @@ object ExplainerStore extends ExplainerAtomImplicits  {
       val newExplainerAtom = fieldSymbol.name match {
         case "title" => ExplainerAtom(value, explainer.tdata.body, explainer.tdata.displayType)
         case "body" => ExplainerAtom(explainer.tdata.title, value, explainer.tdata.displayType)
-//        case "displayType" => ExplainerAtom(explainer.tdata.title, explainer.tdata.body, DisplayType.Expandable)
+        case "displayType" => {
+          value match {
+            case "Expandable" => ExplainerAtom(explainer.tdata.title, explainer.tdata.body, DisplayType.Expandable)
+            case "Flat" => ExplainerAtom(explainer.tdata.title, explainer.tdata.body, DisplayType.Flat)
+          }
+        }
       }
       val updatedExplainer = buildAtomWithDefaults(explainer.id, newExplainerAtom, explainer.contentChangeDetails.revision+1)
       ExplainerDB.store(updatedExplainer)

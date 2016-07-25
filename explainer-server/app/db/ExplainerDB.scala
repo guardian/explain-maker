@@ -45,7 +45,6 @@ object ExplainerDB {
   implicit val dynamoFormat: DynamoFormat[Atom] =
     DynamoFormat.xmap(rowToAtom _)(AtomRow.apply _)(DynamoFormat[AtomRow]) // <- just saving a new implicit here
 
-
   val dynamoDBClient: AmazonDynamoDBAsyncClient = new AmazonDynamoDBAsyncClient(Config.awsCredentialsprovider).withRegion(EU_WEST_1)
   val explainersTable  = Table[Atom](Config.tableName)
 

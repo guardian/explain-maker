@@ -4,7 +4,6 @@ import com.gu.contentatom.thrift._
 import contentatom.explainer.{DisplayType, ExplainerAtom}
 import shared.util.ExplainerAtomImplicits
 
-
 case class CsExplainerAtom(title: String, body: String, displayType: String)
 case class CsUser(email: String, firstName: Option[String], lastName: Option[String])
 case class CsChangeRecord(date: Long, user: Option[CsUser])
@@ -20,8 +19,6 @@ object CsExplainerAtom {
   }
 
 }
-
-
 
 object CsAtom extends ExplainerAtomImplicits {
   private implicit def userToCsUser(user: Option[User]): Option[CsUser]= user.map(u => CsUser(u.email, u.firstName, u.lastName))
