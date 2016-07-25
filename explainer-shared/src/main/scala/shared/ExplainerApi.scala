@@ -13,5 +13,5 @@ trait ExplainerApi {
   /*
     Performs the migration of the current draft data to published state.
    */
-//  def publish(id: String): Future[CsAtom]
+  def publish(id: String): Future[CsAtom]
 }

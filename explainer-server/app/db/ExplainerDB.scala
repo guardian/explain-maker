@@ -11,8 +11,9 @@ import com.gu.scanamo.{DynamoFormat, Scanamo, ScanamoAsync}
 import config.Config
 import com.gu.scanamo.{Table, _}
 import com.gu.scanamo.syntax._
-//import com.gu.scanamo.scrooge.ScroogeDynamoFormat._
+import com.gu.scanamo.scrooge.ScroogeDynamoFormat._
 import com.twitter.scrooge.CompactThriftSerializer
+import play.api.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -48,7 +49,7 @@ class ExplainerDB @Inject() (config: Config) {
     DynamoFormat.xmap(rowToAtom _)(AtomRow.apply _)(DynamoFormat[AtomRow]) // <- just saving a new implicit here
 
 
-  val dynamoDBClient: AmazonDynamoDBAsyncClient = new AmazonDynamoDBAsyncClient(config.awsCredentialsprovider).withRegion(EU_WEST_1)
+  val dynamoDBClient: AmazonDynamoDBAsyncClient = new AmazonDynamoDBAsyncClient(config.awsCredentialsprovider).withRegion(config.region)
   val explainersTable  = Table[Atom](config.tableName)
 
   def store(explainer: Atom): Unit = {
@@ -56,7 +57,7 @@ class ExplainerDB @Inject() (config: Config) {
   }
 
   def all : Future[Seq[Atom]] = {
-    ScanamoAsync.exec(dynamoDBClient)(explainersTable.scan()).map(_.toList.flatMap(_.toOption))
+    ScanamoAsync.scan[Atom](dynamoDBClient)(config.tableName).map(_.flatMap(_.toOption))
   }
 
   def load(id: String): Future[Atom] = {

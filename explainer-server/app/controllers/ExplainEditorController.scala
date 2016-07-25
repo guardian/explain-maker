@@ -9,6 +9,7 @@ import config.Config
 import db.ExplainerDB
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
+import play.api.Logger
 import services.PublicSettingsService
 import shared._
 import shared.util.ExplainerAtomImplicits
@@ -33,6 +34,7 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
         }
         Ok(views.html.explainList(r.sortWith(sorting),request.user))
     }.recover{ case err =>
+      Logger.error("Error fetching explainers from dynamo", err)
       InternalServerError(err.getMessage)
     }
   }

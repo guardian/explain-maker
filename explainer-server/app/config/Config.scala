@@ -15,10 +15,7 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val stage = readTag("Stage") getOrElse "DEV"
 
-  def configValueForStage(value: String) = {
-    println(conf.getString(stage+'.'+value))
-    conf.getString(stage+'.'+value)
-  }
+  def configValueForStage(value: String) = conf.getString(stage+"."+value)
 
   val pandaDomain = configValueForStage("pandomain.domain").get
 

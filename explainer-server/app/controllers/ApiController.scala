@@ -7,8 +7,8 @@ import actions.AuthActions
 
 import scala.util.{Failure, Success}
 import autowire.Core.Request
-import com.gu.atom.publish.{LiveAtomPublisher, PreviewAtomPublisher}
-import com.gu.contentatom.thrift.{ContentAtomEvent, EventType}
+import com.gu.atom.publish.{AtomPublisher, LiveAtomPublisher, PreviewAtomPublisher}
+import com.gu.contentatom.thrift.{Atom, ContentAtomEvent, EventType}
 import config.Config
 import db.ExplainerDB
 import models.ExplainerStore
@@ -30,9 +30,9 @@ object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
   def write[Result: Writer](r: Result) = upickle.default.writeJs(r)
 }
 
-class ApiController @Inject() (config: Config, previewAtomPublisher: PreviewAtomPublisher) (
+class ApiController @Inject() (config: Config, previewAtomPublisher: PreviewAtomPublisher,
   val publicSettingsService: PublicSettingsService,
-  val livePublisher: LiveAtomPublisher, val previewPublisher: PreviewAtomPublisher) extends Controller with ExplainerApi with AuthActions  {
+  val liveAtomPublisher: LiveAtomPublisher) extends Controller with ExplainerApi with AuthActions  {
 
   val explainerDB = new ExplainerDB(config)
   val explainerStore = new ExplainerStore(config)
@@ -50,35 +50,33 @@ class ApiController @Inject() (config: Config, previewAtomPublisher: PreviewAtom
     })
   }
 
+  def publishExplainerToKinesis(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher) = {
+    val event = ContentAtomEvent(explainer, EventType.Update, DateTime.now.getMillis)
+    atomPublisher.publishAtomEvent(event) match {
+      case Success(_) => Logger.info(s"$actionMessage succeeded")
+      case Failure(err) => Logger.error(s"$actionMessage failed", err)
+    }
+  }
+
   override def update(id: String, fieldName: String, value: String): Future[CsAtom] = {
-    explainerStore.update(id, Symbol(fieldName), value).map(CsAtom.atomToCsAtom)
+    val updatedExplainer = explainerStore.update(id, Symbol(fieldName), value)
+    updatedExplainer.map(publishExplainerToKinesis(_, "Publishing explainer update to PREVIEW kinesis", previewAtomPublisher))
+    updatedExplainer.map(CsAtom.atomToCsAtom)
   }
 
   override def load(id: String): Future[CsAtom] = explainerDB.load(id).map(CsAtom.atomToCsAtom)
 
   override def create(): Future[CsAtom] = {
     val newExplainer = explainerStore.create()
-    val event = newExplainer.map(ContentAtomEvent(_, EventType.Update, DateTime.now.getMillis))
-    event.map(e => previewAtomPublisher.publishAtomEvent(e) match {
-      case Success(_) => Logger.info("Successfully pushed new atom to kinesis")
-      case Failure(err) => Logger.error(s"Failed to push atom to kinesis")
-    })
-
+    newExplainer.map(publishExplainerToKinesis(_, "Publishing new explainer to PREVIEW kinesis", previewAtomPublisher))
     newExplainer.map(e => CsAtom.atomToCsAtom(e))
 
   }
 
-//  override def publish(id: String): Future[CsAtom] = {
-////    load(id).map( explainer => ExplainerStore.store(
-////      ExplainerItem(
-////        explainer.id,
-////        explainer.draft,
-////        Some(
-////          ExplainerAtom(explainer.draft.title,explainer.draft.body,explainer.draft.displayType)
-////        )
-////      )
-////    ))
-//    load(id).map(CsAtom.atomToCsAtom)
-//  }
+  override def publish(id: String): Future[CsAtom] = {
+    val explainerToPublish = explainerDB.load(id)
+    explainerToPublish.map(publishExplainerToKinesis(_, "Publishing explainer to LIVE kinesis", liveAtomPublisher))
+    explainerToPublish.map(CsAtom.atomToCsAtom)
+  }
 
 }
