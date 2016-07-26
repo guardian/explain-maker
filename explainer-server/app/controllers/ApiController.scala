@@ -54,7 +54,7 @@ class ExplainerApiImpl(
   }
 
   override def update(id: String, fieldName: String, value: String): Future[CsAtom] = {
-    val updatedExplainer = explainerStore.update(user, id, Symbol(fieldName), value)
+    val updatedExplainer = explainerStore.update(id, Symbol(fieldName), value, user)
     updatedExplainer.map(publishExplainerToKinesis(_, "Publishing explainer update to PREVIEW kinesis", previewAtomPublisher))
     updatedExplainer.map(CsAtom.atomToCsAtom)
   }
@@ -69,6 +69,7 @@ class ExplainerApiImpl(
   }
 
   override def publish(id: String): Future[CsAtom] = {
+    val _ = explainerStore.publish(id, user)
     val explainerToPublish = explainerDB.load(id)
     explainerToPublish.map(publishExplainerToKinesis(_, "Publishing explainer to LIVE kinesis", liveAtomPublisher))
     explainerToPublish.map(CsAtom.atomToCsAtom)
