@@ -18,17 +18,19 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
 
   val explainerDB = new ExplainerDB(config)
 
-  def buildAtomWithDefaults(id: String, explainerAtom: ExplainerAtom, revision: Long): Atom = {
+  def buildAtomWithDefaults(user: com.gu.pandomainauth.model.User, id: String, explainerAtom: ExplainerAtom, revision: Long): Atom = {
     Atom(
       id = id,
       atomType = AtomType.Explainer,
       defaultHtml = "",
       data = AtomData.Explainer(explainerAtom),
-      contentChangeDetails = ContentChangeDetails(lastModified = Some(ChangeRecord(DateTime.now.getMillis, user=None)), revision = revision)
+      contentChangeDetails = ContentChangeDetails(
+        lastModified = Some(ChangeRecord(DateTime.now.getMillis, user=Some(User(user.email,Some(user.firstName),Some(user.lastName))))),
+        revision = revision)
     )
   }
 
-  def update(id: String, fieldSymbol: Symbol, value: String): Future[Atom] = {
+  def update(user: com.gu.pandomainauth.model.User, id: String, fieldSymbol: Symbol, value: String): Future[Atom] = {
     val allowed_fields = Set(
       "title",
       "body",
@@ -46,16 +48,16 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
           }
         }
       }
-      val updatedExplainer = buildAtomWithDefaults(explainer.id, newExplainerAtom, explainer.contentChangeDetails.revision+1)
+      val updatedExplainer = buildAtomWithDefaults(user, explainer.id, newExplainerAtom, explainer.contentChangeDetails.revision+1)
       explainerDB.store(updatedExplainer)
       updatedExplainer
     }
   }
 
-  def create(): Future[Atom] = {
+  def create(user: com.gu.pandomainauth.model.User): Future[Atom] = {
     val uuid = java.util.UUID.randomUUID.toString
     val explainerAtom = ExplainerAtom("-", "-", DisplayType.Expandable)
-    val explainer = buildAtomWithDefaults(uuid, explainerAtom, 1)
+    val explainer = buildAtomWithDefaults(user, uuid, explainerAtom, 1)
     explainerDB.store(explainer)
     Future(explainer)
   }
