@@ -205,3 +205,13 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
         color:red;
         font-weight: bold;
     }
+
+    .explainer-editor__displayType-wrapper {
+        width:100%;
+    }
+        .explainer-editor__displayType-inner {
+            float:right;
+        }
+            .explainer-editor__displayType-checkbox {
+
+            }

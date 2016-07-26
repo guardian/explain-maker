@@ -1,8 +1,9 @@
+import autowire.Macros.Check
 import autowire._
 import common.ExtAjax._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
-import org.scalajs.dom.html.{Element, Input, TextArea}
+import org.scalajs.dom.html.{Element, Input, TextArea, Option}
 import org.scalajs.dom.{Event, FocusEvent}
 import presence.StateChange.State
 import presence.{Person, PresenceGlobalScope, StateChange}
@@ -43,6 +44,7 @@ object ExplainEditorJS {
   val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
 
   object Model {
+
     import org.scalajs.jquery.{jQuery => $}
 
     val explainer = Var(CsAtom)
@@ -138,11 +140,37 @@ object ExplainEditorJS {
 //      Model.publish(explainerId).map(republishStatusBar)
     }
 
+    val checkboxClassName: String = "explainer-editor__displayType-checkbox"
+    val checkbox: TypedTag[Input] = explainer.data.displayType match {
+      case "Expandable" => {
+        input(
+          cls:=checkboxClassName,
+          `type`:="checkbox",
+          `checked`:= "checked"
+        )
+      }
+      case "Flat" => {
+        input(
+          cls:=checkboxClassName,
+          `type`:="checkbox"
+        )
+      }
+    }
+    val checkboxTag = checkbox.render
+    checkboxTag.onchange = (x: Event) => {
+      g.updateCheckboxState()
+    }
+
     div(id:="explainer-editor")(
       div(id:="explainer-editor__ops-wrapper")(
         publishButton
       ),
       hr,
+      div(cls:="explainer-editor__displayType-wrapper")(
+        div(cls:="explainer-editor__displayType-inner")(
+          checkboxTag, " Expandable explainer"
+        )
+      ),
       form()(
         div(id:="explainer-editor__title-wrapper")(
           turnOnPresenceFor(explainerId,"title",titleTag)
@@ -180,6 +208,11 @@ object ExplainEditorJS {
     Model.createNewExplainer().map{ explainer: CsAtom =>
       g.location.href = s"/explain/${explainer.id}"
     }
+  }
+
+  @JSExport
+  def setDisplayType(explainerId: String, displayType: String) = {
+    Model.updateFieldContent(explainerId, ExplainerUpdate("displayType", displayType))
   }
 
 }

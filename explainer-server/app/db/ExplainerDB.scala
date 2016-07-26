@@ -3,7 +3,6 @@ package db
 import javax.inject.Inject
 
 import cats.data.Xor
-import com.amazonaws.regions.Regions._
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
 import com.gu.contentatom.thrift.Atom
 import com.gu.scanamo.error.{DynamoReadError, TypeCoercionError}
@@ -47,7 +46,6 @@ class ExplainerDB @Inject() (config: Config) {
 
   implicit val dynamoFormat: DynamoFormat[Atom] =
     DynamoFormat.xmap(rowToAtom _)(AtomRow.apply _)(DynamoFormat[AtomRow]) // <- just saving a new implicit here
-
 
   val dynamoDBClient: AmazonDynamoDBAsyncClient = new AmazonDynamoDBAsyncClient(config.awsCredentialsprovider).withRegion(config.region)
   val explainersTable  = Table[Atom](config.tableName)
