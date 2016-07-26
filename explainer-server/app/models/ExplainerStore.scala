@@ -85,7 +85,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
   def publish(id: String, user: PandaUser): Future[Atom] = {
     explainerDB.load(id).map{ explainer =>
       val newExplainerAtom = ExplainerAtom(explainer.tdata.title, explainer.tdata.body, explainer.tdata.displayType)
-      val contentChangeDetails = contentChangeDetailsBuilder(user, None, false, false, true)
+      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), false, false, true)
       val updatedExplainer = buildAtomWithDefaults(explainer.id, newExplainerAtom, contentChangeDetails, user)
       explainerDB.store(updatedExplainer)
       updatedExplainer
