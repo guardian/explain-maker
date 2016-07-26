@@ -11,7 +11,7 @@ The sbt build file contains 3 modules
 - `ExplainerShared` Scala code that you want to share between the server and the client.
 
 ### Setup
-You'll need to create ~/.gu.explainer.local.conf, with the following fields:
+You'll need to create ~/.gu/explainer.local.conf, with the following fields:
 ```
 DEV {
   pandomain {
