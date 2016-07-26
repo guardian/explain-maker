@@ -24,6 +24,7 @@ import upickle.default._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import com.gu.pandomainauth.model.{User => PandaUser}
 
 object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
   def read[Result: Reader](p: Js.Value) = upickle.default.readJs[Result](p)
@@ -31,11 +32,11 @@ object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
 }
 
 class ExplainerApiImpl(
-  user: com.gu.pandomainauth.model.User,
   config: Config,
   previewAtomPublisher: PreviewAtomPublisher,
   liveAtomPublisher: LiveAtomPublisher,
-  val publicSettingsService: PublicSettingsService) extends ExplainerApi {
+  val publicSettingsService: PublicSettingsService,
+  user: PandaUser) extends ExplainerApi {
 
   val explainerDB = new ExplainerDB(config)
   val explainerStore = new ExplainerStore(config)
@@ -89,7 +90,7 @@ class ApiController @Inject() (val config: Config,
       path.split("/"),
       upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
     )
-    val api = new ExplainerApiImpl(request.user.user, config, previewAtomPublisher, liveAtomPublisher, publicSettingsService)
+    val api = new ExplainerApiImpl(config, previewAtomPublisher, liveAtomPublisher, publicSettingsService, request.user.user)
     AutowireServer.route[ExplainerApi](api)(autowireRequest).map(responseJS => {
       Ok(upickle.json.write(responseJS))
     })
