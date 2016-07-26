@@ -30,7 +30,7 @@ object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
   def write[Result: Writer](r: Result) = upickle.default.writeJs(r)
 }
 
-class ExplainerApiC(
+class ExplainerApiImpl(
   config: Config,
   previewAtomPublisher: PreviewAtomPublisher,
   liveAtomPublisher: LiveAtomPublisher,
@@ -87,7 +87,7 @@ class ApiController @Inject() (val config: Config,
       path.split("/"),
       upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
     )
-    val api = new ExplainerApiC(config, previewAtomPublisher, liveAtomPublisher, publicSettingsService)
+    val api = new ExplainerApiImpl(config, previewAtomPublisher, liveAtomPublisher, publicSettingsService)
     AutowireServer.route[ExplainerApi](api)(autowireRequest).map(responseJS => {
       Ok(upickle.json.write(responseJS))
     })
