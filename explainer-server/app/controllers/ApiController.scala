@@ -30,25 +30,14 @@ object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
   def write[Result: Writer](r: Result) = upickle.default.writeJs(r)
 }
 
-class ApiController @Inject() (config: Config, previewAtomPublisher: PreviewAtomPublisher,
-  val publicSettingsService: PublicSettingsService,
-  val liveAtomPublisher: LiveAtomPublisher) extends Controller with ExplainerApi with AuthActions  {
+class ExplainerApiImpl(
+  config: Config,
+  previewAtomPublisher: PreviewAtomPublisher,
+  liveAtomPublisher: LiveAtomPublisher,
+  val publicSettingsService: PublicSettingsService) extends ExplainerApi {
 
   val explainerDB = new ExplainerDB(config)
   val explainerStore = new ExplainerStore(config)
-
-  val pandaAuthenticated = new PandaAuthenticated(config)
-
-  def autowireApi(path: String) = pandaAuthenticated.async(parse.json) { implicit request =>
-    val autowireRequest: Request[Js.Value] = autowire.Core.Request(
-      path.split("/"),
-      upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
-    )
-
-    AutowireServer.route[ExplainerApi](this)(autowireRequest).map(responseJS => {
-      Ok(upickle.json.write(responseJS))
-    })
-  }
 
   def publishExplainerToKinesis(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher) = {
     if (config.publishToKinesis) {
@@ -61,7 +50,6 @@ class ApiController @Inject() (config: Config, previewAtomPublisher: PreviewAtom
     else {
       Logger.info(s"Not $actionMessage - kinesis publishing disabled in config")
     }
-
   }
 
   override def update(id: String, fieldName: String, value: String): Future[CsAtom] = {
@@ -83,6 +71,26 @@ class ApiController @Inject() (config: Config, previewAtomPublisher: PreviewAtom
     val explainerToPublish = explainerDB.load(id)
     explainerToPublish.map(publishExplainerToKinesis(_, "Publishing explainer to LIVE kinesis", liveAtomPublisher))
     explainerToPublish.map(CsAtom.atomToCsAtom)
+  }
+
+}
+
+class ApiController @Inject() (val config: Config,
+  val previewAtomPublisher: PreviewAtomPublisher,
+  val publicSettingsService: PublicSettingsService,
+  val liveAtomPublisher: LiveAtomPublisher) extends Controller with AuthActions {
+
+  val pandaAuthenticated = new PandaAuthenticated(config)
+
+  def autowireApi(path: String) = pandaAuthenticated.async(parse.json) { implicit request =>
+    val autowireRequest: Request[Js.Value] = autowire.Core.Request(
+      path.split("/"),
+      upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
+    )
+    val api = new ExplainerApiImpl(config, previewAtomPublisher, liveAtomPublisher, publicSettingsService)
+    AutowireServer.route[ExplainerApi](api)(autowireRequest).map(responseJS => {
+      Ok(upickle.json.write(responseJS))
+    })
   }
 
 }
