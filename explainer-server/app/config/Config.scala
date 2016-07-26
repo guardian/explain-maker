@@ -11,14 +11,12 @@ import services.{AWS, AwsInstanceTags}
 
 @Singleton
 class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
-
-
+  
   val stage = readTag("Stage") getOrElse "DEV"
 
   def configValueForStage(path: String) = conf.getString(s"$stage.$path")
 
   val pandaDomain = configValueForStage("pandomain.domain").get
-
 
   lazy val region = {
     val r = conf.getString("aws.region").map(Regions.fromName).getOrElse(Regions.EU_WEST_1)
@@ -45,11 +43,6 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
     null
   )
 
-
   val tableName = s"explain-maker-preview-$stage"
-
-
-
-
 
 }
