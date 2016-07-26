@@ -44,7 +44,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
       created      = buildChangeRecord(existingContentChangeDetails.flatMap(_.created)     , updateCreated),
       lastModified = buildChangeRecord(existingContentChangeDetails.flatMap(_.lastModified), updateLastModified),
       published    = buildChangeRecord(existingContentChangeDetails.flatMap(_.published)   , updatePublished),
-      revision     = existingContentChangeDetails.map(_.revision).getOrElse(1)
+      revision     = existingContentChangeDetails.map(_.revision).getOrElse(0L) + 1
     )
   }
 
