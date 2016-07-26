@@ -14,21 +14,41 @@ import scala.concurrent.Future
 import org.joda.time.DateTime
 import shared.util.ExplainerAtomImplicits
 
+import com.gu.pandomainauth.model.{User => PandaUser}
+
 class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  {
 
   val explainerDB = new ExplainerDB(config)
 
-  def buildAtomWithDefaults(id: String, explainerAtom: ExplainerAtom, revision: Long): Atom = {
+  def buildAtomWithDefaults(id: String, explainerAtom: ExplainerAtom, contentChangeDetails: ContentChangeDetails, user: PandaUser): Atom = {
     Atom(
       id = id,
       atomType = AtomType.Explainer,
       defaultHtml = "",
       data = AtomData.Explainer(explainerAtom),
-      contentChangeDetails = ContentChangeDetails(lastModified = Some(ChangeRecord(DateTime.now.getMillis, user=None)), revision = revision)
+      contentChangeDetails = contentChangeDetails
     )
   }
 
-  def update(id: String, fieldSymbol: Symbol, value: String): Future[Atom] = {
+  def pandaUserToAtomUser(user: PandaUser): Option[User] = {
+    Some(User(user.email,Some(user.firstName),Some(user.lastName)))
+  }
+
+  def contentChangeDetailsBuilder(user: PandaUser, existingContentChangeDetails: Option[ContentChangeDetails], updateCreated: Boolean, updateLastModified: Boolean, updatePublished: Boolean): ContentChangeDetails = {
+    def buildChangeRecord(existingRecord: Option[ChangeRecord], shouldUpdate: Boolean) = {
+      if (shouldUpdate) {
+        Some(ChangeRecord(DateTime.now.getMillis, user=pandaUserToAtomUser(user)))
+      } else if (existingRecord.isDefined) existingRecord else None
+    }
+    ContentChangeDetails(
+      created      = buildChangeRecord(existingContentChangeDetails.flatMap(_.created)     , updateCreated),
+      lastModified = buildChangeRecord(existingContentChangeDetails.flatMap(_.lastModified), updateLastModified),
+      published    = buildChangeRecord(existingContentChangeDetails.flatMap(_.published)   , updatePublished),
+      revision     = existingContentChangeDetails.map(_.revision).getOrElse(0L) + 1
+    )
+  }
+
+  def update(id: String, fieldSymbol: Symbol, value: String, user: PandaUser): Future[Atom] = {
     val allowed_fields = Set(
       "title",
       "body",
@@ -46,18 +66,30 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
           }
         }
       }
-      val updatedExplainer = buildAtomWithDefaults(explainer.id, newExplainerAtom, explainer.contentChangeDetails.revision+1)
+      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), false, true, false)
+      val updatedExplainer = buildAtomWithDefaults(explainer.id, newExplainerAtom, contentChangeDetails, user)
       explainerDB.store(updatedExplainer)
       updatedExplainer
     }
   }
 
-  def create(): Future[Atom] = {
+  def create(user: PandaUser): Future[Atom] = {
     val uuid = java.util.UUID.randomUUID.toString
     val explainerAtom = ExplainerAtom("-", "-", DisplayType.Expandable)
-    val explainer = buildAtomWithDefaults(uuid, explainerAtom, 1)
+    val contentChangeDetails = contentChangeDetailsBuilder(user, None, true, true, false)
+    val explainer = buildAtomWithDefaults(uuid, explainerAtom, contentChangeDetails, user)
     explainerDB.store(explainer)
     Future(explainer)
   }
+
+  def publish(id: String, user: PandaUser): Future[Atom] = {
+    explainerDB.load(id).map{ explainer =>
+      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), false, false, true)
+      val updatedExplainer = buildAtomWithDefaults(explainer.id, explainer.tdata, contentChangeDetails, user)
+      explainerDB.store(updatedExplainer)
+      updatedExplainer
+    }
+  }
+
 }
 

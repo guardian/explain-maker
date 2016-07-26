@@ -24,6 +24,7 @@ import upickle.default._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import com.gu.pandomainauth.model.{User => PandaUser}
 
 object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
   def read[Result: Reader](p: Js.Value) = upickle.default.readJs[Result](p)
@@ -34,7 +35,8 @@ class ExplainerApiImpl(
   config: Config,
   previewAtomPublisher: PreviewAtomPublisher,
   liveAtomPublisher: LiveAtomPublisher,
-  val publicSettingsService: PublicSettingsService) extends ExplainerApi {
+  val publicSettingsService: PublicSettingsService,
+  user: PandaUser) extends ExplainerApi {
 
   val explainerDB = new ExplainerDB(config)
   val explainerStore = new ExplainerStore(config)
@@ -53,7 +55,7 @@ class ExplainerApiImpl(
   }
 
   override def update(id: String, fieldName: String, value: String): Future[CsAtom] = {
-    val updatedExplainer = explainerStore.update(id, Symbol(fieldName), value)
+    val updatedExplainer = explainerStore.update(id, Symbol(fieldName), value, user)
     updatedExplainer.map(publishExplainerToKinesis(_, "Publishing explainer update to PREVIEW kinesis", previewAtomPublisher))
     updatedExplainer.map(CsAtom.atomToCsAtom)
   }
@@ -61,13 +63,14 @@ class ExplainerApiImpl(
   override def load(id: String): Future[CsAtom] = explainerDB.load(id).map(CsAtom.atomToCsAtom)
 
   override def create(): Future[CsAtom] = {
-    val newExplainer = explainerStore.create()
+    val newExplainer = explainerStore.create(user)
     newExplainer.map(publishExplainerToKinesis(_, "Publishing new explainer to PREVIEW kinesis", previewAtomPublisher))
     newExplainer.map(e => CsAtom.atomToCsAtom(e))
 
   }
 
   override def publish(id: String): Future[CsAtom] = {
+    val _ = explainerStore.publish(id, user)
     val explainerToPublish = explainerDB.load(id)
     explainerToPublish.map(publishExplainerToKinesis(_, "Publishing explainer to LIVE kinesis", liveAtomPublisher))
     explainerToPublish.map(CsAtom.atomToCsAtom)
@@ -87,7 +90,7 @@ class ApiController @Inject() (val config: Config,
       path.split("/"),
       upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
     )
-    val api = new ExplainerApiImpl(config, previewAtomPublisher, liveAtomPublisher, publicSettingsService)
+    val api = new ExplainerApiImpl(config, previewAtomPublisher, liveAtomPublisher, publicSettingsService, request.user.user)
     AutowireServer.route[ExplainerApi](api)(autowireRequest).map(responseJS => {
       Ok(upickle.json.write(responseJS))
     })
