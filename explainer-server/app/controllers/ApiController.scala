@@ -34,11 +34,10 @@ class ExplainerApiC(
   config: Config,
   previewAtomPublisher: PreviewAtomPublisher,
   liveAtomPublisher: LiveAtomPublisher,
-  val publicSettingsService: PublicSettingsService) extends ExplainerApi with AuthActions {
+  val publicSettingsService: PublicSettingsService) extends ExplainerApi {
 
   val explainerDB = new ExplainerDB(config)
   val explainerStore = new ExplainerStore(config)
-  val pandaAuthenticated = new PandaAuthenticated(config)
 
   def publishExplainerToKinesis(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher) = {
     if (config.publishToKinesis) {
