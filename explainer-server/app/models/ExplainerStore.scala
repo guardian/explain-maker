@@ -30,6 +30,10 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     )
   }
 
+  def pandaUserToAtomUser(user: PandaUser): Option[User] = {
+    Some(User(user.email,Some(user.firstName),Some(user.lastName)))
+  }
+
   def update(id: String, fieldSymbol: Symbol, value: String, user: PandaUser): Future[Atom] = {
     val allowed_fields = Set(
       "title",
@@ -50,7 +54,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
       }
       val contentChangeDetails = ContentChangeDetails(
         created      = explainer.contentChangeDetails.created,
-        lastModified = Some(ChangeRecord(DateTime.now.getMillis, user=Some(User(user.email,Some(user.firstName),Some(user.lastName))))),
+        lastModified = Some(ChangeRecord(DateTime.now.getMillis, user=pandaUserToAtomUser(user))),
         published    = explainer.contentChangeDetails.published,
         revision = explainer.contentChangeDetails.revision+1
       )
@@ -64,8 +68,8 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     val uuid = java.util.UUID.randomUUID.toString
     val explainerAtom = ExplainerAtom("-", "-", DisplayType.Expandable)
     val contentChangeDetails = ContentChangeDetails(
-      created      = Some(ChangeRecord(DateTime.now.getMillis, user=Some(User(user.email,Some(user.firstName),Some(user.lastName))))),
-      lastModified = Some(ChangeRecord(DateTime.now.getMillis, user=Some(User(user.email,Some(user.firstName),Some(user.lastName))))),
+      created      = Some(ChangeRecord(DateTime.now.getMillis, user=pandaUserToAtomUser(user))),
+      lastModified = Some(ChangeRecord(DateTime.now.getMillis, user=pandaUserToAtomUser(user))),
       published    = None,
       revision = 1
     )
@@ -80,7 +84,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
       val contentChangeDetails = ContentChangeDetails(
         created      = explainer.contentChangeDetails.created,
         lastModified = explainer.contentChangeDetails.lastModified,
-        published    = Some(ChangeRecord(DateTime.now.getMillis, user=Some(User(user.email,Some(user.firstName),Some(user.lastName))))),
+        published    = Some(ChangeRecord(DateTime.now.getMillis, user=pandaUserToAtomUser(user))),
         revision     = explainer.contentChangeDetails.revision+1
       )
       val updatedExplainer = buildAtomWithDefaults(explainer.id, newExplainerAtom, contentChangeDetails, user)
