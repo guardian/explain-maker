@@ -1,5 +1,7 @@
 import services.PublicSettingsService
 import com.google.inject.AbstractModule
+import com.gu.atom.publish.{LiveAtomPublisher, PreviewAtomPublisher}
+import data.{LiveAtomPublisherProvider, PreviewAtomPublisherProvider}
 
 /**
   * This class is a Guice module that tells Guice how to bind several
@@ -15,6 +17,12 @@ class Module extends AbstractModule {
 
   override def configure() = {
     bind(classOf[PublicSettingsService]).asEagerSingleton()
+
+    bind(classOf[LiveAtomPublisher])
+      .toProvider(classOf[LiveAtomPublisherProvider])
+
+    bind(classOf[PreviewAtomPublisher])
+      .toProvider(classOf[PreviewAtomPublisherProvider])
   }
 
 }

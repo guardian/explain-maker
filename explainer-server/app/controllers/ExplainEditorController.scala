@@ -5,23 +5,28 @@ import javax.inject.Inject
 import actions.AuthActions
 import com.gu.contentatom.thrift.Atom
 import com.gu.scanamo.syntax.{set => _}
+import config.Config
 import db.ExplainerDB
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
+import play.api.Logger
 import services.PublicSettingsService
 import shared._
 import shared.util.ExplainerAtomImplicits
 
-class ExplainEditorController @Inject() (val publicSettingsService: PublicSettingsService) extends Controller with AuthActions with ExplainerAtomImplicits {
+class ExplainEditorController @Inject() (val publicSettingsService: PublicSettingsService, config: Config) extends Controller with AuthActions with ExplainerAtomImplicits {
+
+  val pandaAuthenticated = new PandaAuthenticated(config)
+  val explainerDB = new ExplainerDB(config)
 
 
-  def get(id: String) = PandaAuthenticated { implicit request =>
+  def get(id: String) = pandaAuthenticated { implicit request =>
     Ok(views.html.explainEditor(id,request.user))
   }
 
-  def all = PandaAuthenticated.async{ implicit request =>
+  def all = pandaAuthenticated.async{ implicit request =>
 
-    ExplainerDB.all.map{ r =>
+    explainerDB.all.map{ r =>
         def sorting(e1: Atom, e2: Atom): Boolean = {
           val time1:Long = e1.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
           val time2:Long = e2.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
@@ -29,6 +34,7 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
         }
         Ok(views.html.explainList(r.sortWith(sorting),request.user))
     }.recover{ case err =>
+      Logger.error("Error fetching explainers from dynamo", err)
       InternalServerError(err.getMessage)
     }
   }

@@ -5,6 +5,8 @@ lazy val clients = Seq(explainerClient)
 lazy val scalaV = "2.11.8"
 def env(key: String): Option[String] = Option(System.getenv(key))
 
+lazy val awsVersion = "1.10.77"
+
 lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   PlayScala,
   BuildInfoPlugin,
@@ -18,6 +20,7 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases",
   libraryDependencies ++= Seq(
     filters,
+    "com.amazonaws" % "aws-java-sdk-core" % awsVersion,
     "com.gu" %% "scanamo" % "0.6.0",
     ws, // for panda
     "com.gu" %% "pan-domain-auth-verification" % "0.3.0",
@@ -30,7 +33,8 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
     "org.webjars" % "font-awesome" % "4.4.0",
     "com.gu" %% "atom-publisher-lib" % "1.0.0-SNAPSHOT",
     "com.twitter" %% "scrooge-core" % "4.5.0",
-    "com.gu" %% "scanamo-scrooge" % "0.1.1"
+    "com.gu" %% "scanamo-scrooge" % "0.1.1",
+    "com.amazonaws" % "aws-java-sdk-ec2" % awsVersion
   ),
   sources in (Compile,doc) := Seq.empty, publishArtifact in (Compile, packageDoc) := false, // Don't do slow ScalaDoc step for anything but a library!
   serverLoading in Debian := Systemd,
@@ -87,7 +91,7 @@ lazy val explainerClient = (project in file("explainer-client")).settings(
 lazy val explainerShared = (crossProject.crossType(CrossType.Pure) in file("explainer-shared")).
   settings(scalaVersion := scalaV,
     libraryDependencies ++= Seq(
-      "com.gu" %% "content-atom-model" % "2.2.1-SNAPSHOT"
+      "com.gu" %% "content-atom-model" % "2.3.0"
     ))
     .jsConfigure(_ enablePlugins ScalaJSPlay)
 

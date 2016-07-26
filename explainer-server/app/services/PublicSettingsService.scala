@@ -14,11 +14,11 @@ import scala.util.{Failure, Success}
 
 
 @Singleton
-class PublicSettingsService @Inject() (appLifecycle: ApplicationLifecycle) {
+class PublicSettingsService @Inject() (appLifecycle: ApplicationLifecycle, config: Config) {
 
   implicit val httpClient = Http(new AsyncHttpClient())
   // This code is called when the application starts.
-  val publicSettings = new PublicSettings(Config.pandaDomain, { // Config.domain
+  val publicSettings = new PublicSettings(config.pandaDomain, { // Config.domain
     case Success(settings) =>
       Logger.info("successfully updated pan-domain public settings")
     case Failure(err) =>

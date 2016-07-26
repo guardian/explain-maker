@@ -11,12 +11,20 @@ The sbt build file contains 3 modules
 - `ExplainerShared` Scala code that you want to share between the server and the client.
 
 ### Setup
-
-You need a `/etc/gu/explainer.stage.conf` file:
-
+You'll need to create ~/.gu.explainer.local.conf, with the following fields:
 ```
-$ cat /etc/gu/explainer.stage.conf
-stage=DEV
+DEV {
+  pandomain {
+    domain = "local.dev-gutools.co.uk"
+  }
+  kinesis {
+    streamName {
+      preview = "<preview kinesis name - only needed if kinesis publishing enabled>"
+      live = "<live kinesis name- only needed if kinesis publishing enabled>"
+    }
+  }
+}
+enable.kinesis.publishing=false
 ```
 
 Configure the composer route in nginx:
@@ -28,7 +36,7 @@ sudo ./setup-app.rb <path_of_explainer>/nginx/nginx-mapping.yml
 
 ### Run the application
 ```
-$ sbt "run 9035"
+./run-explainer.sh
 ```
 
 ### Access the User Interface
