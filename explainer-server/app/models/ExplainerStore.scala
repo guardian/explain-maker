@@ -75,7 +75,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
 
   def create(user: PandaUser): Future[Atom] = {
     val uuid = java.util.UUID.randomUUID.toString
-    val explainerAtom = ExplainerAtom("-", "-", DisplayType.Expandable)
+    val explainerAtom = ExplainerAtom("", "", DisplayType.Expandable)
     val contentChangeDetails = contentChangeDetailsBuilder(user, None, true, true, false)
     val explainer = buildAtomWithDefaults(uuid, explainerAtom, contentChangeDetails, user)
     explainerDB.store(explainer)
