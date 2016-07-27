@@ -3,7 +3,7 @@ import autowire._
 import common.ExtAjax._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
-import org.scalajs.dom.html.{Element, Input, TextArea, Option}
+import org.scalajs.dom.html.{Element, Input, Option, TextArea}
 import org.scalajs.dom.{Event, FocusEvent}
 import presence.StateChange.State
 import presence.{Person, PresenceGlobalScope, StateChange}
@@ -121,15 +121,13 @@ object ExplainEditorJS {
     }
 
     val body: TypedTag[TextArea] = textarea(
+      id:="explainer-input-text-area",
       cls:="explainer-editor__body-wrapper__input explainer-input-field",
       maxlength:=1800,
       placeholder:="body"
     )
 
     val bodyTag = body(explainer.data.body).render
-    bodyTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyTag.value)).map(republishStatusBar)
-    }
     bodyTag.oninput = (x: Event) => {
       g.updateWordCountDisplay()
       g.updateWordCountWarningDisplay()
@@ -200,6 +198,7 @@ object ExplainEditorJS {
       )
       g.updateWordCountDisplay()
       g.updateWordCountWarningDisplay()
+      g.initiateEditor()
     }
   }
 
@@ -215,4 +214,8 @@ object ExplainEditorJS {
     Model.updateFieldContent(explainerId, ExplainerUpdate("displayType", displayType))
   }
 
+  @JSExport
+  def updateBodyContents(explainerId: String, bodyString: String) = {
+    Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyString)).map(republishStatusBar)
+  }
 }
