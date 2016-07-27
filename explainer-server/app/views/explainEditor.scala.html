@@ -2,6 +2,7 @@
 
 @header = {
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 }
 @toolbar = {
     <header class="top-toolbar">
@@ -82,4 +83,20 @@
     </script>
 
     <script>ExplainEditorJS().main("@id")</script>
+
+    <script>
+        function initiateEditor(){
+            tinymce.init({
+                selector:'#explainer-input-text-area',
+                setup:function(ed) {
+                    ed.on('change', function(e) {
+                        var bodyString = ed.getContent();
+                        console.log('body ', bodyString);
+                        ExplainEditorJS().updateBodyContents("@id", bodyString)
+                    });
+                }
+            });
+        }
+    </script>
+
 }
