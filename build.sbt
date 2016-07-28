@@ -34,7 +34,9 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
     "com.gu" %% "atom-publisher-lib" % "0.1.1",
     "com.twitter" %% "scrooge-core" % "4.5.0",
     "com.gu" %% "scanamo-scrooge" % "0.1.1",
-    "com.amazonaws" % "aws-java-sdk-ec2" % awsVersion
+    "com.amazonaws" % "aws-java-sdk-ec2" % awsVersion,
+    "com.gu" % "kinesis-logback-appender" % "1.2.0",
+    "net.logstash.logback" % "logstash-logback-encoder" % "4.2"
   ),
   sources in (Compile,doc) := Seq.empty, publishArtifact in (Compile, packageDoc) := false, // Don't do slow ScalaDoc step for anything but a library!
   serverLoading in Debian := Systemd,
