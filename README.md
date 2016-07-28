@@ -20,11 +20,13 @@ DEV {
   kinesis {
     streamName {
       preview = "<preview kinesis name - only needed if kinesis publishing enabled>"
-      live = "<live kinesis name- only needed if kinesis publishing enabled>"
+      live = "<live kinesis name- only needed if kinesis publishing enabled>",
+      elk  = "<elk kinesis stream - only needed if elk publishing enabled"
     }
   }
 }
 enable.kinesis.publishing=false
+enable.elk.logging=false
 ```
 
 Configure the composer route in nginx:
