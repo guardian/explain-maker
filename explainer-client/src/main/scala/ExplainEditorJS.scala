@@ -92,7 +92,14 @@ object ExplainEditorJS {
   }
 
   def statusBarText(explainer: CsAtom) = {
-    val isDraftState =  true// !explainer.live.isDefined || explainer.draft.title!=explainer.live.get.title || explainer.draft.body!=explainer.live.get.body
+
+    val isDraftState = (for {
+      lastModifiedDate <- explainer.contentChangeDetails.lastModified
+      publishedDate <- explainer.contentChangeDetails.published
+    }yield {
+      lastModifiedDate.date != publishedDate.date
+    }).getOrElse(true)
+
     val status = if(isDraftState){
       "Draft State"
     }else{
@@ -100,7 +107,6 @@ object ExplainEditorJS {
     }
     status
   }
-
 
   def republishStatusBar(explainer: CsAtom) = {
     g.updateStatusBar(statusBarText(explainer))
