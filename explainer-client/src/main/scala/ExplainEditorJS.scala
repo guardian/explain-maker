@@ -141,9 +141,7 @@ object ExplainEditorJS {
 
     val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
     publishButton.onclick = (x: Event) => {
-       Model.publish(explainerId).map{ explainer =>
-         republishStatusBar(explainer)
-       }
+      Model.publish(explainerId).map(republishStatusBar)
     }
 
     val checkboxClassName: String = "explainer-editor__displayType-checkbox"
