@@ -89,6 +89,10 @@
         function initiateEditor(){
             tinymce.init({
                 selector:'#explainer-input-text-area',
+                menu: {
+                    table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'},
+                    tools: {title: 'Tools', items: 'spellchecker code'}
+                },
                 setup:function(ed) {
                     ed.on('change', function(e) {
                         var bodyString = ed.getContent();
