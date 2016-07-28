@@ -90,9 +90,9 @@
             tinymce.init({
                 selector:'#explainer-input-text-area',
                 menu: {
-                    table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'},
-                    tools: {title: 'Tools', items: 'spellchecker code'}
+                    table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'}
                 },
+                toolbar: 'undo redo | styleselect | bold italic underline',
                 setup:function(ed) {
                     ed.on('change', function(e) {
                         var bodyString = ed.getContent();

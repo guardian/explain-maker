@@ -101,7 +101,6 @@ object ExplainEditorJS {
     status
   }
 
-
   def republishStatusBar(explainer: CsAtom) = {
     g.updateStatusBar(statusBarText(explainer))
   }
