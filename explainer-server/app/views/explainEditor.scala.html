@@ -2,7 +2,7 @@
 
 @header = {
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
-    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script src="@routes.Assets.at("lib/tinymce/tinymce.min.js")"></script>
 }
 @toolbar = {
     <header class="top-toolbar">
@@ -91,7 +91,6 @@
                 setup:function(ed) {
                     ed.on('change', function(e) {
                         var bodyString = ed.getContent();
-                        console.log('body ', bodyString);
                         ExplainEditorJS().updateBodyContents("@id", bodyString)
                     });
                 }
