@@ -61,9 +61,9 @@ object ExplainEditorJS {
       Ajaxer[ExplainerApi].create().call()
     }
 
-//    def publish(id: String): Future[CsAtom] = {
-//      Ajaxer[ExplainerApi].publish(id).call()
-//    }
+    def publish(id: String): Future[CsAtom] = {
+      Ajaxer[ExplainerApi].publish(id).call()
+    }
 
   }
 
@@ -97,7 +97,7 @@ object ExplainEditorJS {
       lastModifiedDate <- explainer.contentChangeDetails.lastModified
       publishedDate <- explainer.contentChangeDetails.published
     }yield {
-      lastModifiedDate.date != publishedDate.date
+      lastModifiedDate.date > publishedDate.date
     }).getOrElse(true)
 
     val status = if(isDraftState){
@@ -141,7 +141,9 @@ object ExplainEditorJS {
 
     val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
     publishButton.onclick = (x: Event) => {
-//      Model.publish(explainerId).map(republishStatusBar)
+       Model.publish(explainerId).map{ explainer =>
+         republishStatusBar(explainer)
+       }
     }
 
     val checkboxClassName: String = "explainer-editor__displayType-checkbox"
@@ -202,6 +204,7 @@ object ExplainEditorJS {
       dom.document.getElementById("content").appendChild(
         ExplainEditor(explainerId, explainer).render
       )
+      republishStatusBar(explainer)
       g.updateWordCountDisplay()
       g.updateWordCountWarningDisplay()
       g.initiateEditor()
