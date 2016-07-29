@@ -5,9 +5,10 @@ import javax.inject.{Inject, Singleton}
 import com.amazonaws.auth.{AWSCredentialsProviderChain, InstanceProfileCredentialsProvider}
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.regions.{Region, Regions}
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.kinesis.AmazonKinesisClient
 import play.api.Configuration
-import services.{AWS, AwsInstanceTags}
+import services.AwsInstanceTags
 
 @Singleton
 class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
@@ -48,6 +49,12 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   lazy val kinesisClient = region.createClient(
     classOf[AmazonKinesisClient],
+    awsCredentialsprovider,
+    null
+  )
+
+  val dynamoClient = region.createClient(
+    classOf[AmazonDynamoDBClient],
     awsCredentialsprovider,
     null
   )

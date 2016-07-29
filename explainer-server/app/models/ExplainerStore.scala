@@ -23,7 +23,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     Atom(
       id = id,
       atomType = AtomType.Explainer,
-      defaultHtml = "",
+      defaultHtml = "-",
       data = AtomData.Explainer(explainerAtom),
       contentChangeDetails = contentChangeDetails
     )
@@ -78,6 +78,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     explainerDB.load(id).map{ explainer =>
       val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = true, updatePublished = false)
       val updatedExplainer = buildAtomWithDefaults(explainer.id, explainer.tdata , contentChangeDetails)
+
       explainerDB.store(updatedExplainer)
       updatedExplainer
     }
@@ -89,6 +90,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     val contentChangeDetails = contentChangeDetailsBuilder(user, None, updateCreated = true, updateLastModified = true, updatePublished = false)
     val explainer = buildAtomWithDefaults(uuid, explainerAtom, contentChangeDetails)
     explainerDB.store(explainer)
+    explainerDB.create(explainer)
     Future(explainer)
   }
 
