@@ -4,7 +4,7 @@ import com.gu.contentatom.thrift._
 import contentatom.explainer.{DisplayType, ExplainerAtom}
 import shared.util.ExplainerAtomImplicits
 
-case class CsExplainerAtom(title: String, body: String, displayType: String)
+case class CsExplainerAtom(title: String, body: String, displayType: String, tags: Option[List[String]])
 case class CsUser(email: String, firstName: Option[String], lastName: Option[String])
 case class CsChangeRecord(date: Long, user: Option[CsUser])
 case class CsContentChangeDetails(lastModified: Option[CsChangeRecord], created: Option[CsChangeRecord], published: Option[CsChangeRecord], revision: Long)
