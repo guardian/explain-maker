@@ -7,6 +7,8 @@ def env(key: String): Option[String] = Option(System.getenv(key))
 
 lazy val awsVersion = "1.10.77"
 
+name := "explain-maker"
+
 lazy val explainMakerServer = (project in file("explainer-server")).enablePlugins(
   PlayScala,
   BuildInfoPlugin,
@@ -53,7 +55,7 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
   maintainer := "Digital CMS Team <digitalcms.dev@guardian.co.uk>",
   packageSummary := "Explain maker tool",
   packageDescription := """Editor tool to create and update explainer 'atoms'""",
-  riffRaffPackageName := "explain-maker",
+  riffRaffPackageName := s"editorial-tools:${name.value}",
   riffRaffPackageType := (packageBin in Debian).value,
   riffRaffUploadArtifactBucket := Option("riffraff-artifact"),
   riffRaffUploadManifestBucket := Option("riffraff-builds"),

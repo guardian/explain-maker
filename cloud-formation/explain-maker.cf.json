@@ -110,7 +110,7 @@
                 },
                 "Policies": [
                 {
-                    "PolicyName": "PrivateBucket",
+                    "PolicyName": "ExplainMakerPrivateBucket",
                     "PolicyDocument": {
                         "Version": "2012-10-17",
                         "Statement": [
@@ -128,7 +128,7 @@
                     }
                 },
                 {
-                  "PolicyName": "DynamoPolicy",
+                  "PolicyName": "ExplainMakerDynamoPolicy",
                   "PolicyDocument": {
                     "Statement": [
                       {
@@ -140,7 +140,7 @@
                   }
                 },
                 {
-                    "PolicyName": "SnapshotterReadKinesisPolicy",
+                    "PolicyName": "ExplainMakerReadELKKinesisPolicy",
                     "PolicyDocument": {
                         "Statement": [
                             {
@@ -157,7 +157,7 @@
                     }
                 },
                 {
-                    "PolicyName": "PushMetrics",
+                    "PolicyName": "ExplainMakerPushMetrics",
                     "PolicyDocument": {
                         "Version": "2012-10-17",
                         "Statement":[{
@@ -168,24 +168,35 @@
                         ]
                     }
                 },
-                    {
-                        "PolicyName": "FetchConfig",
+                {
+                    "PolicyName": "ExplainMakerFetchConfig",
+                    "PolicyDocument": {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Action": ["s3:GetObject"],
+                                "Resource": ["arn:aws:s3:::explainer-config/*"]
+                            },
+                            {
+                                "Effect":"Allow",
+                                "Action": ["s3:ListBucket"],
+                                "Resource":"arn:aws:s3:::explainer-config"
+                            }
+                        ]
+                    }
+                },
+                {
+                        "PolicyName": "ExplainMakerDescribeEC2Policy",
                         "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                                {
-                                    "Effect": "Allow",
-                                    "Action": ["s3:GetObject"],
-                                    "Resource": ["arn:aws:s3:::explainer-config/*"]
-                                },
-                                {
-                                    "Effect":"Allow",
-                                    "Action": ["s3:ListBucket"],
-                                    "Resource":"arn:aws:s3:::explainer-config"
-                                }
-                            ]
+                            "Statement": [ {
+                                "Action": ["EC2:Describe*"],
+                                "Effect": "Allow",
+                                "Resource":"*"
+                            }]
                         }
-                    }]
+                }
+                ]
             }
         },
         "AppInstanceProfile": {
