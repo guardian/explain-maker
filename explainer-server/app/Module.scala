@@ -1,6 +1,7 @@
 import services.PublicSettingsService
 import com.google.inject.AbstractModule
 import com.gu.atom.publish.{LiveAtomPublisher, PreviewAtomPublisher}
+import config.LogConfig
 import data.{LiveAtomPublisherProvider, PreviewAtomPublisherProvider}
 
 /**
@@ -23,6 +24,8 @@ class Module extends AbstractModule {
 
     bind(classOf[PreviewAtomPublisher])
       .toProvider(classOf[PreviewAtomPublisherProvider])
+
+    bind(classOf[LogConfig]).asEagerSingleton()
   }
 
 }

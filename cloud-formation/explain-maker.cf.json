@@ -50,6 +50,10 @@
             "Description": "Ip range for the office",
             "Type": "String",
             "Default": "77.91.248.0/21"
+        },
+        "ELKKinesisStream": {
+            "Description": "Kinesis stream for logging to the ELK stack",
+            "Type": "String"
         }
     },
     "Resources" : {
@@ -137,14 +141,20 @@
                   }
                 },
                 {
-                    "PolicyName": "PushLogs",
+                    "PolicyName": "SnapshotterReadKinesisPolicy",
                     "PolicyDocument": {
-                        "Version": "2012-10-17",
-                        "Statement": [{
-                            "Effect": "Allow",
-                            "Action": ["logs:*"],
-                            "Resource": ["arn:aws:logs:*:*:*"]
-                        }]
+                        "Statement": [
+                            {
+                                "Resource": {
+                                    "Fn::Join": [ "", ["arn:aws:kinesis:eu-west-1:743583969668:stream/", { "Ref" :"ELKKinesisStream"}]]
+                                },
+                                "Action": [
+                                    "kinesis:PutRecord",
+                                    "kinesis:DescribeStream"
+                                ],
+                                "Effect": "Allow"
+                            }
+                        ]
                     }
                 },
                 {
