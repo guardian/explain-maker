@@ -25,8 +25,7 @@ object CsAtom extends ExplainerAtomImplicits {
   private implicit def changeRecordToCsChangeRecord(changeRecord: Option[ChangeRecord]): Option[CsChangeRecord]= changeRecord.map(cr => CsChangeRecord(cr.date, cr.user))
   private implicit def contentChangeDetailsToCsContentChangeDetails(contentChangeDetails: ContentChangeDetails): CsContentChangeDetails =
     CsContentChangeDetails(contentChangeDetails.lastModified, contentChangeDetails.created, contentChangeDetails.published, contentChangeDetails.revision)
-  private implicit def optionSeqStringToOptionListString(tags: Option[Seq[String]]): Option[List[String]] = tags.map( x => x.toList )
-  private implicit def explainerAtomToCsExplainerAtom(explainerAtom: ExplainerAtom): CsExplainerAtom = CsExplainerAtom(explainerAtom.title, explainerAtom.body, explainerAtom.displayType.name, explainerAtom.tags)
+  private implicit def explainerAtomToCsExplainerAtom(explainerAtom: ExplainerAtom): CsExplainerAtom = CsExplainerAtom(explainerAtom.title, explainerAtom.body, explainerAtom.displayType.name, explainerAtom.tags.map( _.toList ))
 
   def atomToCsAtom(atom: Atom) = CsAtom(atom.id, atom.tdata, atom.contentChangeDetails)
 
