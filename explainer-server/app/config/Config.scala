@@ -13,8 +13,16 @@ import services.{AWS, AwsInstanceTags}
 class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
   
   val stage = readTag("Stage") getOrElse "DEV"
+  val app = readTag("App") getOrElse "explain-maker"
+  val stack = readTag("Stack") getOrElse "composer"
 
   def configValueForStage(path: String) = conf.getString(s"$stage.$path")
+
+  def fetchOrErrorOptionalProperty(propertyEnabled: Boolean, path: String, errorMessage: String) = {
+    if (propertyEnabled) {
+      configValueForStage(path).getOrElse(sys.error(errorMessage))
+    } else ""
+  }
 
   val pandaDomain = configValueForStage("pandomain.domain").get
 
@@ -30,12 +38,11 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val publishToKinesis = conf.getBoolean("enable.kinesis.publishing") getOrElse true
 
-  val previewKinesisStreamName = if (publishToKinesis) {
-     configValueForStage("kinesis.streamName.preview").getOrElse(sys.error("preview stream name required when kinesis publishing enabled"))
-  } else ""
-  val liveKinesisStreamName = if (publishToKinesis) {
-    configValueForStage("kinesis.streamName.live").getOrElse(sys.error("preview stream name required when kinesis publishing enabled"))
-  } else ""
+  val previewKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.preview", "preview stream name required when kinesis publishing enabled")
+  val liveKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.live", "live stream name required when kinesis publishing enabled")
+
+  val elkLoggingEnabled = conf.getBoolean("enable.elk.logging") getOrElse true
+  val elkKinesisStream = fetchOrErrorOptionalProperty(elkLoggingEnabled, "kinesis.streamName.elk", "elk stream name required when elk logging enabled")
 
   lazy val kinesisClient = region.createClient(
     classOf[AmazonKinesisClient],
