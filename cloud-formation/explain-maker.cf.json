@@ -110,7 +110,7 @@
                 },
                 "Policies": [
                 {
-                    "PolicyName": "ExplainMakerPrivateBucket",
+                    "PolicyName": "GithubTeamKeysPolicy",
                     "PolicyDocument": {
                         "Version": "2012-10-17",
                         "Statement": [
@@ -182,6 +182,18 @@
                                 "Effect":"Allow",
                                 "Action": ["s3:ListBucket"],
                                 "Resource":"arn:aws:s3:::explainer-config"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "PolicyName": "ExplainMakerGetDistributablesPolicy",
+                    "PolicyDocument": {
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Action": [ "s3:GetObject" ],
+                                "Resource": [ "arn:aws:s3:::composer-dist/*" ]
                             }
                         ]
                     }
