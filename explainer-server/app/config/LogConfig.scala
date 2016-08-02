@@ -44,6 +44,9 @@ class LogConfig @Inject() (config: Config) extends AbstractModule {
 
     rootLogger.addAppender(appender.asInstanceOf[Appender[ILoggingEvent]])
     rootLogger.info("Configured kinesis appender")
-    }
-  configure
+  }
+  if (config.elkLoggingEnabled) {
+    configure
+  }
+
 }
