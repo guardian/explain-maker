@@ -91,8 +91,7 @@
                       "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
                       "mkdir /etc/gu",
                       "aws s3 cp s3://explainer-config/application.secrets.conf /etc/gu/explainer.secrets.conf",
-                      {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/composer-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "explain-maker/explainerserver_0.1-SNAPSHOT_all.deb"]]},
-                      "dpkg -i explainerserver_0.1-SNAPSHOT_all.deb"
+                        "/opt/features/native-packager/install.sh -b composer-dist -a explain-maker -t tgz\n"
                     ]]
                 }}
             }
