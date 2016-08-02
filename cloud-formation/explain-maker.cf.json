@@ -91,7 +91,7 @@
                       "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
                       "mkdir /etc/gu",
                       "aws s3 cp s3://explainer-config/application.secrets.conf /etc/gu/explainer.secrets.conf",
-                        "/opt/features/native-packager/install.sh -b composer-dist -a explain-maker -t tgz\n"
+                        "/opt/features/native-packager/install.sh -b composer-dist -a explain-maker -t tgz -s\n"
                     ]]
                 }}
             }
@@ -134,7 +134,7 @@
                       {
                         "Effect": "Allow",
                         "Action": [ "dynamodb:*" ],
-                        "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:743583969668:table/explainers-", { "Ref": "Stage" } ] ] } ]
+                        "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:743583969668:table/explain-maker-preview-", { "Ref": "Stage" } ] ] } ]
                       }
                     ]
                   }
