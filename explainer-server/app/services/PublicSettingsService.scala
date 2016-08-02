@@ -20,7 +20,7 @@ class PublicSettingsService @Inject() (appLifecycle: ApplicationLifecycle, confi
   // This code is called when the application starts.
   val publicSettings = new PublicSettings(config.pandaDomain, { // Config.domain
     case Success(settings) =>
-      Logger.info("successfully updated pan-domain public settings")
+      Logger.debug("successfully updated pan-domain public settings")
     case Failure(err) =>
       Logger.warn("failed to update pan-domain public settings", err)
     })
