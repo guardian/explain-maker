@@ -48,5 +48,5 @@ class LogConfig @Inject() (config: Config) extends AbstractModule {
   if (config.elkLoggingEnabled) {
     configure
   }
-  
+
 }

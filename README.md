@@ -12,6 +12,7 @@ The sbt build file contains 3 modules
 
 ### Setup
 You'll need to create ~/.gu/explainer.local.conf, with the following fields:
+
 ```
 DEV {
   pandomain {
