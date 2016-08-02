@@ -1,13 +1,14 @@
+import com.gu.riffraff.artifact.RiffRaffArtifact.autoImport._
 import sbt.Project.projectToRef
 import com.typesafe.sbt.packager.archetypes.ServerLoader.Systemd
+import play.sbt.PlayImport.PlayKeys._
+
 
 lazy val clients = Seq(explainMakerClient)
 lazy val scalaV = "2.11.8"
 def env(key: String): Option[String] = Option(System.getenv(key))
 
 lazy val awsVersion = "1.10.77"
-
-name := "explain-maker"
 
 lazy val explainMakerServer = (project in file("explainer-server")).enablePlugins(
   PlayScala,
@@ -53,15 +54,15 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
     "-J-XX:+PrintGCDateStamps"
   ),
   maintainer := "Digital CMS Team <digitalcms.dev@guardian.co.uk>",
+  name := "explain-maker",
   packageSummary := "Explain maker tool",
+  packageName in Universal := normalizedName.value,
   packageDescription := """Editor tool to create and update explainer 'atoms'""",
-  riffRaffPackageName := s"editorial-tools:${name.value}",
-  riffRaffPackageType := (packageBin in Debian).value,
+  riffRaffPackageType := (packageZipTarball in config("universal")).value,
   riffRaffUploadArtifactBucket := Option("riffraff-artifact"),
   riffRaffUploadManifestBucket := Option("riffraff-builds"),
-  riffRaffManifestProjectName := "editorial-tools:explain-maker",
-  riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("unknown_branch"),
   riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV"),
+  riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("unknown_branch"),
   riffRaffManifestVcsUrl  := "git@github.com:guardian/explain-maker.git",
   buildInfoKeys := Seq[BuildInfoKey](
     name,
