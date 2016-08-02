@@ -92,7 +92,7 @@ lazy val explainerClient = (project in file("explainer-client")).settings(
 lazy val explainerShared = (crossProject.crossType(CrossType.Pure) in file("explainer-shared")).
   settings(scalaVersion := scalaV,
     libraryDependencies ++= Seq(
-      "com.gu" %% "content-atom-model" % "2.3.0"
+      "com.gu" %% "content-atom-model" % "2.4.2"
     ))
     .jsConfigure(_ enablePlugins ScalaJSPlay)
 
