@@ -10,10 +10,13 @@
   },
   "recipes":{
     "default":{
-      "actionsBeforeApp": ["explain-maker.uploadArtifacts", "explain-maker.deploy"]
+      "depends": ["artifactUploadOnly", "deploy"]
     },
     "artifactUploadOnly": {
       "actions": [ "explain-maker.uploadArtifacts" ]
+    },
+    "deploy": {
+      "actionsBeforeApp": ["explain-maker.deploy"]
     }
   }
 }

@@ -91,8 +91,7 @@
                       "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
                       "mkdir /etc/gu",
                       "aws s3 cp s3://explainer-config/application.secrets.conf /etc/gu/explainer.secrets.conf",
-                      {"Fn::Join":["/", ["wget https://s3-eu-west-1.amazonaws.com/composer-dist", { "Ref" : "Stack" }, { "Ref" : "Stage" }, "explain-maker/explainerserver_0.1-SNAPSHOT_all.deb"]]},
-                      "dpkg -i explainerserver_0.1-SNAPSHOT_all.deb"
+                        "/opt/features/native-packager/install.sh -b composer-dist -a explain-maker -t tgz -s\n"
                     ]]
                 }}
             }
@@ -111,7 +110,7 @@
                 },
                 "Policies": [
                 {
-                    "PolicyName": "PrivateBucket",
+                    "PolicyName": "GithubTeamKeysPolicy",
                     "PolicyDocument": {
                         "Version": "2012-10-17",
                         "Statement": [
@@ -129,19 +128,19 @@
                     }
                 },
                 {
-                  "PolicyName": "DynamoPolicy",
+                  "PolicyName": "ExplainMakerDynamoPolicy",
                   "PolicyDocument": {
                     "Statement": [
                       {
                         "Effect": "Allow",
                         "Action": [ "dynamodb:*" ],
-                        "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:743583969668:table/explainers-", { "Ref": "Stage" } ] ] } ]
+                        "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:743583969668:table/explain-maker-preview-", { "Ref": "Stage" } ] ] } ]
                       }
                     ]
                   }
                 },
                 {
-                    "PolicyName": "SnapshotterReadKinesisPolicy",
+                    "PolicyName": "ExplainMakerReadELKKinesisPolicy",
                     "PolicyDocument": {
                         "Statement": [
                             {
@@ -158,7 +157,7 @@
                     }
                 },
                 {
-                    "PolicyName": "PushMetrics",
+                    "PolicyName": "ExplainMakerPushMetrics",
                     "PolicyDocument": {
                         "Version": "2012-10-17",
                         "Statement":[{
@@ -169,24 +168,47 @@
                         ]
                     }
                 },
-                    {
-                        "PolicyName": "FetchConfig",
+                {
+                    "PolicyName": "ExplainMakerFetchConfig",
+                    "PolicyDocument": {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Action": ["s3:GetObject"],
+                                "Resource": ["arn:aws:s3:::explainer-config/*"]
+                            },
+                            {
+                                "Effect":"Allow",
+                                "Action": ["s3:ListBucket"],
+                                "Resource":"arn:aws:s3:::explainer-config"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "PolicyName": "ExplainMakerGetDistributablesPolicy",
+                    "PolicyDocument": {
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Action": [ "s3:GetObject" ],
+                                "Resource": [ "arn:aws:s3:::composer-dist/*" ]
+                            }
+                        ]
+                    }
+                },
+                {
+                        "PolicyName": "ExplainMakerDescribeEC2Policy",
                         "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                                {
-                                    "Effect": "Allow",
-                                    "Action": ["s3:GetObject"],
-                                    "Resource": ["arn:aws:s3:::explainer-config/*"]
-                                },
-                                {
-                                    "Effect":"Allow",
-                                    "Action": ["s3:ListBucket"],
-                                    "Resource":"arn:aws:s3:::explainer-config"
-                                }
-                            ]
+                            "Statement": [ {
+                                "Action": ["EC2:Describe*"],
+                                "Effect": "Allow",
+                                "Resource":"*"
+                            }]
                         }
-                    }]
+                }
+                ]
             }
         },
         "AppInstanceProfile": {

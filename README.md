@@ -6,9 +6,9 @@
 
 
 The sbt build file contains 3 modules
-- `ExplainerServer` Play application (server side)
-- `ExplainerClient` Scala.js application (client side)
-- `ExplainerShared` Scala code that you want to share between the server and the client.
+- `ExplainMakerServer` Play application (server side)
+- `ExplainMakerClient` Scala.js application (client side)
+- `ExplainMakerShared` Scala code that you want to share between the server and the client.
 
 ### Setup
 You'll need to create ~/.gu/explainer.local.conf, with the following fields:
