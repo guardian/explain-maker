@@ -270,9 +270,7 @@ object ExplainEditorJS {
   }
 
   def redisplayExplainerTagManagement(explainerId: String) = {
-    for {
-      explainer <- Model.extractExplainer(explainerId)
-    }yield{
+    Model.extractExplainer(explainerId).map{ explainer =>
       dom.document.getElementById("explainer-editor__tags-wrapper").innerHTML = ""
       dom.document.getElementById("explainer-editor__tags-wrapper").appendChild(makeTagArea(explainer).render)
     }
