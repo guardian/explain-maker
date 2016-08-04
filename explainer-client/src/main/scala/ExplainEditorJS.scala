@@ -65,19 +65,27 @@ object ExplainEditorJS {
       Ajaxer[ExplainerApi].publish(id).call()
     }
 
-  }
-
-  def turnOnPresenceFor(explainerId: String ,area: String, field: Element) = {
-    field.onfocus = (x: FocusEvent) => {
-      presenceClient.enter("explain-" + explainerId, area)
+    def addTagToExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
+      Ajaxer[ExplainerApi].addTagToExplainer(explainerId, tagId).call()
     }
 
-    val indicatorId = s"presence-indicator-$area"
+    def removeTagFromExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
+      Ajaxer[ExplainerApi].removeTagFromExplainer(explainerId, tagId).call()
+    }
+
+  }
+
+  def turnOnPresenceFor(explainerId: String ,presenceAreaName: String, field: Element) = {
+    field.onfocus = (x: FocusEvent) => {
+      presenceClient.enter("explain-" + explainerId, presenceAreaName)
+    }
+
+    val indicatorId = s"presence-indicator-${presenceAreaName}"
     val fieldPresenceIndicator = div(`class` := "field-presence-indicator", id := indicatorId)()
 
     presenceClient.on("visitor-list-updated", { data: js.Object =>
       val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
-      val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == area)
+      val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == presenceAreaName)
       //dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
       ()
     })
@@ -85,7 +93,7 @@ object ExplainEditorJS {
     div(`class` := "presence-field-container") (
       fieldPresenceIndicator,
       div(cls:="form-group")(
-        label(area),
+        label(presenceAreaName.capitalize),
         field
       )
     )
@@ -110,6 +118,51 @@ object ExplainEditorJS {
 
   def republishStatusBar(explainer: CsAtom) = {
     g.updateStatusBar(statusBarText(explainer))
+  }
+
+  def explainerToDivTags(explainer:CsAtom) = {
+    explainer.data.tags match {
+      case None => List()
+      case Some(list) => list.map(tagId => div(cls:="explainer-editor__tags__existing-tags__tag")(
+        span(
+          cls:="explainer-editor__tags__existing-tags__tag-delete-icon",
+          data("explainer-id"):=explainer.id,
+          data("tag-id"):=tagId
+        )("[x]")," ",tagId
+      ))
+    }
+  }
+
+  def makeTagArea(explainer: CsAtom) = {
+
+    val tagsSearchInput: TypedTag[Input] = input(
+      id:="explainer-editor__tags__tag-search-input-field",
+      cls:="explainer-editor__tags__tag-search-input-field",
+      placeholder:="tag search"
+    )
+
+    val tagsSearchInputTag = tagsSearchInput().render
+    tagsSearchInputTag.oninput = (x: Event) => {
+      g.performTagSearch()
+    }
+
+    div()(
+      div(id:="explainer-editor__tags__input-field-wrapper")(
+        div(cls:="form-group")(
+          div("")(
+            label(cls:="form-group")("Tags")
+          ),
+          div("")(
+            tagsSearchInputTag
+          )
+        )
+      ),
+      div(cls:="explainer-editor__tags__suggestions")(""),
+      div(cls:="explainer-editor__tags__existing-tags")(
+        explainerToDivTags(explainer)
+      )
+    )
+
   }
 
   def ExplainEditor(explainerId: String, explainer: CsAtom) = {
@@ -179,6 +232,9 @@ object ExplainEditorJS {
         div(id:="explainer-editor__title-wrapper")(
           turnOnPresenceFor(explainerId,"title",titleTag)
         ),
+        div(id:="explainer-editor__tags-wrapper")(
+          makeTagArea(explainer)
+        ),
         div(id:="explainer-editor__body-wrapper")(
           turnOnPresenceFor(explainerId,"body",bodyTag)
         )
@@ -189,7 +245,6 @@ object ExplainEditorJS {
 
   @JSExport
   def main(explainerId: String) = {
-    g.console.log(person)
     val articleId = "explain-"+explainerId
 
     presenceClient.startConnection()
@@ -210,6 +265,24 @@ object ExplainEditorJS {
   }
 
   @JSExport
+  def generateExplainerTagManagement(explainerId: String): Future[String] = {
+    for {
+      explainer <- Model.extractExplainer(explainerId)
+    }yield{
+      makeTagArea(explainer).render.outerHTML
+    }
+  }
+
+  def redisplayExplainerTagManagement(explainerId: String) = {
+    for {
+      explainer <- Model.extractExplainer(explainerId)
+    }yield{
+      dom.document.getElementById("explainer-editor__tags-wrapper").innerHTML = ""
+      dom.document.getElementById("explainer-editor__tags-wrapper").appendChild(makeTagArea(explainer).render)
+    }
+  }
+
+  @JSExport
   def CreateNewExplainer() = {
     Model.createNewExplainer().map{ explainer: CsAtom =>
       g.location.href = s"/explain/${explainer.id}"
@@ -225,4 +298,19 @@ object ExplainEditorJS {
   def updateBodyContents(explainerId: String, bodyString: String) = {
     Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyString)).map(republishStatusBar)
   }
+
+  @JSExport
+  def addTagToExplainer(explainerId: String, tagId: String) = {
+    Model.addTagToExplainer(explainerId, tagId).map( explainer =>
+      redisplayExplainerTagManagement(explainer.id)
+    )
+  }
+
+  @JSExport
+  def removeTagFromExplainer(explainerId: String, tagId: String) = {
+    Model.removeTagFromExplainer(explainerId, tagId).map( explainer =>
+      redisplayExplainerTagManagement(explainer.id)
+    )
+  }
+
 }

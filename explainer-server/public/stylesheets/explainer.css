@@ -180,6 +180,10 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
             padding: 6px;
         }
 
+    .explainer-editor__tags__input-field-label {
+        font-family: bold;
+    }
+
     #explainer-editor__body-wrapper {
 
     }
@@ -215,3 +219,41 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
             .explainer-editor__displayType-checkbox {
 
             }
+
+/* -------------------------------------- */
+/* Explainer Tags                         */
+/* -------------------------------------- */
+
+
+    .explainer-editor__tags__input-field-label {
+
+    }
+
+    .explainer-editor__tags__suggestions {
+        margin-top:20px;
+    }
+
+        .explainer-editor__tag-suggestion__item {
+            color:blue;
+            font-weight: bold;
+            padding-left:30px;
+            cursor: pointer;
+            cursor: hand;
+        }
+
+    .explainer-editor__tags__existing-tags {
+        padding-top:20px;
+        padding-left:30px;
+    }
+
+        .explainer-editor__tags__existing-tags__tag-delete-icon {
+            cursor: pointer;
+            cursor: hand;
+            color:red;
+        }
+        .explainer-editor__tags__existing-tags__tag {
+
+        }
+
+
+

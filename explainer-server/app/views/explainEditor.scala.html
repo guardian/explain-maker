@@ -1,4 +1,4 @@
-@(id: String, user: com.gu.pandomainauth.model.AuthenticatedUser)(implicit request: RequestHeader)
+@(id: String, user: com.gu.pandomainauth.model.AuthenticatedUser, config: play.api.libs.json.JsObject)(implicit request: RequestHeader)
 
 @header = {
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
@@ -37,6 +37,8 @@
 @templates.main("Explainer Editor", header, toolbar){
 
     <script type="text/javascript">
+
+        var CONFIG = @Html(config.toString);
 
         /*
          * This function was put here at opposition to within the scala code because
@@ -78,6 +80,34 @@
                 ExplainEditorJS().setDisplayType("@id","Flat")
             }
         };
+
+        /*
+         * Tag Search
+         */
+        var tagAddClickHandler = function(e){
+            var tagid = $(this).text();
+            ExplainEditorJS().addTagToExplainer("@id",tagid);
+        }
+        function performTagSearch(){
+            var fragment = $("#explainer-editor__tags__tag-search-input-field").val();
+            $.get( "https://content.guardianapis.com/tags?api-key="+CONFIG.CAPI_API_KEY+"&q="+encodeURIComponent(fragment), function( response ) {
+                $(".explainer-editor__tags__suggestions").empty();
+                response.response.results.forEach(function(tag){
+                    var textNode = document.createTextNode(tag.id);
+                    var div = document.createElement("div");
+                    div.appendChild(textNode);
+                    div.onclick = tagAddClickHandler;
+                    div.setAttribute("class","explainer-editor__tag-suggestion__item");
+                    $(".explainer-editor__tags__suggestions").append(div);
+                });
+            });
+        }
+
+        $(document).delegate( ".explainer-editor__tags__existing-tags__tag-delete-icon", "click", function() {
+            var explainerId = $(this).data("explainer-id");
+            var tagId = $(this).data("tag-id");
+            ExplainEditorJS().removeTagFromExplainer(explainerId,tagId);
+        });
 
     </script>
 

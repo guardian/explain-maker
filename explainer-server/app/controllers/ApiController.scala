@@ -18,7 +18,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Controller
 import services.PublicSettingsService
 import shared._
-import shared.models.CsAtom
+import shared.models.{CsAtom, CsExplainerAtom}
 import upickle.Js
 import upickle.default._
 
@@ -74,6 +74,50 @@ class ExplainerApiImpl(
     val explainerToPublish = explainerDB.load(id)
     explainerToPublish.map(publishExplainerToKinesis(_, "Publishing explainer to LIVE kinesis", liveAtomPublisher))
     explainerToPublish.map(CsAtom.atomToCsAtom)
+  }
+
+  override def addTagToExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
+    for {
+      csatom <- explainerDB.load(explainerId).map(CsAtom.atomToCsAtom)
+    }yield{
+      val csexplaineratom: CsExplainerAtom = csatom.data
+      val tags: Option[List[String]] = csexplaineratom.tags
+      val newtags: Option[List[String]] = tags match {
+        case None => Some(List(tagId))
+        case Some(list) => Some( (tagId :: list).distinct.sorted )
+      }
+      val newCsExplainerAtom: CsExplainerAtom = CsExplainerAtom(csexplaineratom.title, csexplaineratom.body, csexplaineratom.displayType, newtags)
+      val newCsAtom: CsAtom = CsAtom(csatom.id, newCsExplainerAtom, csatom.contentChangeDetails)
+      explainerDB.store(CsAtom.csAtomToAtom(newCsAtom))
+      explainerStore.updateLastModified(explainerId, user)
+    }
+    load(explainerId)
+  }
+
+  override def removeTagFromExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
+    for {
+      csatom <- explainerDB.load(explainerId).map(CsAtom.atomToCsAtom)
+    }yield{
+      val csexplaineratom: CsExplainerAtom = csatom.data
+      val tags: Option[List[String]] = csexplaineratom.tags
+      val newtags: Option[List[String]] = tags match {
+        case None => None
+        case Some(list) => {
+          val x = (list diff List(tagId)).sorted
+          // We do the following check to prevent to return an empty list, which causes some problems.
+          if(x.size==0){
+            None
+          }else{
+            Some(x)
+          }
+        }
+      }
+      val newCsExplainerAtom: CsExplainerAtom = CsExplainerAtom(csexplaineratom.title, csexplaineratom.body, csexplaineratom.displayType, newtags)
+      val newCsAtom: CsAtom = CsAtom(csatom.id, newCsExplainerAtom, csatom.contentChangeDetails)
+      explainerDB.store(CsAtom.csAtomToAtom(newCsAtom))
+      explainerStore.updateLastModified(explainerId, user)
+    }
+    load(explainerId)
   }
 
 }
