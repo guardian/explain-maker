@@ -77,17 +77,12 @@ class ExplainerApiImpl(
   }
 
   override def addTagToExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
-    for {
-      csatom <- explainerDB.load(explainerId).map(CsAtom.atomToCsAtom)
-    }yield{
-      val csexplaineratom: CsExplainerAtom = csatom.data
-      val tags: Option[List[String]] = csexplaineratom.tags
-      val newtags: Option[List[String]] = tags match {
-        case None => Some(List(tagId))
-        case Some(list) => Some( (tagId :: list).distinct.sorted )
-      }
-      val newCsExplainerAtom: CsExplainerAtom = CsExplainerAtom(csexplaineratom.title, csexplaineratom.body, csexplaineratom.displayType, newtags)
-      val newCsAtom: CsAtom = CsAtom(csatom.id, newCsExplainerAtom, csatom.contentChangeDetails)
+    explainerDB.load(explainerId).map(CsAtom.atomToCsAtom).map{ csatom =>
+      val newCsAtom = csatom.copy(
+        data = csatom.data.copy(
+          tags = Some((tagId +: csatom.data.tags.getOrElse(List())).distinct.sorted)
+        )
+      )
       explainerDB.store(CsAtom.csAtomToAtom(newCsAtom))
       explainerStore.updateLastModified(explainerId, user)
     }
