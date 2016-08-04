@@ -266,11 +266,7 @@ object ExplainEditorJS {
 
   @JSExport
   def generateExplainerTagManagement(explainerId: String): Future[String] = {
-    for {
-      explainer <- Model.extractExplainer(explainerId)
-    }yield{
-      makeTagArea(explainer).render.outerHTML
-    }
+    Model.extractExplainer(explainerId).map( explainer => makeTagArea(explainer).render.outerHTML )
   }
 
   def redisplayExplainerTagManagement(explainerId: String) = {
