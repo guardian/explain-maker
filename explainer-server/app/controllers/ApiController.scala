@@ -90,25 +90,15 @@ class ExplainerApiImpl(
   }
 
   override def removeTagFromExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
-    for {
-      csatom <- explainerDB.load(explainerId).map(CsAtom.atomToCsAtom)
-    }yield{
-      val csexplaineratom: CsExplainerAtom = csatom.data
-      val tags: Option[List[String]] = csexplaineratom.tags
-      val newtags: Option[List[String]] = tags match {
-        case None => None
-        case Some(list) => {
-          val x = (list diff List(tagId)).sorted
-          // We do the following check to prevent to return an empty list, which causes some problems.
-          if(x.size==0){
-            None
-          }else{
-            Some(x)
+    explainerDB.load(explainerId).map(CsAtom.atomToCsAtom).map{ csatom =>
+      val newCsAtom: CsAtom = csatom.copy(
+        data = csatom.data.copy(
+          tags = csatom.data.tags.flatMap{ list =>
+            val newlist = (list diff List(tagId)).sorted
+            if(newlist.isEmpty){ None }else{ Some(newlist) }
           }
-        }
-      }
-      val newCsExplainerAtom: CsExplainerAtom = CsExplainerAtom(csexplaineratom.title, csexplaineratom.body, csexplaineratom.displayType, newtags)
-      val newCsAtom: CsAtom = CsAtom(csatom.id, newCsExplainerAtom, csatom.contentChangeDetails)
+        )
+      )
       explainerDB.store(CsAtom.csAtomToAtom(newCsAtom))
       explainerStore.updateLastModified(explainerId, user)
     }
