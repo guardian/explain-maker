@@ -84,22 +84,10 @@
         /*
          * Tag Search
          */
-        var tagAddClickHandler = function(e){
-            var tagid = $(this).text();
-            ExplainEditorJS().addTagToExplainer("@id",tagid);
-        }
-        function performTagSearch(){
-            var fragment = $("#explainer-editor__tags__tag-search-input-field").val();
-            $.get( "https://content.guardianapis.com/tags?api-key="+CONFIG.CAPI_API_KEY+"&q="+encodeURIComponent(fragment), function( response ) {
-                $(".explainer-editor__tags__suggestions").empty();
-                response.response.results.forEach(function(tag){
-                    var textNode = document.createTextNode(tag.id);
-                    var div = document.createElement("div");
-                    div.appendChild(textNode);
-                    div.onclick = tagAddClickHandler;
-                    div.setAttribute("class","explainer-editor__tag-suggestion__item");
-                    $(".explainer-editor__tags__suggestions").append(div);
-                });
+
+        function processCapiSearchResponse(response){
+            response.results.forEach(function(tag){
+                ExplainEditorJS().addTagToSuggestionSet("@id",tag.id);
             });
         }
 
@@ -108,6 +96,13 @@
             var tagId = $(this).data("tag-id");
             ExplainEditorJS().removeTagFromExplainer(explainerId,tagId);
         });
+
+        /*
+         * Generic Functions
+         */
+        function readValueAtDiv(id){
+            return $("#"+id).val();
+        }
 
     </script>
 

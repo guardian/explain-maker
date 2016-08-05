@@ -143,7 +143,18 @@ object ExplainEditorJS {
 
     val tagsSearchInputTag = tagsSearchInput().render
     tagsSearchInputTag.oninput = (x: Event) => {
-      g.performTagSearch()
+
+      val fragment: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
+      val xhr = new dom.XMLHttpRequest()
+      xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+"&q="+g.encodeURIComponent(fragment))
+      xhr.onload = (e: dom.Event) => {
+        if (xhr.status == 200) {
+          g.jQuery(".explainer-editor__tags__suggestions").empty();
+          g.processCapiSearchResponse(js.JSON.parse(xhr.responseText).response);
+        }
+      }
+      xhr.send()
+
     }
 
     div()(
@@ -157,7 +168,7 @@ object ExplainEditorJS {
           )
         )
       ),
-      div(cls:="explainer-editor__tags__suggestions")(""),
+      div(cls:="explainer-editor__tags__suggestions", id:="explainer-editor__tags__suggestions")(""),
       div(cls:="explainer-editor__tags__existing-tags")(
         explainerToDivTags(explainer)
       )
@@ -305,6 +316,15 @@ object ExplainEditorJS {
     Model.removeTagFromExplainer(explainerId, tagId).map( explainer =>
       redisplayExplainerTagManagement(explainer.id)
     )
+  }
+
+  @JSExport
+  def addTagToSuggestionSet(explainerId: String, tagId: String) = {
+    val node = div(cls:="explainer-editor__tag-suggestion__item")(tagId).render
+    node.onclick = (x: Event) => {
+      addTagToExplainer(explainerId, tagId)
+    }
+    dom.document.getElementById("explainer-editor__tags__suggestions").appendChild(node)
   }
 
 }
