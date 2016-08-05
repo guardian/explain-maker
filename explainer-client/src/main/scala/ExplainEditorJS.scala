@@ -144,13 +144,13 @@ object ExplainEditorJS {
     val tagsSearchInputTag = tagsSearchInput().render
     tagsSearchInputTag.oninput = (x: Event) => {
 
-      val fragment: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
+      val searchString: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
       val xhr = new dom.XMLHttpRequest()
-      xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+"&q="+g.encodeURIComponent(fragment))
+      xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+"&q="+g.encodeURIComponent(searchString))
       xhr.onload = (e: dom.Event) => {
         if (xhr.status == 200) {
-          g.jQuery(".explainer-editor__tags__suggestions").empty();
-          g.processCapiSearchResponse(js.JSON.parse(xhr.responseText).response);
+          g.jQuery(".explainer-editor__tags__suggestions").empty()
+          g.processCapiSearchResponse(js.JSON.parse(xhr.responseText).response)
         }
       }
       xhr.send()
