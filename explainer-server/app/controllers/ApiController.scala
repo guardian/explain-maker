@@ -18,7 +18,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Controller
 import services.PublicSettingsService
 import shared._
-import shared.models.CsAtom
+import shared.models.{CsAtom, CsExplainerAtom}
 import upickle.Js
 import upickle.default._
 
@@ -74,6 +74,35 @@ class ExplainerApiImpl(
     val explainerToPublish = explainerDB.load(id)
     explainerToPublish.map(publishExplainerToKinesis(_, "Publishing explainer to LIVE kinesis", liveAtomPublisher))
     explainerToPublish.map(CsAtom.atomToCsAtom)
+  }
+
+  override def addTagToExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
+    explainerDB.load(explainerId).map(CsAtom.atomToCsAtom).map{ csatom =>
+      val newCsAtom = csatom.copy(
+        data = csatom.data.copy(
+          tags = Some((tagId +: csatom.data.tags.getOrElse(List())).distinct.sorted)
+        )
+      )
+      explainerDB.store(CsAtom.csAtomToAtom(newCsAtom))
+      explainerStore.updateLastModified(explainerId, user)
+    }
+    load(explainerId)
+  }
+
+  override def removeTagFromExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
+    explainerDB.load(explainerId).map(CsAtom.atomToCsAtom).map{ csatom =>
+      val newCsAtom: CsAtom = csatom.copy(
+        data = csatom.data.copy(
+          tags = csatom.data.tags.flatMap{ list =>
+            val newlist = (list diff List(tagId)).sorted
+            if(newlist.isEmpty){ None }else{ Some(newlist) }
+          }
+        )
+      )
+      explainerDB.store(CsAtom.csAtomToAtom(newCsAtom))
+      explainerStore.updateLastModified(explainerId, user)
+    }
+    load(explainerId)
   }
 
 }

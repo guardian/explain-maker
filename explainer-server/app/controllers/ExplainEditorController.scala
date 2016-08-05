@@ -10,6 +10,7 @@ import db.ExplainerDB
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import play.api.Logger
+import play.api.libs.json.Json
 import services.PublicSettingsService
 import shared._
 import shared.util.ExplainerAtomImplicits
@@ -19,9 +20,11 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
   val pandaAuthenticated = new PandaAuthenticated(config)
   val explainerDB = new ExplainerDB(config)
 
-
   def get(id: String) = pandaAuthenticated { implicit request =>
-    Ok(views.html.explainEditor(id,request.user))
+    val viewConfig = Json.obj(
+      "CAPI_API_KEY" -> config.capiKey
+    )
+    Ok(views.html.explainEditor(id,request.user,viewConfig))
   }
 
   def all = pandaAuthenticated.async{ implicit request =>
