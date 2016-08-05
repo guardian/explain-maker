@@ -20,7 +20,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
 
   val explainerDB = new ExplainerDB(config)
 
-  def buildAtomWithDefaults(id: String, explainerAtom: ExplainerAtom, contentChangeDetails: ContentChangeDetails, user: PandaUser): Atom = {
+  def buildAtomWithDefaults(id: String, explainerAtom: ExplainerAtom, contentChangeDetails: ContentChangeDetails): Atom = {
     Atom(
       id = id,
       atomType = AtomType.Explainer,
@@ -57,17 +57,19 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     assert(allowed_fields.contains(fieldSymbol.name))
     explainerDB.load(id).map{ explainer =>
       val newExplainerAtom = fieldSymbol.name match {
-        case "title" => ExplainerAtom(value, explainer.tdata.body, explainer.tdata.displayType, explainer.tdata.tags)
-        case "body" => ExplainerAtom(explainer.tdata.title, value, explainer.tdata.displayType, explainer.tdata.tags)
+        case "title" => explainer.tdata.copy( title = value )
+        case "body" => explainer.tdata.copy( body = value )
         case "displayType" => {
           value match {
-            case "Expandable" => ExplainerAtom(explainer.tdata.title, explainer.tdata.body, DisplayType.Expandable, explainer.tdata.tags)
-            case "Flat" => ExplainerAtom(explainer.tdata.title, explainer.tdata.body, DisplayType.Flat, explainer.tdata.tags)
+            case "Expandable" => explainer.tdata.copy( displayType = DisplayType.Expandable )
+            case "Flat" => explainer.tdata.copy( displayType = DisplayType.Flat )
           }
         }
       }
-      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), false, true, false)
-      val updatedExplainer = buildAtomWithDefaults(explainer.id, newExplainerAtom, contentChangeDetails, user)
+      val updatedExplainer = explainer.copy(
+        data = AtomData.Explainer(newExplainerAtom),
+        contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = true, updatePublished = false)
+      )
       explainerDB.store(updatedExplainer)
       updatedExplainer
     }
@@ -75,8 +77,8 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
 
   def updateLastModified(id: String, user: PandaUser): Future[Atom] = {
     explainerDB.load(id).map{ explainer =>
-      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), false, true, false)
-      val updatedExplainer = buildAtomWithDefaults(explainer.id, explainer.tdata , contentChangeDetails, user)
+      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = true, updatePublished = false)
+      val updatedExplainer = buildAtomWithDefaults(explainer.id, explainer.tdata , contentChangeDetails)
       explainerDB.store(updatedExplainer)
       updatedExplainer
     }
@@ -85,16 +87,16 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
   def create(user: PandaUser): Future[Atom] = {
     val uuid = java.util.UUID.randomUUID.toString
     val explainerAtom = ExplainerAtom("", "", DisplayType.Expandable)
-    val contentChangeDetails = contentChangeDetailsBuilder(user, None, true, true, false)
-    val explainer = buildAtomWithDefaults(uuid, explainerAtom, contentChangeDetails, user)
+    val contentChangeDetails = contentChangeDetailsBuilder(user, None, updateCreated = true, updateLastModified = true, updatePublished = false)
+    val explainer = buildAtomWithDefaults(uuid, explainerAtom, contentChangeDetails)
     explainerDB.store(explainer)
     Future(explainer)
   }
 
   def publish(id: String, user: PandaUser): Future[Atom] = {
     explainerDB.load(id).map{ explainer =>
-      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), false, false, true)
-      val updatedExplainer = buildAtomWithDefaults(explainer.id, explainer.tdata, contentChangeDetails, user)
+      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = false, updatePublished = true)
+      val updatedExplainer = buildAtomWithDefaults(explainer.id, explainer.tdata, contentChangeDetails)
       explainerDB.store(updatedExplainer)
       updatedExplainer
     }
