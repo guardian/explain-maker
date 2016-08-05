@@ -65,10 +65,13 @@ function readValueAtDiv(id){
 function initiateEditor(){
     tinymce.init({
         selector:'#explainer-input-text-area',
+        plugins: [
+            'link'
+        ],
         menu: {
             table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'}
         },
-        toolbar: 'undo redo | styleselect | bold italic underline bullist, numlist',
+        toolbar: 'undo redo | styleselect | bold italic underline bullist, numlist link',
         setup:function(ed) {
             ed.on('change', function(e) {
                 var bodyString = ed.getContent();
