@@ -35,6 +35,7 @@
         </div>
     </header>
 }
+
 @templates.main("Explainers", header, toolbar){
     <div id="dashboard">
         <div id="dashboard__title"><h2>Explainers</h2></div>
@@ -48,7 +49,11 @@
             <div id="dashboard__body__listing">
             @for(e <- explainers) {
                 <div class="dashboard__body__listing__item">
-                    <div class="title"><a href="/explain/@e.id">@ExplainerAtomImplicits.AtomWithData(e).tdata.title</a></div>
+                    <div class="title"><a href="/explain/@e.id">@{if(ExplainerAtomImplicits.AtomWithData(e).tdata.title.trim.length>0){
+                        ExplainerAtomImplicits.AtomWithData(e).tdata.title
+                    }else{
+                        "untitled"
+                    }}</a></div>
                     <div class="last_modified">@{
                         val time:Long = e.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
                         val datetime = new DateTime(time)
