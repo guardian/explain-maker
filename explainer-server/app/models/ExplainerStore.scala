@@ -57,12 +57,12 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     assert(allowed_fields.contains(fieldSymbol.name))
     explainerDB.load(id).map{ explainer =>
       val newExplainerAtom = fieldSymbol.name match {
-        case "title" => ExplainerAtom(value, explainer.tdata.body, explainer.tdata.displayType)
-        case "body" => ExplainerAtom(explainer.tdata.title, value, explainer.tdata.displayType)
+        case "title" => ExplainerAtom(value, explainer.tdata.body, explainer.tdata.displayType, explainer.tdata.tags)
+        case "body" => ExplainerAtom(explainer.tdata.title, value, explainer.tdata.displayType, explainer.tdata.tags)
         case "displayType" => {
           value match {
-            case "Expandable" => ExplainerAtom(explainer.tdata.title, explainer.tdata.body, DisplayType.Expandable)
-            case "Flat" => ExplainerAtom(explainer.tdata.title, explainer.tdata.body, DisplayType.Flat)
+            case "Expandable" => ExplainerAtom(explainer.tdata.title, explainer.tdata.body, DisplayType.Expandable, explainer.tdata.tags)
+            case "Flat" => ExplainerAtom(explainer.tdata.title, explainer.tdata.body, DisplayType.Flat, explainer.tdata.tags)
           }
         }
       }
