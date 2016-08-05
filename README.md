@@ -25,6 +25,7 @@ DEV {
       elk  = "<elk kinesis stream - only needed if elk publishing enabled"
     }
   }
+  capi.key = "CAPI-API-KEY"
 }
 enable.kinesis.publishing=false
 enable.elk.logging=false
