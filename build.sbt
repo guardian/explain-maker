@@ -1,13 +1,16 @@
+import com.gu.riffraff.artifact.RiffRaffArtifact.autoImport._
 import sbt.Project.projectToRef
 import com.typesafe.sbt.packager.archetypes.ServerLoader.Systemd
+import play.sbt.PlayImport.PlayKeys._
 
-lazy val clients = Seq(explainerClient)
+
+lazy val clients = Seq(explainMakerClient)
 lazy val scalaV = "2.11.8"
 def env(key: String): Option[String] = Option(System.getenv(key))
 
 lazy val awsVersion = "1.10.77"
 
-lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
+lazy val explainMakerServer = (project in file("explainer-server")).enablePlugins(
   PlayScala,
   BuildInfoPlugin,
   RiffRaffArtifact,
@@ -48,19 +51,18 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
     "-J-XX:InitialRAMFraction=2",
     "-J-XX:MaxMetaspaceSize=500m",
     "-J-XX:+PrintGCDetails",
-    "-J-XX:+PrintGCDateStamps",
-    s"-J-Xloggc:/var/log/${name.value}/gc.log"
+    "-J-XX:+PrintGCDateStamps"
   ),
-  maintainer := "Membership Discovery <membership.dev@theguardian.com>",
-  packageSummary := "Explainer tool",
-  packageDescription := """Editor tool to create and update the Explainer 'atoms'""",
-  riffRaffPackageName := "explain-maker",
-  riffRaffPackageType := (packageBin in Debian).value,
+  maintainer := "Digital CMS Team <digitalcms.dev@guardian.co.uk>",
+  name := "explain-maker",
+  packageSummary := "Explain maker tool",
+  packageName in Universal := normalizedName.value,
+  packageDescription := """Editor tool to create and update explainer 'atoms'""",
+  riffRaffPackageType := (packageZipTarball in config("universal")).value,
   riffRaffUploadArtifactBucket := Option("riffraff-artifact"),
   riffRaffUploadManifestBucket := Option("riffraff-builds"),
-  riffRaffManifestProjectName := "editorial-tools:explainer",
-  riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("unknown_branch"),
   riffRaffBuildIdentifier := env("BUILD_NUMBER").getOrElse("DEV"),
+  riffRaffManifestBranch := env("BRANCH_NAME").getOrElse("unknown_branch"),
   riffRaffManifestVcsUrl  := "git@github.com:guardian/explain-maker.git",
   buildInfoKeys := Seq[BuildInfoKey](
     name,
@@ -74,9 +76,9 @@ lazy val explainerServer = (project in file("explainer-server")).enablePlugins(
   ),
   buildInfoPackage := "app"
 ).aggregate(clients.map(projectToRef): _*).
-  dependsOn(explainerSharedJvm)
+  dependsOn(explainMakerSharedJvm)
 
-lazy val explainerClient = (project in file("explainer-client")).settings(
+lazy val explainMakerClient = (project in file("explainer-client")).settings(
   scalaVersion := scalaV,
   persistLauncher := true,
   persistLauncher in Test := false,
@@ -89,18 +91,18 @@ lazy val explainerClient = (project in file("explainer-client")).settings(
     "com.lihaoyi" %%% "upickle" % "0.4.1"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay)
-  .dependsOn(explainerSharedJs)
+  .dependsOn(explainMakerSharedJs)
 
-lazy val explainerShared = (crossProject.crossType(CrossType.Pure) in file("explainer-shared")).
+lazy val explainMakerShared = (crossProject.crossType(CrossType.Pure) in file("explainer-shared")).
   settings(scalaVersion := scalaV,
     libraryDependencies ++= Seq(
       "com.gu" %% "content-atom-model" % "2.4.2"
     ))
     .jsConfigure(_ enablePlugins ScalaJSPlay)
 
-lazy val explainerSharedJvm = explainerShared.jvm
-lazy val explainerSharedJs = explainerShared.js
+lazy val explainMakerSharedJvm = explainMakerShared.jvm
+lazy val explainMakerSharedJs = explainMakerShared.js
 
 // loads the jvm project at sbt startup
-onLoad in Global := (Command.process("project explainerServer", _: State)) compose (onLoad in Global).value
+onLoad in Global := (Command.process("project explainMakerServer", _: State)) compose (onLoad in Global).value
 
