@@ -22,7 +22,7 @@ object ExplainEditorJSDomBuilders {
     }).getOrElse(true)
 
     val status = if(isDraftState){
-      "Draft State"
+      "Draft"
     }else{
       ""
     }

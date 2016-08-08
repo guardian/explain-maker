@@ -21,19 +21,20 @@
             <ul class="links">
             </ul>
         </div>
-        <div class="top-toolbar__status-bar-wrapper">
-            <div class="top-toolbar__status-bar-inner"></div>
+        <div class="top-toolbar__item">
+            <div class="top-toolbar__item-inner">
+                <p class="label label--info content-status"></p>
+            </div>
         </div>
-        <div class="top-toolbar__word-count-wrapper" class="top-toolbar__right-align">
-            word count:&nbsp;<span class="top-toolbar__word-count-wrapper__count"></span>
-            <span class="top-toolbar__word-count-wrapper__warning-outer">
-                |
-                <span class="top-toolbar__word-count-wrapper__warning-inner">over max word count</span>
-            </span>
+        <div class="top-toolbar__item">
+            <p class="top-toolbar__item-inner word-count">
+                word count: <span class="word-count__number"></span>
+                <span class="word-count__message">Max word count exceeded</span>
+            </p>
         </div>
-        <div class="top-toolbar__right-align">
-            <div class="top-toolbar__user top-toolbar__item">
-                <span class="user__name">@{user.user.firstName} @{user.user.lastName}</span>
+        <div class="top-toolbar__item">
+            <div class="top-toolbar__item-inner user">
+                <p class="user__name">@{user.user.firstName} @{user.user.lastName}</p>
             </div>
         </div>
     </header>

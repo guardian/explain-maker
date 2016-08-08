@@ -3,9 +3,9 @@
 /* Generic Elements                       */
 /* -------------------------------------- */
 
-body, p {
+body{
     font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    line-height: 1.4em;
+    line-height: 1.4;
     background: #F5F5F5;
     color: #4d4d4d;
 
@@ -25,6 +25,10 @@ hr {
 
 ul, li {
     list-style: none;
+}
+
+p {
+    margin: 0;
 }
 
 .hidden {

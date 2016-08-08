@@ -82,6 +82,7 @@ body {
   background-color: #dee2e3;
   z-index: 2;
   line-height: 50px;
+  align-items: stretch;
 }
 
 .top-toolbar__title {
@@ -195,39 +196,22 @@ body {
   height: 16px;
 }
 
-.top-toolbar__right-align {
-  margin-left: auto;
+.top-toolbar__item {
+  border-left: 1px solid #bdbdbd;
+  padding: 0 15px;
+  font-size: 12px;
+  font-weight: bold;
   display: flex;
+  align-items: center;
 }
 
-.top-toolbar__item, .top-toolbar__item--disabled, .top-toolbar__item--highlight, .top-toolbar__item--btn {
-  position: relative;
-  padding: 0 15px;
-  line-height: 50px;
-  text-decoration: none;
-  color: #333333;
+.label {
+  padding: 7px 10px;
+  border-radius: 25px;
+  text-align: center;
+  text-transform: uppercase;
 }
 
-.top-toolbar__right-align .top-toolbar__user {
-  border-left: 1px solid #bdbdbd;
-}
-
-.top-toolbar__word-count-wrapper {
-  border-left: 1px solid #bdbdbd;
-  padding: 0 15px
-}
-
-.top-toolbar__word-count-wrapper__count {
-  font-weight:bold;
-}
-
-.top-toolbar__status-bar-wrapper {
-
-}
-
-.top-toolbar__status-bar-inner {
-  border-left: 1px solid #bdbdbd;
-  padding: 0 15px;
-  color:red;
-  font-family: "GuardianTitlepieceWeb", Georgia, serif;
+.label--warning {
+  background: #ffbc01;
 }
