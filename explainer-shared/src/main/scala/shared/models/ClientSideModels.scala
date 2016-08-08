@@ -1,7 +1,7 @@
 package shared.models
 
 import com.gu.contentatom.thrift._
-import contentatom.explainer.{DisplayType, ExplainerAtom}
+import com.gu.contentatom.thrift.atom.explainer.{DisplayType, ExplainerAtom}
 import shared.util.ExplainerAtomImplicits
 
 case class CsExplainerAtom(title: String, body: String, displayType: String, tags: Option[List[String]])
