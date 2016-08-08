@@ -2,18 +2,17 @@ package models
 
 import com.gu.contentatom.thrift._
 import com.gu.scanamo.{Table, _}
-import contentatom.explainer.{DisplayType, ExplainerAtom}
 import db.ExplainerDB
 import shared._
 import javax.inject.Inject
 
+import com.gu.contentatom.thrift.atom.explainer.{DisplayType, ExplainerAtom}
 import config.Config
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import org.joda.time.DateTime
 import shared.util.ExplainerAtomImplicits
-
 import com.gu.pandomainauth.model.{User => PandaUser}
 
 class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  {
