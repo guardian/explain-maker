@@ -63,7 +63,7 @@ object ExplainEditorJSDomBuilders {
     )
   }
 
-  def xxxxx( queryFragment: String, divIdentifier: String, userInterfaceTagDescriptionKey: String ) = {
+  def capiXMLHttpRequest( queryFragment: String, divIdentifier: String, userInterfaceTagDescriptionKey: String ) = {
     val xhr = new dom.XMLHttpRequest()
     xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+""+queryFragment+"")
     xhr.onload = (e: dom.Event) => {
@@ -84,7 +84,7 @@ object ExplainEditorJSDomBuilders {
     val tagsSearchInputTag = tagsSearchInput().render
     tagsSearchInputTag.oninput = (x: Event) => {
       val searchString: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
-      xxxxx("&q="+g.encodeURIComponent(searchString), "explainer-editor__tags__suggestions", "id")
+      capiXMLHttpRequest("&q="+g.encodeURIComponent(searchString), "explainer-editor__tags__suggestions", "id")
     }
     renderTaggingArea(explainer, "explainer-editor__tags__suggestions", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
 
@@ -99,7 +99,7 @@ object ExplainEditorJSDomBuilders {
     )
     val tagsSearchInputTag = tagsSearchInput().render
     tagsSearchInputTag.onclick = (x: Event) => {
-      xxxxx("&type=tracking&page-size=1000", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
+      capiXMLHttpRequest("&type=tracking&page-size=1000", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
     }
     renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
 
