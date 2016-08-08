@@ -10,6 +10,7 @@ import shared.models.{CsAtom, ExplainerUpdate}
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+import scalatags.JsDom
 
 object ExplainEditorJSDomBuilders {
 
@@ -43,6 +44,25 @@ object ExplainEditorJSDomBuilders {
     }
   }
 
+  def renderTaggingArea(explainer:CsAtom, suggestionsDomId: String, inputTag: JsDom.Modifier, explainerToDivFilterLambda: String => Boolean) ={
+    div()(
+      div(id:="explainer-editor__tags__input-field-wrapper")(
+        div(cls:="form-group")(
+          div("")(
+            label(cls:="form-group")("Tags")
+          ),
+          div("")(
+            inputTag
+          )
+        )
+      ),
+      div(id:=suggestionsDomId, cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
+      div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
+        explainerToDivTags(explainer, explainerToDivFilterLambda)
+      )
+    )
+  }
+
   def makeTagArea(explainer: CsAtom) = {
 
     val tagsSearchInput: TypedTag[Input] = input(
@@ -67,22 +87,7 @@ object ExplainEditorJSDomBuilders {
 
     }
 
-    div()(
-      div(id:="explainer-editor__tags__input-field-wrapper")(
-        div(cls:="form-group")(
-          div("")(
-            label(cls:="form-group")("Tags")
-          ),
-          div("")(
-            tagsSearchInputTag
-          )
-        )
-      ),
-      div(id:="explainer-editor__tags__suggestions", cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
-      div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
-        explainerToDivTags(explainer, { tagId => !tagId.startsWith("tracking") })
-      )
-    )
+    renderTaggingArea(explainer, "explainer-editor__tags__suggestions", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
 
   }
 
@@ -109,22 +114,7 @@ object ExplainEditorJSDomBuilders {
 
     }
 
-    div()(
-      div(id:="explainer-editor__commissioning-desk-tags__input-field-wrapper")(
-        div(cls:="form-group")(
-          div("")(
-            label(cls:="form-group")("Commissioning Desks")
-          ),
-          div("")(
-            tagsSearchInputTag
-          )
-        )
-      ),
-      div(id:="explainer-editor__commissioning-desk-tags__suggestions", cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
-      div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
-        explainerToDivTags(explainer, { tagId => tagId.startsWith("tracking") })
-      )
-    )
+    renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
 
   }
 
