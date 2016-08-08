@@ -30,20 +30,20 @@ object ExplainEditorJSDomBuilders {
     status
   }
 
-  def makeTagArea(explainer: CsAtom) = {
-
-    def explainerToDivTags(explainer:CsAtom) = {
-      explainer.data.tags match {
-        case None => List()
-        case Some(list) => list.filter( tagId => !tagId.startsWith("tracking") ).map(tagId => div(cls:="explainer-editor__tags-common__existing-tag")(
-          span(
-            cls:="explainer-editor__tags-common__tag-delete-icon",
-            data("explainer-id"):=explainer.id,
-            data("tag-id"):=tagId
-          )("[x]")," ",tagId
-        ))
-      }
+  def explainerToDivTags(explainer:CsAtom, filterLambda: String => Boolean) = {
+    explainer.data.tags match {
+      case None => List()
+      case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => div(cls:="explainer-editor__tags-common__existing-tag")(
+        span(
+          cls:="explainer-editor__tags-common__tag-delete-icon",
+          data("explainer-id"):=explainer.id,
+          data("tag-id"):=tagId
+        )("[x]")," ",tagId
+      ))
     }
+  }
+
+  def makeTagArea(explainer: CsAtom) = {
 
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
@@ -80,26 +80,13 @@ object ExplainEditorJSDomBuilders {
       ),
       div(id:="explainer-editor__tags__suggestions", cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
       div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
-        explainerToDivTags(explainer)
+        explainerToDivTags(explainer, { tagId => !tagId.startsWith("tracking") })
       )
     )
 
   }
 
   def makeCommissioningDeskArea(explainer: CsAtom) = {
-
-    def explainerToDivTags(explainer:CsAtom) = {
-      explainer.data.tags match {
-        case None => List()
-        case Some(list) => list.filter( tagId => tagId.startsWith("tracking") ).map(tagId => div(cls:="explainer-editor__tags-common__existing-tag")(
-          span(
-            cls:="explainer-editor__tags-common__tag-delete-icon",
-            data("explainer-id"):=explainer.id,
-            data("tag-id"):=tagId
-          )("[x]")," ",tagId
-        ))
-      }
-    }
 
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__commissioning-desk-tags__tag-search-input-field",
@@ -135,7 +122,7 @@ object ExplainEditorJSDomBuilders {
       ),
       div(id:="explainer-editor__commissioning-desk-tags__suggestions", cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
       div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
-        explainerToDivTags(explainer)
+        explainerToDivTags(explainer, { tagId => tagId.startsWith("tracking") })
       )
     )
 
