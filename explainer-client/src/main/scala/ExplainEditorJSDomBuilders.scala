@@ -12,6 +12,7 @@ import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object ExplainEditorJSDomBuilders {
+
   def statusBarText(explainer: CsAtom) = {
 
     val isDraftState = (for {
@@ -28,23 +29,25 @@ object ExplainEditorJSDomBuilders {
     }
     status
   }
-  def explainerToDivTags(explainer:CsAtom) = {
-    explainer.data.tags match {
-      case None => List()
-      case Some(list) => list.map(tagId => div(cls:="explainer-editor__tags__existing-tags__tag")(
-        span(
-          cls:="explainer-editor__tags__existing-tags__tag-delete-icon",
-          data("explainer-id"):=explainer.id,
-          data("tag-id"):=tagId
-        )("[x]")," ",tagId
-      ))
-    }
-  }
+
   def makeTagArea(explainer: CsAtom) = {
+
+    def explainerToDivTags(explainer:CsAtom) = {
+      explainer.data.tags match {
+        case None => List()
+        case Some(list) => list.filter( tagId => !tagId.startsWith("tracking") ).map(tagId => div(cls:="explainer-editor__tags-common__existing-tag")(
+          span(
+            cls:="explainer-editor__tags-common__tag-delete-icon",
+            data("explainer-id"):=explainer.id,
+            data("tag-id"):=tagId
+          )("[x]")," ",tagId
+        ))
+      }
+    }
 
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
-      cls:="explainer-editor__tags__tag-search-input-field",
+      cls:="explainer-editor__tags-common__search-input-field",
       placeholder:="tag search"
     )
 
@@ -56,8 +59,8 @@ object ExplainEditorJSDomBuilders {
       xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+"&q="+g.encodeURIComponent(searchString))
       xhr.onload = (e: dom.Event) => {
         if (xhr.status == 200) {
-          g.jQuery(".explainer-editor__tags__suggestions").empty()
-          g.processCapiSearchResponse(js.JSON.parse(xhr.responseText).response)
+          g.jQuery(".explainer-editor__tags-common__suggestions-wrapper").empty()
+          g.processCapiSearchResponseGenericTags("explainer-editor__tags__suggestions",js.JSON.parse(xhr.responseText).response)
         }
       }
       xhr.send()
@@ -75,9 +78,64 @@ object ExplainEditorJSDomBuilders {
           )
         )
       ),
-      div(cls:="explainer-editor__tags__suggestions", id:="explainer-editor__tags__suggestions")(""),
-      div(cls:="explainer-editor__tags__existing-tags")(
-        ExplainEditorJSDomBuilders.explainerToDivTags(explainer)
+      div(id:="explainer-editor__tags__suggestions", cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
+      div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
+        explainerToDivTags(explainer)
+      )
+    )
+
+  }
+
+  def makeCommissioningDeskArea(explainer: CsAtom) = {
+
+    def explainerToDivTags(explainer:CsAtom) = {
+      explainer.data.tags match {
+        case None => List()
+        case Some(list) => list.filter( tagId => tagId.startsWith("tracking") ).map(tagId => div(cls:="explainer-editor__tags-common__existing-tag")(
+          span(
+            cls:="explainer-editor__tags-common__tag-delete-icon",
+            data("explainer-id"):=explainer.id,
+            data("tag-id"):=tagId
+          )("[x]")," ",tagId
+        ))
+      }
+    }
+
+    val tagsSearchInput: TypedTag[Input] = input(
+      id:="explainer-editor__commissioning-desk-tags__tag-search-input-field",
+      cls:="explainer-editor__tags-common__search-input-field",
+      value:="Add a commissioning desk",
+      `type`:="button"
+    )
+
+    val tagsSearchInputTag = tagsSearchInput().render
+    tagsSearchInputTag.onclick = (x: Event) => {
+      val xhr = new dom.XMLHttpRequest()
+      xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+"&type=tracking&page-size=1000")
+      xhr.onload = (e: dom.Event) => {
+        if (xhr.status == 200) {
+          g.jQuery(".explainer-editor__tags-common__suggestions-wrapper").empty()
+          g.processCapiSearchResponseCommissioningDesk("explainer-editor__commissioning-desk-tags__suggestions",js.JSON.parse(xhr.responseText).response)
+        }
+      }
+      xhr.send()
+
+    }
+
+    div()(
+      div(id:="explainer-editor__commissioning-desk-tags__input-field-wrapper")(
+        div(cls:="form-group")(
+          div("")(
+            label(cls:="form-group")("Commissioning Desks")
+          ),
+          div("")(
+            tagsSearchInputTag
+          )
+        )
+      ),
+      div(id:="explainer-editor__commissioning-desk-tags__suggestions", cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
+      div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
+        explainerToDivTags(explainer)
       )
     )
 
@@ -154,8 +212,17 @@ object ExplainEditorJSDomBuilders {
         div(id:="explainer-editor__title-wrapper")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"title",titleTag)
         ),
-        div(id:="explainer-editor__tags-wrapper")(
-          ExplainEditorJSDomBuilders.makeTagArea(explainer)
+        div(cls:="row")(
+          div(cls:="col-md-6")(
+            div(id:="explainer-editor__commissioning-desk-tags-wrapper")(
+              ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
+            )
+          ),
+          div(cls:="col-md-6")(
+            div(id:="explainer-editor__tags-wrapper")(
+              ExplainEditorJSDomBuilders.makeTagArea(explainer)
+            )
+          )
         ),
         div(id:="explainer-editor__body-wrapper")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",bodyTag)

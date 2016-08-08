@@ -52,10 +52,15 @@ object ExplainEditorJS {
     Model.extractExplainer(explainerId).map( explainer => ExplainEditorJSDomBuilders.makeTagArea(explainer).render.outerHTML )
   }
 
-  def redisplayExplainerTagManagement(explainerId: String) = {
+  def redisplayExplainerTagManagementAreas(explainerId: String) = {
     Model.extractExplainer(explainerId).map{ explainer =>
+
+      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").innerHTML = ""
+      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer).render)
+
       dom.document.getElementById("explainer-editor__tags-wrapper").innerHTML = ""
       dom.document.getElementById("explainer-editor__tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeTagArea(explainer).render)
+
     }
   }
 
@@ -78,25 +83,25 @@ object ExplainEditorJS {
 
   @JSExport
   def addTagToExplainer(explainerId: String, tagId: String) = {
-    Model.addTagToExplainer(explainerId, tagId).map( explainer =>
-      redisplayExplainerTagManagement(explainer.id)
-    )
+    Model.addTagToExplainer(explainerId, tagId).map { explainer =>
+      redisplayExplainerTagManagementAreas(explainer.id)
+    }
   }
 
   @JSExport
   def removeTagFromExplainer(explainerId: String, tagId: String) = {
-    Model.removeTagFromExplainer(explainerId, tagId).map( explainer =>
-      redisplayExplainerTagManagement(explainer.id)
-    )
+    Model.removeTagFromExplainer(explainerId, tagId).map { explainer =>
+      redisplayExplainerTagManagementAreas(explainer.id)
+    }
   }
 
   @JSExport
-  def addTagToSuggestionSet(explainerId: String, tagId: String) = {
-    val node = div(cls:="explainer-editor__tag-suggestion__item")(tagId).render
+  def addTagToSuggestionSet(explainerId: String, divIdentifier: String, tagId: String, userInterfaceDescription: String) = {
+    val node = div(cls:="explainer-editor__tags-common__suggestion-item")(userInterfaceDescription).render
     node.onclick = (x: Event) => {
       addTagToExplainer(explainerId, tagId)
     }
-    dom.document.getElementById("explainer-editor__tags__suggestions").appendChild(node)
+    dom.document.getElementById(divIdentifier).appendChild(node)
   }
 
 }
