@@ -1,0 +1,16 @@
+{
+  "name": "explainer-server",
+  "version": "1.0.0",
+  "description": "Explain maker front end",
+  "scripts": {
+    "watch": "node-sass --watch public/stylesheets/main.scss public/stylesheets/main.css",
+    "build": "node-sass public/stylesheets/main.scss public/stylesheets/main.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guardian/explain-maker/"
+  },
+  "devDependencies": {
+    "node-sass": "3.8.0"
+  }
+}
