@@ -5,7 +5,8 @@
 
 /// Regular font family
 /// @type List
-$text-font-stack: 'Helvetica Neue', Helvetica, Arial, sans-serif !default;
+$text-font-stack: 'Guardian Agate Sans', Arial, sans-serif !default;
+$title-font-stack: 'Guardian Egyptian Text', Georgia, serif;
 
 /// Copy text color
 /// @type Color
@@ -22,15 +23,15 @@ $brand-color-light: #BB3A7F !default;
 
 /// Light grey
 /// @type Color
-$light-grey: #dee2e3 !default;
+$light-grey: #F5F5F5 !default;
 
 /// Medium grey
 /// @type Color
-$mid-grey: #bdbdbd !default;
+$mid-grey: #dee2e3 !default;
 
 /// Dark grey
 /// @type Color
-$dark-grey: rgb(68, 68, 68) !default;
+$dark-grey: #bdbdbd !default;
 
 
 
