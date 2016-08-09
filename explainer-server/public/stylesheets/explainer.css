@@ -250,6 +250,7 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
 
 .explainer-editor__tags-common__search-input-field {
     width:300px;
+    margin-right:50px;
 }
 
 .explainer-editor__tags-common__suggestions-wrapper {
