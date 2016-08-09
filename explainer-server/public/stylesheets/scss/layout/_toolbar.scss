@@ -10,7 +10,7 @@ $toolbarHeight: 50px;
   left: 0;
   width: 100%;
   height: $toolbarHeight;
-  background-color: $light-grey;
+  background-color: $mid-grey;
   display: flex;
   justify-content: space-between;
 }
@@ -78,7 +78,7 @@ $toolbarHeight: 50px;
   align-items: stretch;
 
   &:not(:last-child) {
-    border-right: 1px solid $mid-grey;
+    border-right: 1px solid $dark-grey;
   }
 }
 
@@ -90,7 +90,7 @@ $toolbarHeight: 50px;
   align-items: center;
 
   &:not(:last-child) {
-    border-right: 1px solid $mid-grey;
+    border-right: 1px solid $dark-grey;
   }
 
   &--no-spacing {

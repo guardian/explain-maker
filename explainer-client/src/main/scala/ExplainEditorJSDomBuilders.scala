@@ -135,7 +135,7 @@ object ExplainEditorJSDomBuilders {
 
     val publishButton = button(
       id:="explainer-editor__ops-wrapper__publish-button",
-      cls:="btn",
+      cls:="btn right",
       `type`:="button"
     )("Publish").render
     publishButton.onclick = (x: Event) => {
@@ -164,10 +164,10 @@ object ExplainEditorJSDomBuilders {
     }
 
     div(id:="explainer-editor")(
-      div(id:="explainer-editor__ops-wrapper")(
-        publishButton
-      ),
-      hr,
+      div(
+        id:="explainer-editor__ops-wrapper",
+        cls:="section clearfix"
+      )(publishButton),
       div(cls:="explainer-editor__displayType-wrapper")(
         div(cls:="explainer-editor__displayType-inner")(
           checkboxTag, " Expandable explainer"
@@ -178,10 +178,14 @@ object ExplainEditorJSDomBuilders {
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"title",titleTag)
         ),
         div(cls:="explainer-editor__tag-management-wrapper")(
-          div(id:="explainer-editor__commissioning-desk-tags-wrapper")(
+          div(
+            id:="explainer-editor__commissioning-desk-tags-wrapper",
+            cls:="column")(
             ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
           ),
-          div(id:="explainer-editor__tags-wrapper")(
+          div(
+            id:="explainer-editor__tags-wrapper",
+            cls:="column")(
             ExplainEditorJSDomBuilders.makeTagArea(explainer)
           )
         ),

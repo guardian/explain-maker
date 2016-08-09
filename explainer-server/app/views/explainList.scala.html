@@ -5,9 +5,6 @@
 
 @(explainers: Seq[Atom], user: com.gu.pandomainauth.model.AuthenticatedUser)(implicit request: RequestHeader)
 
-@header = {
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
-}
 @toolbar = {
     <header class="top-toolbar">
         <div class="top-toolbar__container">
@@ -35,7 +32,7 @@
     </header>
 }
 
-@templates.main("Explainers", header, toolbar){
+@templates.main("Explainers", toolbar){
     <div id="dashboard">
         <div id="dashboard__title"><h2>Explainers</h2></div>
         <div id="dashboard__body">

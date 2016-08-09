@@ -1,7 +1,6 @@
 @(id: String, user: com.gu.pandomainauth.model.AuthenticatedUser, config: play.api.libs.json.JsObject)(implicit request: RequestHeader)
 
 @header = {
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
     <script type="text/javascript">
         CONFIG = @Html(config.toString);
         EXPLAINER_IDENTIFIER = "@id"
