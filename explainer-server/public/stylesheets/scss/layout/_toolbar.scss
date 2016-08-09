@@ -24,7 +24,7 @@ $toolbarHeight: 50px;
 }
 
 .top-toolbar__title__hover-state {
-  font-family: "GuardianTitlepieceWeb", Georgia, serif;
+  font-family: $title-font-stack;
   visibility: hidden;
   position: absolute;
   left: 0;
@@ -33,6 +33,7 @@ $toolbarHeight: 50px;
   height: 100%;
   background-color: $text-color;
   color: $text-contrast;
+  padding: 5px;
 }
 
 .top-toolbar__title:hover .top-toolbar__title__hover-state {
