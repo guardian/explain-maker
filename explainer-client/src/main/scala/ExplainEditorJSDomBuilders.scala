@@ -84,7 +84,7 @@ object ExplainEditorJSDomBuilders {
     val tagsSearchInputTag = tagsSearchInput().render
     tagsSearchInputTag.oninput = (x: Event) => {
       val searchString: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
-      capiXMLHttpRequest("&q="+g.encodeURIComponent(searchString), "explainer-editor__tags__suggestions", "id")
+      capiXMLHttpRequest("&type=keyword&q="+g.encodeURIComponent(searchString), "explainer-editor__tags__suggestions", "id")
     }
     renderTaggingArea(explainer, "explainer-editor__tags__suggestions", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
 
