@@ -1,0 +1,25 @@
+// -----------------------------------------------------------------------------
+// This file contains tags.
+// -----------------------------------------------------------------------------
+
+.tag {
+  padding: 5px 30px 5px 5px;
+  background: $mid-grey;
+  cursor: pointer;
+  font-size: 14px;
+  position: relative;
+  overflow: hidden;
+
+  &:not(:last-child) {
+    margin-bottom: 1px;
+  }
+}
+
+.tag__delete {
+  text-indent: -9999px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 20px;
+  background: red;
+}

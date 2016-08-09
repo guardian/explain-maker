@@ -34,12 +34,13 @@ object ExplainEditorJSDomBuilders {
   def explainerToDivTags(explainer:CsAtom, filterLambda: String => Boolean) = {
     explainer.data.tags match {
       case None => List()
-      case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => div(cls:="explainer-editor__tags-common__existing-tag")(
-        span(
-          cls:="explainer-editor__tags-common__tag-delete-icon",
+      case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => div(cls:="tag")(
+        " ",tagId,button(
+          cls:="tag__delete",
+          `type`:="button",
           data("explainer-id"):=explainer.id,
           data("tag-id"):=tagId
-        )("[x]")," ",tagId
+        )("Delete")
       ))
     }
   }
@@ -56,8 +57,8 @@ object ExplainEditorJSDomBuilders {
           )
         )
       ),
-      div(id:=suggestionsDomId, cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
-      div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
+      div(id:=suggestionsDomId, cls:="tag__suggestions")(""),
+      div(cls:="tags")(
         explainerToDivTags(explainer, explainerToDivFilterLambda)
       )
     )
@@ -68,7 +69,7 @@ object ExplainEditorJSDomBuilders {
     xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+""+queryFragment+"")
     xhr.onload = (e: dom.Event) => {
       if (xhr.status == 200) {
-        g.jQuery(".explainer-editor__tags-common__suggestions-wrapper").empty()
+        g.jQuery(".tag__suggestions").empty()
         g.processCapiSearchResponseTags(divIdentifier,js.JSON.parse(xhr.responseText).response,tagFieldToDisplay)
       }
     }
@@ -177,6 +178,9 @@ object ExplainEditorJSDomBuilders {
         div(id:="explainer-editor__title-wrapper")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"title",titleTag)
         ),
+        div(id:="explainer-editor__body-wrapper")(
+          ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",bodyTag)
+        ),
         div(cls:="explainer-editor__tag-management-wrapper")(
           div(
             id:="explainer-editor__commissioning-desk-tags-wrapper",
@@ -188,9 +192,6 @@ object ExplainEditorJSDomBuilders {
             cls:="column")(
             ExplainEditorJSDomBuilders.makeTagArea(explainer)
           )
-        ),
-        div(id:="explainer-editor__body-wrapper")(
-          ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",bodyTag)
         )
       )
     )
