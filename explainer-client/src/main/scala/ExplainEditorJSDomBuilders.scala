@@ -102,7 +102,6 @@ object ExplainEditorJSDomBuilders {
       capiXMLHttpRequest("&type=tracking&page-size=200", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
     }
     renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
-
   }
 
   def republishStatusBar(explainer: CsAtom) = {
