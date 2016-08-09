@@ -180,10 +180,6 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
             padding: 6px;
         }
 
-    .explainer-editor__tags__input-field-label {
-        font-family: bold;
-    }
-
     #explainer-editor__body-wrapper {
 
     }
@@ -220,40 +216,38 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
 
             }
 
+
 /* -------------------------------------- */
-/* Explainer Tags                         */
+/* Tags Common Elements                   */
 /* -------------------------------------- */
 
+.explainer-editor__tags-common__suggestion-item {
+    color:blue;
+    font-weight: bold;
+    padding-left:30px;
+    cursor: pointer;
+    cursor: hand;
+}
 
-    .explainer-editor__tags__input-field-label {
+.explainer-editor__tags-common__tag-delete-icon {
+    cursor: pointer;
+    cursor: hand;
+    color:red;
+}
 
-    }
+.explainer-editor__tags-common__existing-tag {
 
-    .explainer-editor__tags__suggestions {
-        margin-top:20px;
-    }
+}
 
-        .explainer-editor__tag-suggestion__item {
-            color:blue;
-            font-weight: bold;
-            padding-left:30px;
-            cursor: pointer;
-            cursor: hand;
-        }
+.explainer-editor__tags-common__existing-tags-wrapper {
+    padding-top:20px;
+    padding-left:30px;
+}
 
-    .explainer-editor__tags__existing-tags {
-        padding-top:20px;
-        padding-left:30px;
-    }
+.explainer-editor__tags-common__search-input-field {
+    width:300px;
+}
 
-        .explainer-editor__tags__existing-tags__tag-delete-icon {
-            cursor: pointer;
-            cursor: hand;
-            color:red;
-        }
-        .explainer-editor__tags__existing-tags__tag {
-
-        }
-
-
-
+.explainer-editor__tags-common__suggestions-wrapper {
+    margin-top:20px;
+}
