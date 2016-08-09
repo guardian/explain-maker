@@ -102,7 +102,6 @@ object ExplainEditorJSDomBuilders {
       capiXMLHttpRequest("&type=tracking&page-size=200", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
     }
     renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
-
   }
 
   def republishStatusBar(explainer: CsAtom) = {
@@ -176,16 +175,12 @@ object ExplainEditorJSDomBuilders {
         div(id:="explainer-editor__title-wrapper")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"title",titleTag)
         ),
-        div(cls:="row")(
-          div(cls:="col-md-6")(
-            div(id:="explainer-editor__commissioning-desk-tags-wrapper")(
-              ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
-            )
+        div(cls:="explainer-editor__tag-management-wrapper")(
+          div(id:="explainer-editor__commissioning-desk-tags-wrapper")(
+            ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
           ),
-          div(cls:="col-md-6")(
-            div(id:="explainer-editor__tags-wrapper")(
-              ExplainEditorJSDomBuilders.makeTagArea(explainer)
-            )
+          div(id:="explainer-editor__tags-wrapper")(
+            ExplainEditorJSDomBuilders.makeTagArea(explainer)
           )
         ),
         div(id:="explainer-editor__body-wrapper")(

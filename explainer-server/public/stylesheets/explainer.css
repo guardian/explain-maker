@@ -216,6 +216,10 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
 
             }
 
+.explainer-editor__tag-management-wrapper {
+    display: flex;
+    margin-top:30px;
+}
 
 /* -------------------------------------- */
 /* Tags Common Elements                   */
