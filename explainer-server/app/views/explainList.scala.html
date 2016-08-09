@@ -10,25 +10,24 @@
 }
 @toolbar = {
     <header class="top-toolbar">
-        <a class="top-toolbar__title" href="/">
-            <div class="top-toolbar__logo"></div>
-            <div class="top-toolbar__page-icon"></div>
-            <div class="top-toolbar__title__hover-state">
-                <span class="top-toolbar__title__hover-state__subtitle">Back to</span><br />
-                <span class="top-toolbar__title__hover-state__title">Dashboard</span>
-            </div>
-        </a>
-        <div class="header__children">
-            <ul class="links">
-                <li class="links__item top-toolbar__item top-toolbar__item--btn">
-                    <i class="i-new-explain"></i>
-                    <div id="new-explainer-activator-wrapper">
-                        <a href="#" onclick="ExplainEditorJS().CreateNewExplainer()">Create New</a>
-                    </div>
-                </li>
-            </ul>
+        <div class="top-toolbar__container">
+            <a class="top-toolbar__title" href="/">
+                <div class="top-toolbar__logo"></div>
+                <div class="top-toolbar__page-icon"></div>
+                <div class="top-toolbar__title__hover-state">
+                    <span class="top-toolbar__title__hover-state__subtitle">Back to</span><br />
+                    <span class="top-toolbar__title__hover-state__title">Dashboard</span>
+                </div>
+            </a>
         </div>
-        <div class="top-toolbar__right-align">
+        <div class="top-toolbar__container">
+            <nav class="nav">
+                <ul class="nav__list">
+                    <li class="nav__item top-toolbar__item top-toolbar__item--no-spacing">
+                        <button class="top-toolbar__button" type="button" onclick="ExplainEditorJS().CreateNewExplainer()">Create New</button>
+                    </li>
+                </ul>
+            </nav>
             <div class="top-toolbar__user top-toolbar__item">
                 <span class="user__name">@{user.user.firstName} @{user.user.lastName}</span>
             </div>

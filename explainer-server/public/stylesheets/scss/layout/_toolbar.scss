@@ -1,44 +1,38 @@
 // -----------------------------------------------------------------------------
 // This file contains styles for the top toolbar
 // -----------------------------------------------------------------------------
+$toolbarHeight: 50px;
+
 
 .top-toolbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  height: $toolbarHeight;
+  background-color: $light-grey;
   display: flex;
-  height: 50px;
-  background-color: #dee2e3;
-  z-index: 2;
-  line-height: 50px;
-  align-items: stretch;
+  justify-content: space-between;
 }
 
 .top-toolbar__title {
-  flex: 0 0 120px;
+  width:120px;
   position: relative;
-  line-height: 50px;
   margin: 0;
   display: flex;
-  text-decoration: none;
-  color: black;
+  color: $text-color;
 }
 
 .top-toolbar__title__hover-state {
   font-family: "GuardianTitlepieceWeb", Georgia, serif;
-  visibility:hidden;
+  visibility: hidden;
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: #333333;
-  line-height: 21px;
-  padding-left: 10px;
-  padding-top: 2px;
-  z-index:2;
-  color:white;
+  background-color: $text-color;
+  color: $text-contrast;
 }
 
 .top-toolbar__title:hover .top-toolbar__title__hover-state {
@@ -65,7 +59,7 @@
 
 .top-toolbar__title .top-toolbar__logo {
   flex: 0 0 60px;
-  background: no-repeat center url(/assets/images/icons/explain-logo.svg) #7D0068;
+  background: no-repeat center url(/assets/images/icons/explain-logo.svg) $brand-color;
 }
 
 .top-toolbar__page-icon {
@@ -76,54 +70,55 @@
 
 .top-toolbar__title .top-toolbar__page-icon {
   flex: 0 0 60px;
-  background: no-repeat center #BB3A7F;
+  background: no-repeat center $brand-color-light;
 }
 
-.top-toolbar .header__children {
-  flex-grow: 2;
-}
+.top-toolbar__container {
+  display: flex;
+  align-items: stretch;
 
-.top-toolbar .links {
-  display: block;
-  text-align: right;
-  margin: 0;
-}
-
-.top-toolbar .links .links__item {
-  vertical-align: middle;
-  display: inline-block;
-  vertical-align: top;
-  height: 50px;
-  line-height: 50px;
-  padding: 0 15px;
-  border-left: 1px solid #bdbdbd;
-}
-
-.top-toolbar .links .links__item a {
-  display: inline-block;
-  text-decoration: none;
-  color: #333333;
-}
-
-.top-toolbar .links .links__item {
-  vertical-align: middle;
-  display: inline-block;
-  vertical-align: top;
-  height: 50px;
-  line-height: 50px;
-  padding: 0 15px;
-  border-left: 1px solid #bdbdbd;
+  &:not(:last-child) {
+    border-right: 1px solid $mid-grey;
+  }
 }
 
 .top-toolbar__item {
-  border-left: 1px solid #bdbdbd;
   padding: 0 15px;
   font-size: 12px;
   font-weight: bold;
   display: flex;
   align-items: center;
+
+  &:not(:last-child) {
+    border-right: 1px solid $mid-grey;
+  }
+
+  &--no-spacing {
+    // For elements that need the whole area e.g. buttons
+    padding: 0;
+  }
 }
 
+.top-toolbar__button {
+  padding: 0 15px;
+}
+
+// Abstracted class to relate nav items
+.nav {
+  flex-grow: 2;
+}
+
+.nav__list {
+  display: block;
+  text-align: right;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+// States
 .save-state {
   overflow: hidden;
 }

@@ -9,19 +9,24 @@ $text-font-stack: 'Helvetica Neue', Helvetica, Arial, sans-serif !default;
 
 /// Copy text color
 /// @type Color
-$text-color: rgb(34, 34, 34) !default;
+$text-color: #2b2b29 !default;
+
+// Contrasting text colour
+// @type Color
+$text-contrast: #FFFFFF !default;
 
 /// Main brand color
 /// @type Color
-$brand-color: rgb(229, 0, 80) !default;
+$brand-color: #7D0068 !default;
+$brand-color-light: #BB3A7F !default;
 
 /// Light grey
 /// @type Color
-$light-grey: rgb(237, 237, 237) !default;
+$light-grey: #dee2e3 !default;
 
 /// Medium grey
 /// @type Color
-$mid-grey: rgb(153, 153, 153) !default;
+$mid-grey: #bdbdbd !default;
 
 /// Dark grey
 /// @type Color
@@ -58,3 +63,5 @@ $breakpoints: (
 /// @example scss - When using a CDN
 ///   $base-url: 'http://cdn.example.com/assets/';
 $base-url: '/assets/' !default;
+
+$toolbarHeight: 50px;
