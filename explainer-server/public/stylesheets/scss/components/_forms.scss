@@ -1,0 +1,25 @@
+// -----------------------------------------------------------------------------
+// This file contains styles for all form elements
+// -----------------------------------------------------------------------------
+
+.form-field {
+  border: 1px solid $mid-grey;
+  background: $text-contrast;
+  color: $text-color;
+  display: block;
+  padding: 5px;
+
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+
+  &:focus {
+    border-color: $brand-color;
+    outline: none;
+  }
+
+  &--large {
+    width: 100%;
+    font-size: 18px;
+  }
+}

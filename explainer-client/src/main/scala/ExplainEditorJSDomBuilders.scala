@@ -78,7 +78,7 @@ object ExplainEditorJSDomBuilders {
   def makeTagArea(explainer: CsAtom) = {
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
-      cls:="explainer-editor__tags-common__search-input-field",
+      cls:="form-field",
       placeholder:="tag search"
     )
     val tagsSearchInputTag = tagsSearchInput().render
@@ -91,17 +91,15 @@ object ExplainEditorJSDomBuilders {
   }
 
   def makeCommissioningDeskArea(explainer: CsAtom) = {
-    val tagsSearchInput: TypedTag[Input] = input(
+    val tagsSearchInput = button(
       id:="explainer-editor__commissioning-desk-tags__tag-search-input-field",
-      cls:="explainer-editor__tags-common__search-input-field",
-      value:="Add a commissioning desk",
+      cls:="btn",
       `type`:="button"
-    )
-    val tagsSearchInputTag = tagsSearchInput().render
-    tagsSearchInputTag.onclick = (x: Event) => {
+    )("Add a commissioning desk").render
+    tagsSearchInput.onclick = (x: Event) => {
       capiXMLHttpRequest("&type=tracking&page-size=200", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
     }
-    renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
+    renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInput, { tagId => tagId.startsWith("tracking") })
   }
 
   def republishStatusBar(explainer: CsAtom) = {
@@ -112,7 +110,7 @@ object ExplainEditorJSDomBuilders {
 
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
-      cls:="explainer-input-field",
+      cls:="form-field form-field--large",
       placeholder:="title",
       autofocus:=true
     )
@@ -124,7 +122,7 @@ object ExplainEditorJSDomBuilders {
 
     val body: TypedTag[TextArea] = textarea(
       id:="explainer-input-text-area",
-      cls:="explainer-editor__body-wrapper__input explainer-input-field",
+      cls:="form-field",
       maxlength:=1800,
       placeholder:="body"
     )
@@ -135,7 +133,11 @@ object ExplainEditorJSDomBuilders {
       g.updateWordCountWarningDisplay()
     }
 
-    val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
+    val publishButton = button(
+      id:="explainer-editor__ops-wrapper__publish-button",
+      cls:="btn",
+      `type`:="button"
+    )("Publish").render
     publishButton.onclick = (x: Event) => {
       Model.publish(explainerId).map(republishStatusBar)
     }
