@@ -13,6 +13,7 @@ $toolbarHeight: 50px;
   background-color: $mid-grey;
   display: flex;
   justify-content: space-between;
+  z-index: 1;
 }
 
 .top-toolbar__title {
@@ -89,6 +90,7 @@ $toolbarHeight: 50px;
   font-weight: bold;
   display: flex;
   align-items: center;
+  text-align: center;
 
   &:not(:last-child) {
     border-right: 1px solid $dark-grey;
@@ -118,12 +120,24 @@ $toolbarHeight: 50px;
   justify-content: flex-end;
 }
 
-
-// States
 .save-state {
-  overflow: hidden;
-}
+  position: relative;
 
-.save-state--loading {
-  background: red;
+  &__icon {
+    visibility: hidden;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &--loading {
+    .save-state__icon {
+      visibility: visible;
+    }
+
+    .save-state__message {
+      visibility: hidden;
+    }
+  }
 }

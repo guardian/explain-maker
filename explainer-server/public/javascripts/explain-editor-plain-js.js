@@ -19,7 +19,7 @@ function updateWordCountWarningDisplay() {
 }
 function updateStatusBar(message){
     // Asumming it saved correctly for now
-    $(".save-state").removeClass("save-state--loading").text("Saved");
+    $(".save-state").removeClass("save-state--loading");
     if (message.length) {
         $(".content-status").text(message);
         $(".content-status").show();
@@ -110,7 +110,7 @@ function initiateEditor(){
         toolbar: 'undo redo | styleselect | bold italic underline bullist, numlist link',
         setup:function(ed) {
             ed.on('keyup', debounce(function(e) {
-                $(".save-state").addClass("save-state--loading").text("Saving");
+                $(".save-state").addClass("save-state--loading");
                 var bodyString = ed.getContent();
                 ExplainEditorJS().updateBodyContents(EXPLAINER_IDENTIFIER, bodyString)
             }, 500));
