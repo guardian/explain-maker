@@ -1,7 +1,7 @@
 package shared.util
 
+import com.gu.contentatom.thrift.atom.explainer.ExplainerAtom
 import com.gu.contentatom.thrift.{Atom, AtomData, _}
-import contentatom.explainer.ExplainerAtom
 
 trait AtomDataTyper[D] {
   def getData(a: Atom): D

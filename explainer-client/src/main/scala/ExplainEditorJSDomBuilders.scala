@@ -10,8 +10,10 @@ import shared.models.{CsAtom, ExplainerUpdate}
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+import scalatags.JsDom
 
 object ExplainEditorJSDomBuilders {
+
   def statusBarText(explainer: CsAtom) = {
 
     val isDraftState = (for {
@@ -28,59 +30,78 @@ object ExplainEditorJSDomBuilders {
     }
     status
   }
-  def explainerToDivTags(explainer:CsAtom) = {
+
+  def explainerToDivTags(explainer:CsAtom, filterLambda: String => Boolean) = {
     explainer.data.tags match {
       case None => List()
-      case Some(list) => list.map(tagId => div(cls:="explainer-editor__tags__existing-tags__tag")(
+      case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => div(cls:="explainer-editor__tags-common__existing-tag")(
         span(
-          cls:="explainer-editor__tags__existing-tags__tag-delete-icon",
+          cls:="explainer-editor__tags-common__tag-delete-icon",
           data("explainer-id"):=explainer.id,
           data("tag-id"):=tagId
         )("[x]")," ",tagId
       ))
     }
   }
-  def makeTagArea(explainer: CsAtom) = {
 
-    val tagsSearchInput: TypedTag[Input] = input(
-      id:="explainer-editor__tags__tag-search-input-field",
-      cls:="explainer-editor__tags__tag-search-input-field",
-      placeholder:="tag search"
-    )
-
-    val tagsSearchInputTag = tagsSearchInput().render
-    tagsSearchInputTag.oninput = (x: Event) => {
-
-      val searchString: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
-      val xhr = new dom.XMLHttpRequest()
-      xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+"&q="+g.encodeURIComponent(searchString))
-      xhr.onload = (e: dom.Event) => {
-        if (xhr.status == 200) {
-          g.jQuery(".explainer-editor__tags__suggestions").empty()
-          g.processCapiSearchResponse(js.JSON.parse(xhr.responseText).response)
-        }
-      }
-      xhr.send()
-
-    }
-
+  def renderTaggingArea(explainer:CsAtom, suggestionsDomId: String, fieldDescription:String, inputTag: JsDom.Modifier, explainerToDivFilterLambda: String => Boolean) ={
     div()(
       div(id:="explainer-editor__tags__input-field-wrapper")(
         div(cls:="form-group")(
           div("")(
-            label(cls:="form-group")("Tags")
+            label(cls:="form-group")(fieldDescription)
           ),
           div("")(
-            tagsSearchInputTag
+            inputTag
           )
         )
       ),
-      div(cls:="explainer-editor__tags__suggestions", id:="explainer-editor__tags__suggestions")(""),
-      div(cls:="explainer-editor__tags__existing-tags")(
-        ExplainEditorJSDomBuilders.explainerToDivTags(explainer)
+      div(id:=suggestionsDomId, cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
+      div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
+        explainerToDivTags(explainer, explainerToDivFilterLambda)
       )
     )
+  }
 
+  def capiXMLHttpRequest( queryFragment: String, divIdentifier: String, tagFieldToDisplay: String ) = {
+    val xhr = new dom.XMLHttpRequest()
+    xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+""+queryFragment+"")
+    xhr.onload = (e: dom.Event) => {
+      if (xhr.status == 200) {
+        g.jQuery(".explainer-editor__tags-common__suggestions-wrapper").empty()
+        g.processCapiSearchResponseTags(divIdentifier,js.JSON.parse(xhr.responseText).response,tagFieldToDisplay)
+      }
+    }
+    xhr.send()
+  }
+
+  def makeTagArea(explainer: CsAtom) = {
+    val tagsSearchInput: TypedTag[Input] = input(
+      id:="explainer-editor__tags__tag-search-input-field",
+      cls:="explainer-editor__tags-common__search-input-field",
+      placeholder:="tag search"
+    )
+    val tagsSearchInputTag = tagsSearchInput().render
+    tagsSearchInputTag.oninput = (x: Event) => {
+      val searchString: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
+      capiXMLHttpRequest("&type=keyword&q="+g.encodeURIComponent(searchString), "explainer-editor__tags__suggestions", "id")
+    }
+    renderTaggingArea(explainer, "explainer-editor__tags__suggestions", "Tags", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
+
+  }
+
+  def makeCommissioningDeskArea(explainer: CsAtom) = {
+    val tagsSearchInput: TypedTag[Input] = input(
+      id:="explainer-editor__commissioning-desk-tags__tag-search-input-field",
+      cls:="explainer-editor__tags-common__search-input-field",
+      value:="Add a commissioning desk",
+      `type`:="button"
+    )
+    val tagsSearchInputTag = tagsSearchInput().render
+    tagsSearchInputTag.onclick = (x: Event) => {
+      capiXMLHttpRequest("&type=tracking&page-size=200", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
+    }
+    renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
   }
 
   def republishStatusBar(explainer: CsAtom) = {
@@ -154,8 +175,13 @@ object ExplainEditorJSDomBuilders {
         div(id:="explainer-editor__title-wrapper")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"title",titleTag)
         ),
-        div(id:="explainer-editor__tags-wrapper")(
-          ExplainEditorJSDomBuilders.makeTagArea(explainer)
+        div(cls:="explainer-editor__tag-management-wrapper")(
+          div(id:="explainer-editor__commissioning-desk-tags-wrapper")(
+            ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
+          ),
+          div(id:="explainer-editor__tags-wrapper")(
+            ExplainEditorJSDomBuilders.makeTagArea(explainer)
+          )
         ),
         div(id:="explainer-editor__body-wrapper")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",bodyTag)

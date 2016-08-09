@@ -1,9 +1,9 @@
 package util
 
 import com.gu.contentatom.thrift._
+import com.gu.contentatom.thrift.atom.explainer.{DisplayType, ExplainerAtom}
 import com.gu.contentatom.thrift.atom.media.{Asset, MediaAtom}
 import com.twitter.scrooge.ThriftEnum
-import contentatom.explainer.{DisplayType, ExplainerAtom}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
