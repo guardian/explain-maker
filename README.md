@@ -38,9 +38,23 @@ cd <path_of_dev_nginx>
 sudo ./setup-app.rb <path_of_explainer>/nginx/nginx-mapping.yml
 ```
 
+Install dependencies and build CSS:
+
+```
+cd explainer-server
+npm install
+```
+
 ### Run the application
 ```
 ./run-explainer.sh
+```
+
+You can also watch the .scss files so they compile on change:
+
+```
+cd explainer-server
+npm run watch
 ```
 
 ### Access the User Interface
