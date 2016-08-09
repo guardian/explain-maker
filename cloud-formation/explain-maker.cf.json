@@ -29,6 +29,7 @@
         },
         "Stage": {
             "Type" : "String",
+            "AllowedValues":[ "PROD", "CODE"],
             "Description" : "Applied directly as a tag",
             "Default" : "CODE"
         },
@@ -60,6 +61,24 @@
             "Type": "String"
         }
     },
+    "Mappings": {
+        "Config":{
+            "CODE":{
+                "MinSize": 2,
+                "MaxSize": 4,
+                "DesiredCapacity": 2,
+                "InstanceType": "t2.small",
+                "ELBIngressIPRange": "77.91.248.0/21"
+            },
+            "PROD":{
+                "MinSize": 3,
+                "MaxSize": 6,
+                "DesiredCapacity": 3,
+                "InstanceType": "t2.small",
+                "ELBIngressIPRange": "0.0.0.0/0"
+            }
+        }
+    },
     "Resources" : {
         "AutoScalingGroup" : {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
@@ -67,9 +86,9 @@
                 "AvailabilityZones" : { "Fn::GetAZs" : "" },
                 "VPCZoneIdentifier" : { "Ref" : "PrivateSubnets" },
                 "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
-                "MinSize" : "2",
-                "MaxSize" : "4",
-                "DesiredCapacity" : "2",
+                "MinSize" : { "Fn::FindInMap": [ "Config", { "Ref": "Stage" }, "MinSize" ] },
+                "MaxSize" : { "Fn::FindInMap": [ "Config", { "Ref": "Stage" }, "MaxSize" ] },
+                "DesiredCapacity" : { "Fn::FindInMap": [ "Config", { "Ref": "Stage" }, "DesiredCapacity" ] },
                 "LoadBalancerNames" : [ { "Ref" : "ElasticLoadBalancer" } ],
                 "HealthCheckType" : "ELB",
                 "HealthCheckGracePeriod" : 300,
@@ -86,7 +105,7 @@
             "Properties" : {
                 "ImageId" : { "Ref": "ImageId" },
                 "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" }, { "Ref": "SSHSecurityGroup" } ],
-                "InstanceType" : { "Ref" : "InstanceType" },
+                "InstanceType" : { "Fn::FindInMap": [ "Config", { "Ref": "Stage" }, "InstanceType" ] },
                 "KeyName" : { "Ref" : "KeyName" },
                 "IamInstanceProfile": { "Ref" : "AppInstanceProfile" },
                 "UserData" : { "Fn::Base64": {
@@ -294,7 +313,8 @@
                         "IpProtocol": "tcp",
                         "FromPort": "443",
                         "ToPort": "443",
-                        "CidrIp": "0.0.0.0/0" }
+                        "CidrIp": { "Fn::FindInMap": [ "Config", { "Ref": "Stage" }, "ELBIngressIPRange" ] }
+                    }
                 ],
                 "SecurityGroupEgress" : [
                     {
