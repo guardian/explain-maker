@@ -49,7 +49,7 @@ object ExplainEditorJSDomBuilders {
       div(id:="explainer-editor__tags__input-field-wrapper")(
         div(cls:="form-group")(
           div("")(
-            label(cls:="form-group")(fieldDescription)
+            label(cls:="form-label")(fieldDescription)
           ),
           div("")(
             inputTag
@@ -93,7 +93,7 @@ object ExplainEditorJSDomBuilders {
   def makeCommissioningDeskArea(explainer: CsAtom) = {
     val tagsSearchInput = button(
       id:="explainer-editor__commissioning-desk-tags__tag-search-input-field",
-      cls:="btn",
+      cls:="btn btn--secondary",
       `type`:="button"
     )("Add a commissioning desk").render
     tagsSearchInput.onclick = (x: Event) => {

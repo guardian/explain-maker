@@ -29,7 +29,7 @@ object ExplainEditorPresenceHelpers {
     div(`class` := "presence-field-container") (
       fieldPresenceIndicator,
       div(cls:="form-group")(
-        label(presenceAreaName.capitalize),
+        label(cls:="form-label")(presenceAreaName.capitalize),
         field
       )
     )

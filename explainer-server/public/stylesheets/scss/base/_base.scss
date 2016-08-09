@@ -19,17 +19,13 @@ html {
   box-sizing: inherit;
 }
 
-body {
+.wrap {
   padding-top: $toolbarHeight;
 }
 
-/*
- * Global add-ons
- */
-
 .sub-header {
   padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid $mid-grey;
 }
 
 /*
