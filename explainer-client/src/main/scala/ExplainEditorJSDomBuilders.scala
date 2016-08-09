@@ -63,13 +63,13 @@ object ExplainEditorJSDomBuilders {
     )
   }
 
-  def capiXMLHttpRequest( queryFragment: String, divIdentifier: String, userInterfaceTagDescriptionKey: String ) = {
+  def capiXMLHttpRequest( queryFragment: String, divIdentifier: String, tagFieldToDisplay: String ) = {
     val xhr = new dom.XMLHttpRequest()
     xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+""+queryFragment+"")
     xhr.onload = (e: dom.Event) => {
       if (xhr.status == 200) {
         g.jQuery(".explainer-editor__tags-common__suggestions-wrapper").empty()
-        g.processCapiSearchResponseTags(divIdentifier,js.JSON.parse(xhr.responseText).response,userInterfaceTagDescriptionKey)
+        g.processCapiSearchResponseTags(divIdentifier,js.JSON.parse(xhr.responseText).response,tagFieldToDisplay)
       }
     }
     xhr.send()
@@ -99,7 +99,7 @@ object ExplainEditorJSDomBuilders {
     )
     val tagsSearchInputTag = tagsSearchInput().render
     tagsSearchInputTag.onclick = (x: Event) => {
-      capiXMLHttpRequest("&type=tracking&page-size=1000", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
+      capiXMLHttpRequest("&type=tracking&page-size=200", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
     }
     renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
 
