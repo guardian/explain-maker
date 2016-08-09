@@ -44,12 +44,12 @@ object ExplainEditorJSDomBuilders {
     }
   }
 
-  def renderTaggingArea(explainer:CsAtom, suggestionsDomId: String, inputTag: JsDom.Modifier, explainerToDivFilterLambda: String => Boolean) ={
+  def renderTaggingArea(explainer:CsAtom, suggestionsDomId: String, fieldDescription:String, inputTag: JsDom.Modifier, explainerToDivFilterLambda: String => Boolean) ={
     div()(
       div(id:="explainer-editor__tags__input-field-wrapper")(
         div(cls:="form-group")(
           div("")(
-            label(cls:="form-group")("Tags")
+            label(cls:="form-group")(fieldDescription)
           ),
           div("")(
             inputTag
@@ -86,7 +86,7 @@ object ExplainEditorJSDomBuilders {
       val searchString: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
       capiXMLHttpRequest("&type=keyword&q="+g.encodeURIComponent(searchString), "explainer-editor__tags__suggestions", "id")
     }
-    renderTaggingArea(explainer, "explainer-editor__tags__suggestions", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
+    renderTaggingArea(explainer, "explainer-editor__tags__suggestions", "Tags", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
 
   }
 
@@ -101,7 +101,7 @@ object ExplainEditorJSDomBuilders {
     tagsSearchInputTag.onclick = (x: Event) => {
       capiXMLHttpRequest("&type=tracking&page-size=1000", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
     }
-    renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
+    renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
 
   }
 
