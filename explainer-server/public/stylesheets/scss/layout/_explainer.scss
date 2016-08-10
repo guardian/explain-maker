@@ -156,21 +156,3 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
     display: flex;
     margin-top:30px;
 }
-
-/* -------------------------------------- */
-/* Tags Common Elements                   */
-/* -------------------------------------- */
-
-.explainer-editor__tags-common__suggestion-item {
-    color:blue;
-    font-weight: bold;
-    padding-left:30px;
-    cursor: pointer;
-    cursor: hand;
-}
-
-.explainer-editor__tags-common__tag-delete-icon {
-    cursor: pointer;
-    cursor: hand;
-    color:red;
-}

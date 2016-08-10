@@ -2,16 +2,13 @@
 // This file contains styles for all form elements
 // -----------------------------------------------------------------------------
 
-.form-group {
-  margin-bottom: 20px;
-}
-
 .form-field {
   border: 1px solid $dark-grey;
   background: $text-contrast;
   color: $text-color;
   display: block;
   padding: 5px;
+  width: 100%;
 
   &:not(:last-child) {
     margin-bottom: 10px;
@@ -23,7 +20,6 @@
   }
 
   &--large {
-    width: 100%;
     font-size: 18px;
   }
 }

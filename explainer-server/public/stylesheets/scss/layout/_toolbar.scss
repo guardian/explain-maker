@@ -82,6 +82,10 @@ $toolbarHeight: 50px;
   &:not(:last-child) {
     border-right: 1px solid $dark-grey;
   }
+
+  &:not(:first-child) {
+    border-left: 1px solid $dark-grey;
+  }
 }
 
 .top-toolbar__item {
@@ -104,20 +108,29 @@ $toolbarHeight: 50px;
 
 .top-toolbar__button {
   padding: 0 15px;
+  height: 100%;
+
+  &:hover {
+    background: darken($mid-grey, 5);
+  }
 }
 
 // Abstracted class to relate nav items
 .nav {
   flex-grow: 2;
+
+  &:not(:last-child) {
+    border-right: 1px solid $dark-grey;
+  }
 }
 
 .nav__list {
-  display: block;
   text-align: right;
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: flex-end;
+  height: 100%;
 }
 
 .save-state {
