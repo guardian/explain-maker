@@ -83,7 +83,7 @@ class ExplainerApiImpl(
           tags = Some((tagId +: csatom.data.tags.getOrElse(List())).distinct.sorted)
         )
       )
-      explainerDB.store(CsAtom.csAtomToAtom(newCsAtom))
+      explainerDB.update(CsAtom.csAtomToAtom(newCsAtom))
       explainerStore.updateLastModified(explainerId, user)
     }
     load(explainerId)
@@ -99,7 +99,7 @@ class ExplainerApiImpl(
           }
         )
       )
-      explainerDB.store(CsAtom.csAtomToAtom(newCsAtom))
+      explainerDB.update(CsAtom.csAtomToAtom(newCsAtom))
       explainerStore.updateLastModified(explainerId, user)
     }
     load(explainerId)
