@@ -54,6 +54,10 @@
         "ELKKinesisStream": {
             "Description": "Kinesis stream for logging to the ELK stack",
             "Type": "String"
+        },
+        "ContentAtomKinesisStreamPrefix": {
+            "Description": "Kinesis stream prefix (before the live/preview-CODE/PROD bit)",
+            "Type": "String"
         }
     },
     "Resources" : {
@@ -207,6 +211,25 @@
                                 "Resource":"*"
                             }]
                         }
+                },
+                {
+                    "PolicyName": "ExplainMakerContentAtomKinesisPolicy",
+                    "PolicyDocument": {
+                        "Statement": [ {
+                            "Action": [ "kinesis:PutRecord", "kinesis:PutRecords", "kinesis:DescribeStream" ],
+                            "Effect": "Allow",
+                            "Resource": {
+                                "Fn::Join": [":", [
+                                    "arn:aws:kinesis",
+                                    {"Ref": "AWS::Region"},
+                                    {"Ref": "AWS::AccountId"},
+                                    {"Fn::Join": ["", ["stream/",
+                                        {"Fn::Join": ["", [{"Ref": "ContentAtomKinesisStreamPrefix"}, "*"]]}
+                                    ]]}
+                                ]]
+                            }
+                        }]
+                    }
                 }
                 ]
             }
