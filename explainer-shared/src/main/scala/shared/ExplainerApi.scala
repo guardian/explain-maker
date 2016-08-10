@@ -16,7 +16,4 @@ trait ExplainerApi {
    */
   def publish(id: String): Future[CsAtom]
 
-  def addTagToExplainer(explainerId: String, tagId: String): Future[CsAtom]
-  def removeTagFromExplainer(explainerId: String, tagId: String): Future[CsAtom]
-
 }

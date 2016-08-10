@@ -31,17 +31,42 @@ object ExplainEditorJSDomBuilders {
     status
   }
 
+  def redisplayExplainerTagManagementAreas(explainerId: String): Unit = {
+    Model.extractExplainer(explainerId).map{ explainer =>
+
+      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").innerHTML = ""
+      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer).render)
+
+      dom.document.getElementById("explainer-editor__tags-wrapper").innerHTML = ""
+      dom.document.getElementById("explainer-editor__tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeTagArea(explainer).render)
+
+    }
+  }
+
+  def tagDeleteButton(explainer:CsAtom, tagId:String) = {
+    val deleteButton = button(
+      cls:="tag__delete",
+      `type`:="button",
+      data("explainer-id"):=explainer.id,
+      data("tag-id"):=tagId
+    )("Delete").render
+    deleteButton.onclick = (x: Event) => {
+      Model.removeTagFromExplainer(explainer.id, tagId).map { explainer =>
+        redisplayExplainerTagManagementAreas(explainer.id)
+      }
+    }
+    deleteButton
+  }
+
   def explainerToDivTags(explainer:CsAtom, filterLambda: String => Boolean) = {
     explainer.data.tags match {
       case None => List()
-      case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => div(cls:="tag")(
-        " ",tagId,button(
-          cls:="tag__delete",
-          `type`:="button",
-          data("explainer-id"):=explainer.id,
-          data("tag-id"):=tagId
-        )("Delete")
-      ))
+      case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => {
+        div(cls:="tag")(
+            " ",tagId,tagDeleteButton(explainer,tagId)
+          )
+        }
+      )
     }
   }
 

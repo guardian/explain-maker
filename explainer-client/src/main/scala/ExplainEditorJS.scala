@@ -52,18 +52,6 @@ object ExplainEditorJS {
     Model.extractExplainer(explainerId).map( explainer => ExplainEditorJSDomBuilders.makeTagArea(explainer).render.outerHTML )
   }
 
-  def redisplayExplainerTagManagementAreas(explainerId: String) = {
-    Model.extractExplainer(explainerId).map{ explainer =>
-
-      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").innerHTML = ""
-      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer).render)
-
-      dom.document.getElementById("explainer-editor__tags-wrapper").innerHTML = ""
-      dom.document.getElementById("explainer-editor__tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeTagArea(explainer).render)
-
-    }
-  }
-
   @JSExport
   def CreateNewExplainer() = {
     Model.createNewExplainer().map{ explainer: CsAtom =>
@@ -84,14 +72,14 @@ object ExplainEditorJS {
   @JSExport
   def addTagToExplainer(explainerId: String, tagId: String) = {
     Model.addTagToExplainer(explainerId, tagId).map { explainer =>
-      redisplayExplainerTagManagementAreas(explainer.id)
+      ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
     }
   }
 
   @JSExport
   def removeTagFromExplainer(explainerId: String, tagId: String) = {
     Model.removeTagFromExplainer(explainerId, tagId).map { explainer =>
-      redisplayExplainerTagManagementAreas(explainer.id)
+      ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
     }
   }
 

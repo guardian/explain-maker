@@ -51,7 +51,9 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     val allowed_fields = Set(
       "title",
       "body",
-      "displayType"
+      "displayType",
+      "addTag",
+      "removeTag"
     )
     assert(allowed_fields.contains(fieldSymbol.name))
     explainerDB.load(id).map{ explainer =>
@@ -64,6 +66,11 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
             case "Flat" => explainer.tdata.copy( displayType = DisplayType.Flat )
           }
         }
+        case "addTag" => explainer.tdata.copy(tags = Some((value +: explainer.tdata.tags.getOrElse(List())).distinct.sorted))
+        case "removeTag" => explainer.tdata.copy(tags = explainer.tdata.tags.flatMap(tagList => {
+          val newTagList = (tagList diff List(value)).sorted
+          if(newTagList.isEmpty){ None }else{ Some(newTagList) }
+        }))
       }
       val updatedExplainer = explainer.copy(
         data = AtomData.Explainer(newExplainerAtom),
