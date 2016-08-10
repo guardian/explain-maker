@@ -90,7 +90,6 @@ object ExplainEditorJSDomBuilders {
       capiXMLHttpRequest("&type=keyword&q="+g.encodeURIComponent(searchString), "explainer-editor__tags__suggestions", "id")
     }
     renderTaggingArea(explainer, "explainer-editor__tags__suggestions", "Tags", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
-
   }
 
   def makeCommissioningDeskArea(explainer: CsAtom) = {
