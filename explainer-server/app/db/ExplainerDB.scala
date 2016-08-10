@@ -31,7 +31,6 @@ class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
         body = conversionFunction(explainer.tdata.body))))
   }
 
-
   def create(explainer: Atom) = {
     val sanitisedAtom = emptyStringConversion(explainer, emptyStringToEmptyStringMarker)
     dynamoDataStore.createAtom(sanitisedAtom)
