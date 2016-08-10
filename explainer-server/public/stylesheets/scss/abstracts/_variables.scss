@@ -1,0 +1,36 @@
+// -----------------------------------------------------------------------------
+// This file contains all application-wide Sass variables.
+// -----------------------------------------------------------------------------
+
+
+/// Regular font family
+/// @type List
+$text-font-stack: 'Guardian Agate Sans', Arial, sans-serif !default;
+$title-font-stack: 'Guardian Egyptian Text', Georgia, serif;
+
+/// Copy text color
+/// @type Color
+$text-color: #2b2b29 !default;
+
+// Contrasting text colour
+// @type Color
+$text-contrast: #FFFFFF !default;
+
+/// Main brand color
+/// @type Color
+$brand-color: #7D0068 !default;
+$brand-color-light: #BB3A7F !default;
+
+/// Light grey
+/// @type Color
+$light-grey: #F5F5F5 !default;
+
+/// Medium grey
+/// @type Color
+$mid-grey: #dee2e3 !default;
+
+/// Dark grey
+/// @type Color
+$dark-grey: #bdbdbd !default;
+
+$toolbarHeight: 50px;

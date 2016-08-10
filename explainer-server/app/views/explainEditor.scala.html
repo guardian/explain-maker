@@ -1,7 +1,6 @@
 @(id: String, user: com.gu.pandomainauth.model.AuthenticatedUser, config: play.api.libs.json.JsObject)(implicit request: RequestHeader)
 
 @header = {
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/explainer.css")">
     <script type="text/javascript">
         CONFIG = @Html(config.toString);
         EXPLAINER_IDENTIFIER = "@id"
@@ -9,31 +8,38 @@
 }
 @toolbar = {
     <header class="top-toolbar">
-        <a class="top-toolbar__title" href="/">
-            <div class="top-toolbar__logo"></div>
-            <div class="top-toolbar__page-icon"></div>
-            <div class="top-toolbar__title__hover-state">
-                <span class="top-toolbar__title__hover-state__subtitle">Back to</span><br />
-                <span class="top-toolbar__title__hover-state__title">Dashboard</span>
+        <div class="top-toolbar__container">
+            <a class="top-toolbar__title" href="/">
+                <div class="top-toolbar__logo"></div>
+                <div class="top-toolbar__page-icon"></div>
+                <div class="top-toolbar__title__hover-state">
+                    <span class="top-toolbar__title__hover-state__subtitle">Back to</span><br />
+                    <span class="top-toolbar__title__hover-state__title">Dashboard</span>
+                </div>
+            </a>
+            <div class="top-toolbar__item">
+                <div class="top-toolbar__item-inner save-state">
+                    <i class="save-state__icon i i-loading"></i>
+                    <span class="label label--success save-state__message">Saved</span>
+                </div>
             </div>
-        </a>
-        <div class="header__children">
-            <ul class="links">
-            </ul>
         </div>
-        <div class="top-toolbar__status-bar-wrapper">
-            <div class="top-toolbar__status-bar-inner"></div>
-        </div>
-        <div class="top-toolbar__word-count-wrapper" class="top-toolbar__right-align">
-            word count:&nbsp;<span class="top-toolbar__word-count-wrapper__count"></span>
-            <span class="top-toolbar__word-count-wrapper__warning-outer">
-                |
-                <span class="top-toolbar__word-count-wrapper__warning-inner">over max word count</span>
-            </span>
-        </div>
-        <div class="top-toolbar__right-align">
-            <div class="top-toolbar__user top-toolbar__item">
-                <span class="user__name">@{user.user.firstName} @{user.user.lastName}</span>
+        <div class="top-toolbar__container">
+            <div class="top-toolbar__item">
+                <div class="top-toolbar__item-inner">
+                    <span class="label label--warning content-status"></span>
+                </div>
+            </div>
+            <div class="top-toolbar__item">
+                <p class="top-toolbar__item-inner word-count">
+                    word count: <span class="word-count__number"></span>
+                    <span class="word-count__message">Max word count exceeded</span>
+                </p>
+            </div>
+            <div class="top-toolbar__item">
+                <div class="top-toolbar__item-inner user">
+                    <span class="user__name">@{user.user.firstName} @{user.user.lastName}</span>
+                </div>
             </div>
         </div>
     </header>

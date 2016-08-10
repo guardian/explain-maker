@@ -1,0 +1,51 @@
+// -----------------------------------------------------------------------------
+// This file contains tags.
+// -----------------------------------------------------------------------------
+
+.tags {
+  margin-top: 20px;
+}
+
+.tag {
+  padding: 5px 30px 5px 5px;
+  background: $mid-grey;
+  font-size: 14px;
+  position: relative;
+  overflow: hidden;
+
+  &:not(:last-child) {
+    margin-bottom: 1px;
+  }
+}
+
+.tag__delete {
+  text-indent: -9999px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 15px;
+  background: url('../images/icons/delete.svg') center center no-repeat;
+}
+
+.tag__suggestions {
+  border-top-width: 1px;
+  background-color: $text-contrast;
+  position: absolute;
+  z-index: 1;
+  font-size: 14px;
+  width: 100%;
+  overflow: auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,.3);
+  top: 100%;
+  max-height: 320px;
+  margin-bottom: 20px;
+}
+
+.tag__result {
+  padding: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background: $light-grey;
+  }
+}

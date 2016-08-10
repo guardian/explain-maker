@@ -97,7 +97,7 @@ object ExplainEditorJS {
 
   @JSExport
   def addTagToSuggestionSet(explainerId: String, divIdentifier: String, tagId: String, userInterfaceDescription: String) = {
-    val node = div(cls:="explainer-editor__tags-common__suggestion-item")(userInterfaceDescription).render
+    val node = div(cls:="tag__result")(userInterfaceDescription).render
     node.onclick = (x: Event) => {
       addTagToExplainer(explainerId, tagId)
     }

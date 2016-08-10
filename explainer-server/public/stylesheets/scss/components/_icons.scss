@@ -1,0 +1,10 @@
+// -----------------------------------------------------------------------------
+// This file contains styles for icons
+// -----------------------------------------------------------------------------
+
+.i-loading {
+  background: url('../images/icons/loading.svg');
+  width: 20px;
+  height: 20px;
+  animation: spin 2000ms;
+}

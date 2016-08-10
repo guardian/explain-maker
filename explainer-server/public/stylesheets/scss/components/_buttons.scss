@@ -1,0 +1,37 @@
+// -----------------------------------------------------------------------------
+// This file contains styles for all buttons.
+// -----------------------------------------------------------------------------
+button {
+  // Reset for browser buttons
+  -webkit-appearance: none;
+  cursor: pointer;
+  outline: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.btn {
+  display: block;
+  padding: 10px;
+  background: $brand-color;
+  color: $text-contrast;
+  font-size: 12px;
+  font-weight: bold;
+
+  &:hover {
+    background: $brand-color-light;
+  }
+
+  &--secondary {
+    background: transparent;
+    color: $brand-color;
+    border: 2px solid $brand-color;
+
+    &:hover {
+      color: $brand-color-light;
+      border-color: $brand-color-light;
+      background: transparent;
+    }
+  }
+}

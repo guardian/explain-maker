@@ -24,7 +24,7 @@ object ExplainEditorJSDomBuilders {
     }).getOrElse(true)
 
     val status = if(isDraftState){
-      "Draft State"
+      "Draft"
     }else{
       ""
     }
@@ -34,30 +34,33 @@ object ExplainEditorJSDomBuilders {
   def explainerToDivTags(explainer:CsAtom, filterLambda: String => Boolean) = {
     explainer.data.tags match {
       case None => List()
-      case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => div(cls:="explainer-editor__tags-common__existing-tag")(
-        span(
-          cls:="explainer-editor__tags-common__tag-delete-icon",
+      case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => div(cls:="tag")(
+        " ",tagId,button(
+          cls:="tag__delete",
+          `type`:="button",
           data("explainer-id"):=explainer.id,
           data("tag-id"):=tagId
-        )("[x]")," ",tagId
+        )("Delete")
       ))
     }
   }
 
   def renderTaggingArea(explainer:CsAtom, suggestionsDomId: String, fieldDescription:String, inputTag: JsDom.Modifier, explainerToDivFilterLambda: String => Boolean) ={
     div()(
-      div(id:="explainer-editor__tags__input-field-wrapper")(
+      div(
+        id:="explainer-editor__tags__input-field-wrapper",
+        cls:="relative-parent")(
         div(cls:="form-group")(
           div("")(
-            label(cls:="form-group")(fieldDescription)
+            label(cls:="form-label")(fieldDescription)
           ),
           div("")(
             inputTag
-          )
+          ),
+          div(id:=suggestionsDomId, cls:="tag__suggestions")("")
         )
       ),
-      div(id:=suggestionsDomId, cls:="explainer-editor__tags-common__suggestions-wrapper")(""),
-      div(cls:="explainer-editor__tags-common__existing-tags-wrapper")(
+      div(cls:="tags")(
         explainerToDivTags(explainer, explainerToDivFilterLambda)
       )
     )
@@ -68,7 +71,7 @@ object ExplainEditorJSDomBuilders {
     xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+""+queryFragment+"")
     xhr.onload = (e: dom.Event) => {
       if (xhr.status == 200) {
-        g.jQuery(".explainer-editor__tags-common__suggestions-wrapper").empty()
+        g.jQuery(".tag__suggestions").empty()
         g.processCapiSearchResponseTags(divIdentifier,js.JSON.parse(xhr.responseText).response,tagFieldToDisplay)
       }
     }
@@ -78,7 +81,7 @@ object ExplainEditorJSDomBuilders {
   def makeTagArea(explainer: CsAtom) = {
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
-      cls:="explainer-editor__tags-common__search-input-field",
+      cls:="form-field form-field--btn-height",
       placeholder:="tag search"
     )
     val tagsSearchInputTag = tagsSearchInput().render
@@ -91,17 +94,15 @@ object ExplainEditorJSDomBuilders {
   }
 
   def makeCommissioningDeskArea(explainer: CsAtom) = {
-    val tagsSearchInput: TypedTag[Input] = input(
+    val tagsSearchInput = button(
       id:="explainer-editor__commissioning-desk-tags__tag-search-input-field",
-      cls:="explainer-editor__tags-common__search-input-field",
-      value:="Add a commissioning desk",
+      cls:="btn btn--secondary",
       `type`:="button"
-    )
-    val tagsSearchInputTag = tagsSearchInput().render
-    tagsSearchInputTag.onclick = (x: Event) => {
+    )("Add a commissioning desk").render
+    tagsSearchInput.onclick = (x: Event) => {
       capiXMLHttpRequest("&type=tracking&page-size=200", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
     }
-    renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
+    renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInput, { tagId => tagId.startsWith("tracking") })
   }
 
   def republishStatusBar(explainer: CsAtom) = {
@@ -112,7 +113,7 @@ object ExplainEditorJSDomBuilders {
 
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
-      cls:="explainer-input-field",
+      cls:="form-field form-field--large",
       placeholder:="title",
       autofocus:=true
     )
@@ -124,7 +125,7 @@ object ExplainEditorJSDomBuilders {
 
     val body: TypedTag[TextArea] = textarea(
       id:="explainer-input-text-area",
-      cls:="explainer-editor__body-wrapper__input explainer-input-field",
+      cls:="form-field",
       maxlength:=1800,
       placeholder:="body"
     )
@@ -135,7 +136,11 @@ object ExplainEditorJSDomBuilders {
       g.updateWordCountWarningDisplay()
     }
 
-    val publishButton = button(id:="explainer-editor__ops-wrapper__publish-button")("Publish").render
+    val publishButton = button(
+      id:="explainer-editor__ops-wrapper__publish-button",
+      cls:="btn right",
+      `type`:="button"
+    )("Publish").render
     publishButton.onclick = (x: Event) => {
       Model.publish(explainerId).map(republishStatusBar)
     }
@@ -162,10 +167,10 @@ object ExplainEditorJSDomBuilders {
     }
 
     div(id:="explainer-editor")(
-      div(id:="explainer-editor__ops-wrapper")(
-        publishButton
-      ),
-      hr,
+      div(
+        id:="explainer-editor__ops-wrapper",
+        cls:="section clearfix"
+      )(publishButton),
       div(cls:="explainer-editor__displayType-wrapper")(
         div(cls:="explainer-editor__displayType-inner")(
           checkboxTag, " Expandable explainer"
@@ -175,16 +180,20 @@ object ExplainEditorJSDomBuilders {
         div(id:="explainer-editor__title-wrapper")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"title",titleTag)
         ),
-        div(cls:="explainer-editor__tag-management-wrapper")(
-          div(id:="explainer-editor__commissioning-desk-tags-wrapper")(
-            ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
-          ),
-          div(id:="explainer-editor__tags-wrapper")(
-            ExplainEditorJSDomBuilders.makeTagArea(explainer)
-          )
-        ),
         div(id:="explainer-editor__body-wrapper")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",bodyTag)
+        ),
+        div(cls:="explainer-editor__tag-management-wrapper")(
+          div(
+            id:="explainer-editor__commissioning-desk-tags-wrapper",
+            cls:="column column--half")(
+            ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
+          ),
+          div(
+            id:="explainer-editor__tags-wrapper",
+            cls:="column column--half")(
+            ExplainEditorJSDomBuilders.makeTagArea(explainer)
+          )
         )
       )
     )

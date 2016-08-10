@@ -1,0 +1,21 @@
+// -----------------------------------------------------------------------------
+// This file contains styles for boxes, blocks and that kind of thing.
+// -----------------------------------------------------------------------------
+
+.section {
+  border-bottom: 1px solid $dark-grey;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.column {
+  display: block;
+
+  &:not(:last-child) {
+    margin-right: 20px;
+  }
+
+  &--half {
+    width: 50%;
+  }
+}
