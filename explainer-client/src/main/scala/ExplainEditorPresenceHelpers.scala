@@ -10,21 +10,21 @@ import upickle.default._
 object ExplainEditorPresenceHelpers {
   val endpoint = "wss://presence.code.dev-gutools.co.uk/socket"
   val person = new Person("A","Nother","a.nother.@guardian.co.uk")
-  val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
+//  val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
   def turnOnPresenceFor(explainerId: String ,presenceAreaName: String, field: Element) = {
     field.onfocus = (x: FocusEvent) => {
-      presenceClient.enter("explain-" + explainerId, presenceAreaName)
+//      presenceClient.enter("explain-" + explainerId, presenceAreaName)
     }
 
     val indicatorId = s"presence-indicator-${presenceAreaName}"
     val fieldPresenceIndicator = div(`class` := "field-presence-indicator", id := indicatorId)()
 
-    presenceClient.on("visitor-list-updated", { data: js.Object =>
-      val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
-      val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == presenceAreaName)
-      //dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
-      ()
-    })
+//    presenceClient.on("visitor-list-updated", { data: js.Object =>
+//      val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
+//      val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == presenceAreaName)
+//      //dom.document.getElementById(indicatorId).innerHTML = statesOnThisArea.map(_.clientId.person.initials).mkString(" ")
+//      ()
+//    })
 
     div(`class` := "presence-field-container") (
       fieldPresenceIndicator,
