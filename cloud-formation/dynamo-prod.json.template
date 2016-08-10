@@ -1,0 +1,68 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "ProdPreviewTableName": {
+            "Description": "Prod preview dynamo table name",
+            "Type": "String"
+        },
+        "CodePreviewTableName": {
+            "Description": "Code preview dynamo table name",
+            "Type": "String"
+        },
+        "ProdReadWriteCapacity":{
+            "Description": "Prod Read/Write Capacity",
+            "Type": "String"
+        },
+        "CodeReadWriteCapacity":{
+            "Description": "Code Read/Write Capacity",
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "ExplainMakerProdPreviewDynamoTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": { "Ref": "ProdPreviewTableName" },
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": { "Ref": "ProdReadWriteCapacity" },
+                    "WriteCapacityUnits": { "Ref": "ProdReadWriteCapacity" }
+                }
+            }
+        },
+        "ExplainMakerCodePreviewDynamoTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": { "Ref": "CodePreviewTableName" },
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": { "Ref": "CodeReadWriteCapacity" },
+                    "WriteCapacityUnits": { "Ref": "CodeReadWriteCapacity"}
+                }
+            }
+        }
+    }
+}
+
