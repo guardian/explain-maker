@@ -30,11 +30,11 @@ object ExplainEditorJS {
   def main(explainerId: String) = {
     val articleId = "explain-"+explainerId
 
-    ExplainEditorPresenceHelpers.presenceClient.startConnection()
-
-    ExplainEditorPresenceHelpers.presenceClient.on("connection.open", { data:js.Object =>
-      ExplainEditorPresenceHelpers.presenceClient.subscribe(articleId)
-    })
+//    ExplainEditorPresenceHelpers.presenceClient.startConnection()
+//
+//    ExplainEditorPresenceHelpers.presenceClient.on("connection.open", { data:js.Object =>
+//      ExplainEditorPresenceHelpers.presenceClient.subscribe(articleId)
+//    })
 
     Model.extractExplainer(explainerId).map { explainer: CsAtom =>
       dom.document.getElementById("content").appendChild(
