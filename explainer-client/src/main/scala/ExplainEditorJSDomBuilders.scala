@@ -63,7 +63,7 @@ object ExplainEditorJSDomBuilders {
       case None => List()
       case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => {
         div(cls:="tag")(
-            " ",tagId,tagDeleteButton(explainer,tagId)
+            tagId,tagDeleteButton(explainer,tagId)
           )
         }
       )
