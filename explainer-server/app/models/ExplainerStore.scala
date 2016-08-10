@@ -69,7 +69,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
         data = AtomData.Explainer(newExplainerAtom),
         contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = true, updatePublished = false)
       )
-      explainerDB.store(updatedExplainer)
+      explainerDB.update(updatedExplainer)
       updatedExplainer
     }
   }
@@ -79,7 +79,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
       val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = true, updatePublished = false)
       val updatedExplainer = buildAtomWithDefaults(explainer.id, explainer.tdata , contentChangeDetails)
 
-      explainerDB.store(updatedExplainer)
+      explainerDB.update(updatedExplainer)
       updatedExplainer
     }
   }
@@ -89,7 +89,6 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     val explainerAtom = ExplainerAtom("", "", DisplayType.Expandable)
     val contentChangeDetails = contentChangeDetailsBuilder(user, None, updateCreated = true, updateLastModified = true, updatePublished = false)
     val explainer = buildAtomWithDefaults(uuid, explainerAtom, contentChangeDetails)
-    explainerDB.store(explainer)
     explainerDB.create(explainer)
     Future(explainer)
   }
@@ -98,7 +97,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     explainerDB.load(id).map{ explainer =>
       val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = false, updatePublished = true)
       val updatedExplainer = buildAtomWithDefaults(explainer.id, explainer.tdata, contentChangeDetails)
-      explainerDB.store(updatedExplainer)
+      explainerDB.update(updatedExplainer)
       updatedExplainer
     }
   }
