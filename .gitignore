@@ -40,4 +40,4 @@ conf/assets.map
 public/dist
 public/images
 public/javascripts
-public/stylesheets
+explainer-server/public/stylesheets/*.css
