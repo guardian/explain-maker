@@ -47,17 +47,19 @@ object ExplainEditorJSDomBuilders {
 
   def renderTaggingArea(explainer:CsAtom, suggestionsDomId: String, fieldDescription:String, inputTag: JsDom.Modifier, explainerToDivFilterLambda: String => Boolean) ={
     div()(
-      div(id:="explainer-editor__tags__input-field-wrapper")(
+      div(
+        id:="explainer-editor__tags__input-field-wrapper",
+        cls:="relative-parent")(
         div(cls:="form-group")(
           div("")(
             label(cls:="form-label")(fieldDescription)
           ),
           div("")(
             inputTag
-          )
+          ),
+          div(id:=suggestionsDomId, cls:="tag__suggestions")("")
         )
       ),
-      div(id:=suggestionsDomId, cls:="tag__suggestions")(""),
       div(cls:="tags")(
         explainerToDivTags(explainer, explainerToDivFilterLambda)
       )
@@ -79,7 +81,7 @@ object ExplainEditorJSDomBuilders {
   def makeTagArea(explainer: CsAtom) = {
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
-      cls:="form-field",
+      cls:="form-field form-field--btn-height",
       placeholder:="tag search"
     )
     val tagsSearchInputTag = tagsSearchInput().render
@@ -184,12 +186,12 @@ object ExplainEditorJSDomBuilders {
         div(cls:="explainer-editor__tag-management-wrapper")(
           div(
             id:="explainer-editor__commissioning-desk-tags-wrapper",
-            cls:="column")(
+            cls:="column column--half")(
             ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
           ),
           div(
             id:="explainer-editor__tags-wrapper",
-            cls:="column")(
+            cls:="column column--half")(
             ExplainEditorJSDomBuilders.makeTagArea(explainer)
           )
         )
