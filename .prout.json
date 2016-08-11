@@ -1,7 +1,7 @@
 {
   "checkpoints": {
-    "CODE": {
-      "url": "https://explainer.code.dev-gutools.co.uk/healthcheck",
+    "PROD": {
+      "url": "https://explainers.gutools.co.uk/healthcheck",
       "overdue": "8M"
     }
   }
