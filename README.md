@@ -1,6 +1,7 @@
 # Explainer Atom Editor
 
 * CI : [TeamCity](https://teamcity-aws.gutools.co.uk/viewType.html?buildTypeId=EditorialTools_Explainer)
+* See live: [PROD](https://explainers.gutools.co.uk) [CODE](https://explainers.code.dev-gutools.co.uk)
 
 ###Scala: 2.11.6, Scala.js: 0.6.5, Play: 2.4.0, Slick: 3.0.0
 
