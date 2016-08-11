@@ -12,17 +12,20 @@ import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scalatags.JsDom
 
+import fr.hmil.roshttp.HttpRequest
+
+import upickle.Js
+import upickle.default._
+
 object ExplainEditorJSDomBuilders {
 
   def statusBarText(explainer: CsAtom) = {
-
     val isDraftState = (for {
       lastModifiedDate <- explainer.contentChangeDetails.lastModified
       publishedDate <- explainer.contentChangeDetails.published
     }yield {
       lastModifiedDate.date > publishedDate.date
     }).getOrElse(true)
-
     val status = if(isDraftState){
       "Draft"
     }else{
@@ -91,19 +94,32 @@ object ExplainEditorJSDomBuilders {
     )
   }
 
-  def capiXMLHttpRequest( queryFragment: String, divIdentifier: String, tagFieldToDisplay: String ) = {
-    val xhr = new dom.XMLHttpRequest()
-    xhr.open("GET", "https://content.guardianapis.com/tags?api-key="+g.CONFIG.CAPI_API_KEY+""+queryFragment+"")
-    xhr.onload = (e: dom.Event) => {
-      if (xhr.status == 200) {
-        g.jQuery(".tag__suggestions").empty()
-        g.processCapiSearchResponseTags(divIdentifier,js.JSON.parse(xhr.responseText).response,tagFieldToDisplay)
-      }
+  def addTagToExplainer(explainerId: String, tagId: String) = {
+    Model.addTagToExplainer(explainerId, tagId).map { explainer =>
+      ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
     }
-    xhr.send()
+  }
+
+  def addTagToSuggestionSet(explainerId: String, suggestionsDivIdentifier: String, tagId: String, userInterfaceDescription: String) = {
+    val node = div(cls:="tag__result")(userInterfaceDescription).render
+    node.onclick = (x: Event) => {
+      addTagToExplainer(explainerId, tagId)
+    }
+    dom.document.getElementById(suggestionsDivIdentifier).appendChild(node)
+  }
+
+  def renderSuggestionSet(request:HttpRequest, explainerId:String, suggestionsDivIdentifier:String) = {
+    request.send().map(response => {
+        g.jQuery(s"#${suggestionsDivIdentifier}").empty()
+        val capiresponse = read[CAPIResponseTagsSearch](response.body).response.results.foreach{ tagObject =>
+          addTagToSuggestionSet(explainerId, suggestionsDivIdentifier, tagObject.id, tagObject.webTitle)
+        }
+      }
+    )
   }
 
   def makeTagArea(explainer: CsAtom) = {
+    val suggestionsDivIdentifier = "explainer-editor__tags__suggestions"
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
       cls:="form-field form-field--btn-height",
@@ -111,22 +127,31 @@ object ExplainEditorJSDomBuilders {
     )
     val tagsSearchInputTag = tagsSearchInput().render
     tagsSearchInputTag.oninput = (x: Event) => {
-      val searchString: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
-      capiXMLHttpRequest("&type=keyword&q="+g.encodeURIComponent(searchString), "explainer-editor__tags__suggestions", "id")
+      val queryValue: String = g.readValueAtDiv("explainer-editor__tags__tag-search-input-field").asInstanceOf[String]
+      val request = HttpRequest(CAPIConfig.capiTagQueryURL)
+        .withQueryParameter("api-key", g.CONFIG.CAPI_API_KEY.toString)
+        .withQueryParameter("type", "keyword")
+        .withQueryParameter("q",queryValue)
+      renderSuggestionSet(request, explainer.id, suggestionsDivIdentifier)
     }
-    renderTaggingArea(explainer, "explainer-editor__tags__suggestions", "Tags", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
+    renderTaggingArea(explainer, suggestionsDivIdentifier, "Tags", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
   }
 
   def makeCommissioningDeskArea(explainer: CsAtom) = {
+    val suggestionsDivIdentifier = "explainer-editor__commissioning-desk-tags__suggestions"
     val tagsSearchInput = button(
       id:="explainer-editor__commissioning-desk-tags__tag-search-input-field",
       cls:="btn btn--secondary",
       `type`:="button"
     )("Add a commissioning desk").render
     tagsSearchInput.onclick = (x: Event) => {
-      capiXMLHttpRequest("&type=tracking&page-size=200", "explainer-editor__commissioning-desk-tags__suggestions", "webTitle")
+      val request = HttpRequest(CAPIConfig.capiTagQueryURL)
+        .withQueryParameter("api-key", g.CONFIG.CAPI_API_KEY.toString)
+        .withQueryParameter("type","tracking")
+        .withQueryParameter("page-size","200")
+      renderSuggestionSet(request, explainer.id, suggestionsDivIdentifier)
     }
-    renderTaggingArea(explainer, "explainer-editor__commissioning-desk-tags__suggestions", "Commissioning Desk", tagsSearchInput, { tagId => tagId.startsWith("tracking") })
+    renderTaggingArea(explainer, suggestionsDivIdentifier, "Commissioning Desk", tagsSearchInput, { tagId => tagId.startsWith("tracking") })
   }
 
   def republishStatusBar(explainer: CsAtom) = {

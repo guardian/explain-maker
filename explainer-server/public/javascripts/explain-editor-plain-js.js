@@ -45,24 +45,6 @@ function updateCheckboxState() {
  * Tag Search
  */
 
-function processCapiSearchResponseTags(divIdentifier,response,userInterfaceTagDescriptionKey){
-    response.results.forEach(function(tag){
-        ExplainEditorJS().addTagToSuggestionSet(EXPLAINER_IDENTIFIER,divIdentifier,tag.id,tag[userInterfaceTagDescriptionKey]);
-    });
-}
-
-function processCapiSearchResponseGenericTags(divIdentifier,response){
-    response.results.forEach(function(tag){
-        ExplainEditorJS().addTagToSuggestionSet(EXPLAINER_IDENTIFIER,divIdentifier,tag.id,tag.id);
-    });
-}
-
-function processCapiSearchResponseCommissioningDesk(divIdentifier,response){
-    response.results.forEach(function(tag){
-        ExplainEditorJS().addTagToSuggestionSet(EXPLAINER_IDENTIFIER,divIdentifier,tag.id,tag.webTitle);
-    });
-}
-
 $(document).delegate( ".explainer-editor__tags-common__tag-delete-icon", "click", function() {
     var explainerId = $(this).data("explainer-id");
     var tagId = $(this).data("tag-id");
