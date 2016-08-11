@@ -94,25 +94,17 @@ object ExplainEditorJSDomBuilders {
     )
   }
 
-  def addTagToExplainer(explainerId: String, tagId: String) = {
-    Model.addTagToExplainer(explainerId, tagId).map { explainer =>
-      ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
-    }
-  }
-
-  def addTagToSuggestionSet(explainerId: String, suggestionsDivIdentifier: String, tagId: String, userInterfaceDescription: String) = {
-    val node = div(cls:="tag__result")(userInterfaceDescription).render
-    node.onclick = (x: Event) => {
-      addTagToExplainer(explainerId, tagId)
-    }
-    dom.document.getElementById(suggestionsDivIdentifier).appendChild(node)
-  }
-
   def renderSuggestionSet(tags:List[Tag], explainerId:String, suggestionsDivIdentifier:String) = {
       g.jQuery(s"#$suggestionsDivIdentifier").empty()
-      tags.foreach( tagObject =>
-        addTagToSuggestionSet(explainerId, suggestionsDivIdentifier, tagObject.id, tagObject.webTitle)
-      )
+      tags.foreach( tagObject => {
+        val node = div(cls:="tag__result")(tagObject.webTitle).render
+        node.onclick = (x: Event) => {
+          Model.addTagToExplainer(explainerId, tagObject.id).map { explainer =>
+            ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
+          }
+        }
+        dom.document.getElementById(suggestionsDivIdentifier).appendChild(node)
+      })
   }
 
   def makeTagArea(explainer: CsAtom) = {
