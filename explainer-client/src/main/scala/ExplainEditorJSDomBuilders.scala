@@ -215,21 +215,27 @@ object ExplainEditorJSDomBuilders {
       g.updateCheckboxState()
     }
 
-    div(id:="explainer-editor")(
+    div(
+      id:="explainer-editor",
+      cls:="explainer container")(
       div(
         id:="explainer-editor__ops-wrapper",
         cls:="section clearfix"
       )(publishButton),
-      div(cls:="explainer-editor__displayType-wrapper")(
-        div(cls:="explainer-editor__displayType-inner")(
+      div(cls:="clearfix")(
+        div(cls:="right")(
           checkboxTag, " Expandable explainer"
         )
       ),
       form()(
-        div(id:="explainer-editor__title-wrapper")(
+        div(
+          id:="explainer-editor__title-wrapper",
+          cls:="explainer__title")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"title",titleTag)
         ),
-        div(id:="explainer-editor__body-wrapper")(
+        div(
+          id:="explainer-editor__body-wrapper",
+          cls:="explainer__body")(
           ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",bodyTag)
         ),
         div(cls:="explainer-editor__tag-management-wrapper")(

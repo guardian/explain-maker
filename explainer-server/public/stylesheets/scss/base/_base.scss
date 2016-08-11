@@ -24,25 +24,8 @@ html {
   padding-top: $toolbarHeight;
 }
 
-.sub-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid $mid-grey;
-}
-
-/*
- * Main content
- */
-
-.main {
-  padding: 20px;
-}
-
-@media (min-width: 768px) {
-  .main {
-    padding-right: 40px;
-    padding-left: 40px;
-  }
-}
-.main .page-header {
-  margin-top: 0;
+.container {
+  padding:20px 0 50px;
+  margin:auto;
+  width:900px;
 }
