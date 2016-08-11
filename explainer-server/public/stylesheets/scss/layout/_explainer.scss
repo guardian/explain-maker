@@ -1,112 +1,71 @@
 /* -------------------------------------- */
-/* Common                                 */
-/* -------------------------------------- */
-
-h2, h3, h4, h5, h6, .preview__title, .preview__score {
-    font-family: "GuardianTextEgyptianWeb-Medium", Georgia, serif;
-    font-weight: normal;
-    font-style: normal;
-}
-
-/* -------------------------------------- */
 /* Dashboard                              */
 /* -------------------------------------- */
 
-#dashboard {
+.explainer-list {
     display: flex;
     flex-direction: column;
-    padding: 12px 0;
-    width: 1000px;
+    padding: 15px 0;
+    width: 100%;
     margin: 0 auto;
-    background-color: #f6f6f6;
-    font-size: 13px;
+
+    &__table {
+        border: 1px solid $dark-grey;
+        width: 100%;
+        text-align: left;
+    }
+
+    &__header {
+        background: $brand-color;
+        color: $text-contrast;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    &__header, &__item {
+        padding: 10px;
+    }
+
+    &__item:not(:last-child) {
+        border-right: 1px solid $dark-grey;
+    }
+
+    &__row {
+        &:not(:last-child) .explainer-list__item {
+            border-bottom: 1px solid $dark-grey;
+        }
+
+        &:hover .explainer-list__item {
+            background-color: $mid-grey;
+        }
+    }
+
+    &__link {
+        font-weight: bold;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
 
-    #dashboard__title {
-
-    }
-
-    #dashboard__header {
-        text-align:right;
-        margin-bottom:20px;
-    }
-
-    #dashboard__body {
-
-    }
-
-    #dashboard__body .heading {
-        font-weight: bold;
-    }
-
-    #dashboard__body .title {
-        width:500px;
-        padding: 5px;
-        font-weight: bold;
-    }
-    #dashboard__body .last_modified {
-        width:200px;
-        padding: 5px;
-        text-align:center;
-    }
-    #dashboard__body .created_by {
-        width:100px;
-        padding: 5px;
-        text-align:center;
-    }
-    #dashboard__body .status {
-        width:100px;
-        padding: 5px;
-        text-align:center;
-    }
-
-        #dashboard__body__header {
-            display: flex;
-            flex-direction: row;
-            background-color: #ededed;
-        }
-
-        #dashboard__body__listing {
-
-        }
-
-            .dashboard__body__listing__item {
-                display: flex;
-                flex-direction: row;
-                background-color: #edf7f9;
-                border-bottom: 1px solid #ededed;
-            }
-
-            .dashboard__body__listing__item:hover {
-                background-color: #ededed;
-            }
-
-    #dashboard__footer {
-
-    }
 
 /* -------------------------------------- */
 /* Presence                               */
 /* -------------------------------------- */
 
-.presence-field-container {
-}
-
 .field-presence-indicator {
     height:30px;
-    color:red;
+    color: $brand-color;
     margin-bottom:3px;
 }
 
 /* -------------------------------------- */
 /* Explainer                              */
 /* -------------------------------------- */
-
-.explainer {
-    padding:20px 0 50px;
-    margin:auto;
-    width:900px;
-}
 
 .explainer-input-field {
     margin:0;
@@ -121,16 +80,6 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
     height:300px;
     padding: 6px;
 }
-
-.explainer-editor__displayType-wrapper {
-    width:100%;
-}
-    .explainer-editor__displayType-inner {
-        float:right;
-    }
-        .explainer-editor__displayType-checkbox {
-
-        }
 
 .explainer-editor__tag-management-wrapper {
     display: flex;

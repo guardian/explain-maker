@@ -5,3 +5,9 @@ body {
   color: $text-color;
   font: normal 14px / 1.4 $text-font-stack;
 }
+
+h2, h3, h4, h5, h6, .preview__title, .preview__score {
+  font-family: "GuardianTextEgyptianWeb-Medium", Georgia, serif;
+  font-weight: normal;
+  font-style: normal;
+}
