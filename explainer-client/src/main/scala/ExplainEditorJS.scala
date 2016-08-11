@@ -30,11 +30,11 @@ object ExplainEditorJS {
   def main(explainerId: String) = {
     val articleId = "explain-"+explainerId
 
-    ExplainEditorPresenceHelpers.presenceClient.startConnection()
-
-    ExplainEditorPresenceHelpers.presenceClient.on("connection.open", { data:js.Object =>
-      ExplainEditorPresenceHelpers.presenceClient.subscribe(articleId)
-    })
+//    ExplainEditorPresenceHelpers.presenceClient.startConnection()
+//
+//    ExplainEditorPresenceHelpers.presenceClient.on("connection.open", { data:js.Object =>
+//      ExplainEditorPresenceHelpers.presenceClient.subscribe(articleId)
+//    })
 
     Model.extractExplainer(explainerId).map { explainer: CsAtom =>
       dom.document.getElementById("content").appendChild(
@@ -50,18 +50,6 @@ object ExplainEditorJS {
   @JSExport
   def generateExplainerTagManagement(explainerId: String): Future[String] = {
     Model.extractExplainer(explainerId).map( explainer => ExplainEditorJSDomBuilders.makeTagArea(explainer).render.outerHTML )
-  }
-
-  def redisplayExplainerTagManagementAreas(explainerId: String) = {
-    Model.extractExplainer(explainerId).map{ explainer =>
-
-      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").innerHTML = ""
-      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer).render)
-
-      dom.document.getElementById("explainer-editor__tags-wrapper").innerHTML = ""
-      dom.document.getElementById("explainer-editor__tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeTagArea(explainer).render)
-
-    }
   }
 
   @JSExport
@@ -84,14 +72,14 @@ object ExplainEditorJS {
   @JSExport
   def addTagToExplainer(explainerId: String, tagId: String) = {
     Model.addTagToExplainer(explainerId, tagId).map { explainer =>
-      redisplayExplainerTagManagementAreas(explainer.id)
+      ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
     }
   }
 
   @JSExport
   def removeTagFromExplainer(explainerId: String, tagId: String) = {
     Model.removeTagFromExplainer(explainerId, tagId).map { explainer =>
-      redisplayExplainerTagManagementAreas(explainer.id)
+      ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
     }
   }
 

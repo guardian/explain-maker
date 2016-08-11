@@ -43,11 +43,11 @@ object Model {
   }
 
   def addTagToExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
-    Ajaxer[ExplainerApi].addTagToExplainer(explainerId, tagId).call()
+    Ajaxer[ExplainerApi].update(explainerId, "addTag", tagId).call()
   }
 
   def removeTagFromExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
-    Ajaxer[ExplainerApi].removeTagFromExplainer(explainerId, tagId).call()
+    Ajaxer[ExplainerApi].update(explainerId, "removeTag", tagId).call()
   }
 
 }

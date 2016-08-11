@@ -45,7 +45,6 @@ function updateCheckboxState() {
  * Tag Search
  */
 
-
 function processCapiSearchResponseTags(divIdentifier,response,userInterfaceTagDescriptionKey){
     response.results.forEach(function(tag){
         ExplainEditorJS().addTagToSuggestionSet(EXPLAINER_IDENTIFIER,divIdentifier,tag.id,tag[userInterfaceTagDescriptionKey]);

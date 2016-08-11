@@ -76,35 +76,6 @@ class ExplainerApiImpl(
     explainerToPublish.map(CsAtom.atomToCsAtom)
   }
 
-  override def addTagToExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
-    explainerDB.load(explainerId).map(CsAtom.atomToCsAtom).map{ csatom =>
-      val newCsAtom = csatom.copy(
-        data = csatom.data.copy(
-          tags = Some((tagId +: csatom.data.tags.getOrElse(List())).distinct.sorted)
-        )
-      )
-      explainerDB.update(CsAtom.csAtomToAtom(newCsAtom))
-      explainerStore.updateLastModified(explainerId, user)
-    }
-    load(explainerId)
-  }
-
-  override def removeTagFromExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
-    explainerDB.load(explainerId).map(CsAtom.atomToCsAtom).map{ csatom =>
-      val newCsAtom: CsAtom = csatom.copy(
-        data = csatom.data.copy(
-          tags = csatom.data.tags.flatMap{ list =>
-            val newlist = (list diff List(tagId)).sorted
-            if(newlist.isEmpty){ None }else{ Some(newlist) }
-          }
-        )
-      )
-      explainerDB.update(CsAtom.csAtomToAtom(newCsAtom))
-      explainerStore.updateLastModified(explainerId, user)
-    }
-    load(explainerId)
-  }
-
 }
 
 class ApiController @Inject() (val config: Config,
