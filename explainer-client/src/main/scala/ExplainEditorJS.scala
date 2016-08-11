@@ -70,26 +70,10 @@ object ExplainEditorJS {
   }
 
   @JSExport
-  def addTagToExplainer(explainerId: String, tagId: String) = {
-    Model.addTagToExplainer(explainerId, tagId).map { explainer =>
-      ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
-    }
-  }
-
-  @JSExport
   def removeTagFromExplainer(explainerId: String, tagId: String) = {
     Model.removeTagFromExplainer(explainerId, tagId).map { explainer =>
       ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
     }
-  }
-
-  @JSExport
-  def addTagToSuggestionSet(explainerId: String, divIdentifier: String, tagId: String, userInterfaceDescription: String) = {
-    val node = div(cls:="tag__result")(userInterfaceDescription).render
-    node.onclick = (x: Event) => {
-      addTagToExplainer(explainerId, tagId)
-    }
-    dom.document.getElementById(divIdentifier).appendChild(node)
   }
 
 }

@@ -88,7 +88,8 @@ lazy val explainMakerClient = (project in file("explainer-client")).settings(
     "com.lihaoyi" %%% "scalarx" % "0.2.8",
     "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
     "com.lihaoyi" %%% "autowire" % "0.2.5",
-    "com.lihaoyi" %%% "upickle" % "0.4.1"
+    "com.lihaoyi" %%% "upickle" % "0.4.1",
+    "fr.hmil" %%% "roshttp" % "1.0.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .dependsOn(explainMakerSharedJs)
