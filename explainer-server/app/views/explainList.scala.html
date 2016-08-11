@@ -2,6 +2,7 @@
 @import shared.util.ExplainerAtomImplicits
 @import org.joda.time.DateTime
 @import org.joda.time.format.DateTimeFormat
+@import util.HelperFunctions._
 
 @(explainers: Seq[Atom], user: com.gu.pandomainauth.model.AuthenticatedUser)(implicit request: RequestHeader)
 
@@ -11,10 +12,6 @@
             <a class="top-toolbar__title" href="/">
                 <div class="top-toolbar__logo"></div>
                 <div class="top-toolbar__page-icon"></div>
-                <div class="top-toolbar__title__hover-state">
-                    <span class="top-toolbar__title__hover-state__subtitle">Back to</span><br />
-                    <span class="top-toolbar__title__hover-state__title">Dashboard</span>
-                </div>
             </a>
         </div>
         <div class="top-toolbar__container">
@@ -58,8 +55,8 @@
                             val fmt = DateTimeFormat.forPattern("MM/dd/YYYY HH:MM");
                             fmt.print(datetime);
                         }</td>
-                        <td class="explainer-list__item">-</td>
-                        <td class="explainer-list__item">-</td>
+                        <td class="explainer-list__item">@{getCreatedByString(e)}</td>
+                        <td class="explainer-list__item">@{isPublished(e)}</td>
                     </tr>
                 }
             </table>
