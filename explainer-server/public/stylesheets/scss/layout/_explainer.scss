@@ -102,55 +102,35 @@ h2, h3, h4, h5, h6, .preview__title, .preview__score {
 /* Explainer                              */
 /* -------------------------------------- */
 
-#explainer-editor {
-    padding:20px 0px 50px 0px;
+.explainer {
+    padding:20px 0 50px;
     margin:auto;
     width:900px;
 }
 
-    #explainer-editor .explainer-input-field {
-        margin:0;
-        width: 100%;
-        font-size: 20px;
-        font-family: inherit;
-        line-height: 1.4em;
-        border:1px solid #DDDDDD;
-    }
+.explainer-input-field {
+    margin:0;
+    width: 100%;
+    font-size: 20px;
+    font-family: inherit;
+    line-height: 1.4em;
+    border:1px solid #DDDDDD;
+}
 
-    #explainer-editor__headline-wrapper {
-        margin: 0px 0px 20px 0px;
+.explainer__input {
+    height:300px;
+    padding: 6px;
+}
+
+.explainer-editor__displayType-wrapper {
+    width:100%;
+}
+    .explainer-editor__displayType-inner {
+        float:right;
     }
-        #explainer-editor__headline-wrapper__input {
-            outline: none;
-            padding: 6px;
+        .explainer-editor__displayType-checkbox {
+
         }
-
-    #explainer-editor__body-wrapper {
-
-    }
-        .explainer-editor__body-wrapper__input {
-            height:300px;
-            padding: 6px;
-        }
-
-
-    .top-toolbar__word-count-wrapper__warning-outer {
-        display:none;
-    }
-    .top-toolbar__word-count-wrapper__warning-inner {
-        color:red;
-        font-weight: bold;
-    }
-
-    .explainer-editor__displayType-wrapper {
-        width:100%;
-    }
-        .explainer-editor__displayType-inner {
-            float:right;
-        }
-            .explainer-editor__displayType-checkbox {
-
-            }
 
 .explainer-editor__tag-management-wrapper {
     display: flex;
