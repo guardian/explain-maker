@@ -34,7 +34,6 @@ function updateStatusBar(message){
             labelClass="label--warning";
             labelRemovedClass = "label--success";
         }
-        console.log(labelClass);
         status.text(message)
             .removeClass(labelRemovedClass)
             .addClass(labelClass)
