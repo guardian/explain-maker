@@ -18,13 +18,29 @@ function updateWordCountWarningDisplay() {
     }
 }
 function updateStatusBar(message){
+    var status = $(".content-status"),
+        labelClass = "",
+        labelRemovedClass = "";
+
     // Asumming it saved correctly for now
     $(".save-state").removeClass("save-state--loading");
+
     if (message.length) {
-        $(".content-status").text(message);
-        $(".content-status").show();
+
+        if (message === "published") {
+            labelClass = "label--success";
+            labelRemovedClass = "label--warning";
+        } else {
+            labelClass="label--warning";
+            labelRemovedClass = "label--success";
+        }
+        console.log(labelClass);
+        status.text(message)
+            .removeClass(labelRemovedClass)
+            .addClass(labelClass)
+            .show();
     } else {
-        $(".content-status").hide();
+        status.hide();
     }
 }
 
