@@ -94,25 +94,66 @@ function readValueAtDiv(id){
     return $("#"+id).val();
 }
 
-function initiateEditor(){
-    tinymce.init({
-        selector:'#explainer-input-text-area',
-        plugins: [
-            'link'
-        ],
-        menu: {
-            table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'}
-        },
-        toolbar: 'undo redo | styleselect | bold italic underline bullist, numlist link',
-        setup:function(ed) {
-            ed.on('keyup', debounce(function(e) {
-                $(".save-state").addClass("save-state--loading");
-                var bodyString = ed.getContent();
-                ExplainEditorJS().updateBodyContents(EXPLAINER_IDENTIFIER, bodyString)
-            }, 500));
-        }
-    });
-}
+require( [
+    'scribe-common',
+    'lodash-amd',
+    'html-janitor',
+    'immutable'
+], function (
+    Scribe,
+    scribePluginToolbar,
+    scribePluginFormatterPlainTextConvertNewLinesToHtml,
+    scribePluginSanitizer,
+    scribePluginInlineStyles,
+    scribePluginHeadingCommand,
+    scribePluginLinkPromptCommand,
+    scribePluginBlockquoteCommand
+) {
+    var scribe = new Scribe(document.querySelector('.rte'),
+        {allowBlockElements: false});
+    window.scribe = scribe;
+    scribe.setContent('<p>Hello, World!<\/p>');
+    scribe.use(scribePluginToolbar(document.querySelector('.rte-toolbar')));
+    scribe.use(scribePluginFormatterPlainTextConvertNewLinesToHtml());
+    scribe.use(scribePluginInlineStyles());
+    scribe.use(scribePluginHeadingCommand(2));
+    scribe.use(scribePluginBlockquoteCommand());
+    scribe.use(scribePluginSanitizer({ tags: {
+        p: {},
+        b: {},
+        i: {},
+        br: {},
+        h2: {},
+        a: {},
+        blockquote: {}
+    }}));
+    scribe.use(scribePluginLinkPromptCommand());
+    scribe.on('content-changed', updateHtml);
+    function updateHtml() {
+        document.querySelector('.rte-output').value = scribe.getHTML();
+    }
+    updateHtml();
+});
+
+// function initiateEditor(){
+//     tinymce.init({
+//         selector:'#explainer-input-text-area',
+//         plugins: [
+//             'link'
+//         ],
+//         menu: {
+//             table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'}
+//         },
+//         toolbar: 'undo redo | styleselect | bold italic underline bullist, numlist link',
+//         setup:function(ed) {
+//             ed.on('keyup', debounce(function(e) {
+//                 $(".save-state").addClass("save-state--loading");
+//                 var bodyString = ed.getContent();
+//                 ExplainEditorJS().updateBodyContents(EXPLAINER_IDENTIFIER, bodyString)
+//             }, 500));
+//         }
+//     });
+// }
 
 ExplainEditorJS().main(EXPLAINER_IDENTIFIER)
 

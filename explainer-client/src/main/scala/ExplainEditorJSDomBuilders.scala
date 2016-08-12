@@ -233,7 +233,9 @@ object ExplainEditorJSDomBuilders {
           )
         )
       )
+
     )
+    script(src:="./target/scala-2.11/explainmakerclient-jsdeps.min.js")
 
   }
 

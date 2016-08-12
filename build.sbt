@@ -78,6 +78,7 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
 ).aggregate(clients.map(projectToRef): _*).
   dependsOn(explainMakerSharedJvm)
 
+
 lazy val explainMakerClient = (project in file("explainer-client")).settings(
   scalaVersion := scalaV,
   persistLauncher := true,
@@ -90,7 +91,13 @@ lazy val explainMakerClient = (project in file("explainer-client")).settings(
     "com.lihaoyi" %%% "autowire" % "0.2.5",
     "com.lihaoyi" %%% "upickle" % "0.4.1",
     "fr.hmil" %%% "roshttp" % "1.0.0"
-  )
+    "org.webjars.bower" % "scribe" % "3.2.0",
+    "org.webjars" % "requirejs" % "2.2.0"
+  ),
+  jsDependencies ++= Seq(
+    "org.webjars.bower" % "scribe" % "3.2.0" / "scribe.js" minified "scribe.min.js" commonJSName "Scribe"
+  ),
+  skip in packageJSDependencies := false
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay)
   .dependsOn(explainMakerSharedJs)
 
