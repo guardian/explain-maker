@@ -41,16 +41,23 @@ class ExplainerApiImpl(
   val explainerDB = new ExplainerDB(config)
   val explainerStore = new ExplainerStore(config)
 
-  def publishExplainerToKinesis(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher) = {
+  def publishExplainerToKinesis(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update) = {
     if (config.publishToKinesis) {
       val event = ContentAtomEvent(explainer, EventType.Update, DateTime.now.getMillis)
       atomPublisher.publishAtomEvent(event) match {
-        case Success(_) => Logger.info(s"$actionMessage succeeded")
-        case Failure(err) => Logger.error(s"$actionMessage failed", err)
+        case Success(_) => {
+          Logger.info(s"$actionMessage succeeded")
+          "success"
+        }
+        case Failure(err) => {
+          Logger.error(s"$actionMessage failed", err)
+          "fail"
+        }
       }
     }
     else {
       Logger.info(s"Not $actionMessage - kinesis publishing disabled in config")
+      "disabled"
     }
   }
 
@@ -70,10 +77,10 @@ class ExplainerApiImpl(
   }
 
   override def publish(id: String): Future[CsAtom] = {
-    val _ = explainerStore.publish(id, user)
-    val explainerToPublish = explainerDB.load(id)
-    explainerToPublish.map(publishExplainerToKinesis(_, "Publishing explainer to LIVE kinesis", liveAtomPublisher))
-    explainerToPublish.map(CsAtom.atomToCsAtom)
+    explainerStore.publish(id, user).map(explainerToPublish => {
+      publishExplainerToKinesis(explainerToPublish, "Publishing explainer to LIVE kinesis", liveAtomPublisher)
+      CsAtom.atomToCsAtom(explainerToPublish)
+    })
   }
 
 }
