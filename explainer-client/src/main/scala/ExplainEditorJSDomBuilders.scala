@@ -16,22 +16,18 @@ import models.Tag
 import services.CAPIService
 import upickle.Js
 import upickle.default._
+import scala.scalajs.js.JSON
 
 object ExplainEditorJSDomBuilders {
 
   def statusBarText(explainer: CsAtom) = {
-    val isDraftState = (for {
-      lastModifiedDate <- explainer.contentChangeDetails.lastModified
-      publishedDate <- explainer.contentChangeDetails.published
-    }yield {
-      lastModifiedDate.date > publishedDate.date
-    }).getOrElse(true)
-    val status = if(isDraftState){
-      "Draft"
-    }else{
-      ""
+    val isPublished = explainer.contentChangeDetails.published.isDefined
+
+    if(isPublished) {
+      "published"
+    } else {
+      "draft"
     }
-    status
   }
 
   def redisplayExplainerTagManagementAreas(explainerId: String): Unit = {
