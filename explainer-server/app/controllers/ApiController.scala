@@ -11,14 +11,14 @@ import com.gu.atom.publish.{AtomPublisher, LiveAtomPublisher, PreviewAtomPublish
 import com.gu.contentatom.thrift.{Atom, ContentAtomEvent, EventType}
 import config.Config
 import db.ExplainerDB
-import models.ExplainerStore
+import models.{ExplainerStore, PublishResult, Success => PublishSuccess, Fail => PublishFail, Disabled => PublishDisabled}
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Controller
 import services.PublicSettingsService
 import shared._
-import shared.models.{CsAtom, CsExplainerAtom}
+import models.{CsAtom, CsExplainerAtom}
 import upickle.Js
 import upickle.default._
 
@@ -41,23 +41,23 @@ class ExplainerApiImpl(
   val explainerDB = new ExplainerDB(config)
   val explainerStore = new ExplainerStore(config)
 
-  def publishExplainerToKinesis(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update) = {
+  def publishExplainerToKinesis(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {
     if (config.publishToKinesis) {
       val event = ContentAtomEvent(explainer, EventType.Update, DateTime.now.getMillis)
       atomPublisher.publishAtomEvent(event) match {
         case Success(_) => {
           Logger.info(s"$actionMessage succeeded")
-          "success"
+          PublishSuccess
         }
         case Failure(err) => {
           Logger.error(s"$actionMessage failed", err)
-          "fail"
+          PublishFail
         }
       }
     }
     else {
       Logger.info(s"Not $actionMessage - kinesis publishing disabled in config")
-      "disabled"
+      PublishDisabled
     }
   }
 
