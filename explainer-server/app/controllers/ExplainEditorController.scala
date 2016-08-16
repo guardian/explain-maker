@@ -13,6 +13,7 @@ import play.api.Logger
 import play.api.libs.json.Json
 import services.PublicSettingsService
 import shared._
+import shared.models.CsAtom
 import shared.util.ExplainerAtomImplicits
 
 class ExplainEditorController @Inject() (val publicSettingsService: PublicSettingsService, config: Config) extends Controller with AuthActions with ExplainerAtomImplicits {
@@ -20,11 +21,14 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
   val pandaAuthenticated = new PandaAuthenticated(config)
   val explainerDB = new ExplainerDB(config)
 
-  def get(id: String) = pandaAuthenticated { implicit request =>
+  def get(id: String) = pandaAuthenticated.async { implicit request =>
     val viewConfig = Json.obj(
       "CAPI_API_KEY" -> config.capiKey
     )
-    Ok(views.html.explainEditor(id,request.user,viewConfig))
+
+    explainerDB.load(id).map(e => {
+      Ok(views.html.explainEditor(e,request.user,viewConfig))
+    })
   }
 
   def all = pandaAuthenticated.async{ implicit request =>
