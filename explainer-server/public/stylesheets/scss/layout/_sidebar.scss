@@ -1,0 +1,12 @@
+// -----------------------------------------------------------------------------
+// This file contains styles for the sidebar
+// -----------------------------------------------------------------------------
+
+.sidebar {
+  background: $light-grey;
+  flex-shrink: 0;
+  width: 400px;
+  border-right: 1px solid $dark-grey;
+  padding: ($toolbarHeight + 40px) 40px 40px;
+  height: calc(100vh - #{$toolbarHeight});
+}

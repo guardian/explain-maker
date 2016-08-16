@@ -1,11 +1,16 @@
-@(id: String, user: com.gu.pandomainauth.model.AuthenticatedUser, config: play.api.libs.json.JsObject)(implicit request: RequestHeader)
+@import com.gu.contentatom.thrift.Atom
+
+@(explainer: Atom, user: com.gu.pandomainauth.model.AuthenticatedUser, config: play.api.libs.json.JsObject)(implicit request: RequestHeader)
 
 @header = {
     <script type="text/javascript">
         CONFIG = @Html(config.toString);
-        EXPLAINER_IDENTIFIER = "@id"
+        EXPLAINER_IDENTIFIER = "@explainer.id"
     </script>
 }
+
+@content = {}
+
 @toolbar = {
     <header class="top-toolbar">
         <div class="top-toolbar__container">
@@ -44,7 +49,17 @@
         </div>
     </header>
 }
-@templates.main("Explainer Editor", header, toolbar){
+
+@sidebar = {
+    <div class="sidebar">
+        <div id="title">
+            <p class="form-label">Title</p>
+            <input type="text" class="form-field"/>
+        </div>
+    </div>
+}
+
+@templates.main("Explainer Editor", header, content, toolbar, sidebar){
     <script src="@routes.Assets.at("lib/tinymce/tinymce.min.js")"></script>
     <script src="@routes.Assets.at("javascripts/explain-editor-plain-js.js")"></script>
 }
