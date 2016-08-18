@@ -63,3 +63,22 @@ Explain Maker should now be found at [https://explainer.local.dev-gutools.co.uk/
 
 In order to get the Panda authentication cookie needed to access Explain Maker, you might want to, for instance, first visit your local instance of Composer or Workflow. Alternatively (better option) you can run [login.gutools](https://github.com/guardian/login.gutools) for a seamless experience.
 
+## Troubleshooting
+
+### NPM issues
+These are usually to do with old dependencies being overwritten. Delete your `npm_modules` folder and clear the npm cache with:
+
+```
+cd explainer-server
+rm -rf node_modules
+npm cache clear
+```
+
+then reinstall them with:
+
+```
+cd ../
+./setup.sh
+```
+
+This will pick up the correct Node version and reinstall all client side dependencies.
