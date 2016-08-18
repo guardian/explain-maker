@@ -199,11 +199,11 @@ object ExplainEditorJSDomBuilders {
 
     div(
       id:="explainer-editor",
-      cls:="explainer container")(
+      cls:="explainer")(
       div(
         id:="explainer-editor__ops-wrapper",
         cls:="section clearfix"
-      )(publishButton),
+      ),
       div(cls:="clearfix")(
         div(cls:="right")(
           checkboxTag, " Expandable explainer"

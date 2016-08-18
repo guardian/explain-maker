@@ -49,6 +49,10 @@
   float: left;
 }
 
+.block-center {
+  display: block; // Just in case
+  margin: auto;
+}
 
 .relative-parent {
   position: relative;
