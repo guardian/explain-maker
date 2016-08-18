@@ -27,15 +27,16 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
     Ok(views.html.explainEditor(id,request.user,viewConfig))
   }
 
-  def all = pandaAuthenticated.async{ implicit request =>
+  def listExplainers(desk: Option[String]) = pandaAuthenticated.async{ implicit request =>
 
-    explainerDB.all.map{ r =>
-        def sorting(e1: Atom, e2: Atom): Boolean = {
-          val time1:Long = e1.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
-          val time2:Long = e2.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
-          time1 > time2
-        }
-        Ok(views.html.explainList(r.sortWith(sorting),request.user))
+    explainerDB.all.map{ explainers =>
+      def sorting(e1: Atom, e2: Atom): Boolean = {
+        val time1:Long = e1.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
+        val time2:Long = e2.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
+        time1 > time2
+      }
+      val explainersForDesk = desk.fold(explainers)(d => explainers.filter(_.tdata.tags.exists(_.contains(d))))
+      Ok(views.html.explainList(explainersForDesk.sortWith(sorting),request.user))
     }.recover{ case err =>
       Logger.error("Error fetching explainers from dynamo", err)
       InternalServerError(err.getMessage)
