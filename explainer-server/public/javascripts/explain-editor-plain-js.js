@@ -124,13 +124,15 @@ require(['scribe', 'scribe-plugin-toolbar', 'scribe-plugin-link-prompt-command',
                 }
             }
         }));
-        scribe.on('content-changed', debounce(function(){
+        scribe.on('content-changed', function(){
             $(".save-state").addClass("save-state--loading");
-            var bodyString = scribeElement.innerHTML;
-            updateWordCountDisplay();
-            updateWordCountWarningDisplay();
-            ExplainEditorJS().updateBodyContents(EXPLAINER_IDENTIFIER, bodyString);
-        }, 500));
+            debounce(function(){
+                var bodyString = scribeElement.innerHTML;
+                updateWordCountDisplay();
+                updateWordCountWarningDisplay();
+                ExplainEditorJS().updateBodyContents(EXPLAINER_IDENTIFIER, bodyString);
+            }, 500)()
+        });
     });
 
 
