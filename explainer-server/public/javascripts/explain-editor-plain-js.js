@@ -94,66 +94,45 @@ function readValueAtDiv(id){
     return $("#"+id).val();
 }
 
-require( [
-    'scribe-common',
-    'lodash-amd',
-    'html-janitor',
-    'immutable'
-], function (
-    Scribe,
-    scribePluginToolbar,
-    scribePluginFormatterPlainTextConvertNewLinesToHtml,
-    scribePluginSanitizer,
-    scribePluginInlineStyles,
-    scribePluginHeadingCommand,
-    scribePluginLinkPromptCommand,
-    scribePluginBlockquoteCommand
-) {
-    var scribe = new Scribe(document.querySelector('.rte'),
-        {allowBlockElements: false});
-    window.scribe = scribe;
-    scribe.setContent('<p>Hello, World!<\/p>');
-    scribe.use(scribePluginToolbar(document.querySelector('.rte-toolbar')));
-    scribe.use(scribePluginFormatterPlainTextConvertNewLinesToHtml());
-    scribe.use(scribePluginInlineStyles());
-    scribe.use(scribePluginHeadingCommand(2));
-    scribe.use(scribePluginBlockquoteCommand());
-    scribe.use(scribePluginSanitizer({ tags: {
-        p: {},
-        b: {},
-        i: {},
-        br: {},
-        h2: {},
-        a: {},
-        blockquote: {}
-    }}));
-    scribe.use(scribePluginLinkPromptCommand());
-    scribe.on('content-changed', updateHtml);
-    function updateHtml() {
-        document.querySelector('.rte-output').value = scribe.getHTML();
-    }
-    updateHtml();
-});
 
-// function initiateEditor(){
-//     tinymce.init({
-//         selector:'#explainer-input-text-area',
-//         plugins: [
-//             'link'
-//         ],
-//         menu: {
-//             table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'}
-//         },
-//         toolbar: 'undo redo | styleselect | bold italic underline bullist, numlist link',
-//         setup:function(ed) {
-//             ed.on('keyup', debounce(function(e) {
-//                 $(".save-state").addClass("save-state--loading");
-//                 var bodyString = ed.getContent();
-//                 ExplainEditorJS().updateBodyContents(EXPLAINER_IDENTIFIER, bodyString)
-//             }, 500));
-//         }
-//     });
-// }
+require(['scribe', 'scribe-plugin-toolbar', 'scribe-plugin-link-prompt-command', 'scribe-plugin-keyboard-shortcuts', 'scribe-plugin-sanitizer'],
+    function (Scribe, scribePluginToolbar, scribePluginLinkPromptCommand, scribePluginkeyboardShorcuts, scribePluginSanitizer) {
 
-ExplainEditorJS().main(EXPLAINER_IDENTIFIER)
+        var scribeElement = document.querySelector('.scribe-body-editor__textarea');
+        
+        // Create an instance of Scribe
+        var scribe = new Scribe(scribeElement);
+
+
+        var toolbarElement = document.querySelector('.scribe-body-editor__toolbar');
+        scribe.use(scribePluginToolbar(toolbarElement));
+        scribe.use(scribePluginLinkPromptCommand());
+
+        scribe.use(scribePluginkeyboardShorcuts({
+            bold: function (event) { return event.metaKey && event.keyCode === 66; }, // b
+            italic: function (event) { return event.metaKey && event.keyCode === 73; }, // i
+            linkPrompt: function (event) { return event.metaKey && !event.shiftKey && event.keyCode === 75; }, // k
+            unlink: function (event) { return event.metaKey && event.shiftKey && event.keyCode === 75; } // shft + k
+        }));
+        scribe.use(scribePluginSanitizer({
+            tags: {
+                p: {},
+                i: {},
+                b: {},
+                a: {
+                    href: true
+                }
+            }
+        }));
+        scribe.on('content-changed', debounce(function(){
+            $(".save-state").addClass("save-state--loading");
+            var bodyString = scribeElement.innerHTML;
+            updateWordCountDisplay();
+            updateWordCountWarningDisplay();
+            ExplainEditorJS().updateBodyContents(EXPLAINER_IDENTIFIER, bodyString);
+        }, 500));
+    });
+
+
+ExplainEditorJS().main(EXPLAINER_IDENTIFIER);
 
