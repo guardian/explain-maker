@@ -40,6 +40,9 @@ object ExplainEditorJS {
       dom.document.getElementById("content").appendChild(
         ExplainEditorJSDomBuilders.ExplainEditor(explainerId, explainer).render
       )
+      dom.document.getElementById("sidebar").appendChild(
+        ExplainEditorJSDomBuilders.SideBar(explainerId, explainer).render
+      )
       ExplainEditorJSDomBuilders.republishStatusBar(explainer)
       g.updateWordCountDisplay()
       g.updateWordCountWarningDisplay()
