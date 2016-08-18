@@ -67,6 +67,7 @@ In order to get the Panda authentication cookie needed to access Explain Maker, 
 
 ### NPM issues
 These are usually to do with old dependencies being overwritten. Delete your `npm_modules` folder and clear the npm cache with:
+
 ```
 cd explainer-server
 rm -rf node_modules
