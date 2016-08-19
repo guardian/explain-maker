@@ -154,11 +154,18 @@ object ExplainEditorJSDomBuilders {
       Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
     }
 
+    val interactiveUrlText: String = g.CONFIG.INTERACTIVE_URL.toString + "?id=" + explainerId
+
+
+    println(g.CONFIG.INTERACTIVE_URL.toString)
+
     val interactiveUrl: TypedTag[TextArea] = textarea(
       cls:="form-field",
       maxlength:=1800,
       readonly:="true"
     )
+
+    val interactiveUrlTag = interactiveUrl(interactiveUrlText).render
 
     val checkboxClassName: String = "explainer-editor__displayType-checkbox"
     val checkbox: TypedTag[Input] = explainer.data.displayType match {
@@ -181,14 +188,13 @@ object ExplainEditorJSDomBuilders {
       g.updateCheckboxState()
     }
 
-    val interactiveUrlTag = interactiveUrl().render
-
     form()(
       div(cls:="form-row")(
         ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"Title",titleTag)
       ),
       div(cls:="form-row")(
-        ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"Interactive URL",interactiveUrlTag)
+        div(cls:="form-label")("Interactive URL"),
+        interactiveUrlTag
       ),
       div(cls:="form-row")(
         div()(
