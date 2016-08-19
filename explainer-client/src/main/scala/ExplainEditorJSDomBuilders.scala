@@ -145,7 +145,7 @@ object ExplainEditorJSDomBuilders {
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
       cls:="form-field form-field--large",
-      placeholder:="title",
+      placeholder:="Explainer title",
       autofocus:=true
     )
 
@@ -154,18 +154,36 @@ object ExplainEditorJSDomBuilders {
       Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
     }
 
-    val body: TypedTag[TextArea] = textarea(
-      id:="explainer-input-text-area",
-      cls:="form-field",
-      maxlength:=1800,
-      placeholder:="body"
+    val toolbarButtonTags = List(
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="bold")("Bold"),
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="italic")("Italic"),
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="linkPrompt")("Link"),
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="unLink")("Unlink")
     )
 
-    val bodyTag = body(explainer.data.body).render
-    bodyTag.oninput = (x: Event) => {
-      g.updateWordCountDisplay()
-      g.updateWordCountWarningDisplay()
-    }
+    val preventDefaultToolbarButtons = toolbarButtonTags.map(b => {
+      val button = b.render
+      button.onmousedown = (e: Event) => {
+        e.preventDefault()
+      }
+      button
+    })
+
+    val toolbarTag: TypedTag[Div] = div(
+      id:="scribe-toolbar",
+      cls:="scribe-body-editor__toolbar"
+    )(
+      preventDefaultToolbarButtons
+    )
+
+    val scribeBodyEditorTextarea: TypedTag[Div] = div(
+      id:="explainer-input-text-area",
+      cls:="scribe-body-editor__textarea",
+      maxlength:=1800,
+      placeholder:="Explainer body text"
+    )
+    val bodyTag = scribeBodyEditorTextarea(raw(explainer.data.body)).render
+
 
     val publishButton = button(
       id:="explainer-editor__ops-wrapper__publish-button",
@@ -218,7 +236,11 @@ object ExplainEditorJSDomBuilders {
         div(
           id:="explainer-editor__body-wrapper",
           cls:="explainer__body")(
-          ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",bodyTag)
+            div(cls:="scribe-body-editor")(
+              toolbarTag.render,
+              bodyTag
+            )
+//          ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",)
         ),
         div(cls:="explainer-editor__tag-management-wrapper")(
           div(
@@ -233,6 +255,7 @@ object ExplainEditorJSDomBuilders {
           )
         )
       )
+
     )
 
   }
