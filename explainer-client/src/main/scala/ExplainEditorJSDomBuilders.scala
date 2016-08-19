@@ -250,7 +250,7 @@ object ExplainEditorJSDomBuilders {
 
     div(
       id:="explainer-editor",
-      cls:="explainer container")(
+      cls:="explainer")(
       form()(
         div(
           id:="explainer-editor__body-wrapper",

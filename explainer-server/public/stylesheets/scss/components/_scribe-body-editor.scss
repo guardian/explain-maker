@@ -1,9 +1,5 @@
 .scribe-body-editor {
-
-  margin-top: $standard-padding/2;
-
   background-color: white;
-  border: 1px solid $c-grey-300;
 }
 
 .scribe-body-editor__toolbar {
@@ -30,6 +26,7 @@
 
 .scribe-body-editor__textarea {
   padding: $standard-padding;
+  font-size: 16px;
 
   b {
     font-weight: bold;
