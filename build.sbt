@@ -26,6 +26,7 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
     "com.amazonaws" % "aws-java-sdk-core" % awsVersion,
     "com.gu" %% "scanamo" % "0.6.0",
     ws, // for panda
+    cache,
     "com.gu" %% "pan-domain-auth-verification" % "0.3.0",
     "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
     "com.lihaoyi" %% "upickle" % "0.4.1",
@@ -40,6 +41,7 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
     "com.amazonaws" % "aws-java-sdk-ec2" % awsVersion,
     "com.gu" % "kinesis-logback-appender" % "1.2.0",
     "net.logstash.logback" % "logstash-logback-encoder" % "4.2",
+    "com.gu" %% "content-api-client" % "9.5",
     "org.webjars.bower" % "scribe" % "3.2.0",
     "org.webjars.bower" % "scribe-plugin-sanitizer" % "0.1.10",
     "org.webjars.bower" % "scribe-plugin-toolbar" % "1.0.0",
@@ -81,7 +83,6 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
   buildInfoPackage := "app"
 ).aggregate(clients.map(projectToRef): _*).
   dependsOn(explainMakerSharedJvm)
-
 
 lazy val explainMakerClient = (project in file("explainer-client")).settings(
   scalaVersion := scalaV,

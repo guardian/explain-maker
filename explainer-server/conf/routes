@@ -3,11 +3,10 @@
 # ~~~~
 
 # Home page
-GET           /                            controllers.ExplainEditorController.all
+GET           /                            controllers.ExplainEditorController.listExplainers(desk: Option[String])
 GET           /healthcheck                 controllers.Healthcheck.healthcheck
 
 GET           /explain/:id                 controllers.ExplainEditorController.get(id)
-GET           /explain                     controllers.ExplainEditorController.all
 
 # Autowire calls
 POST          /api/*path                   controllers.ApiController.autowireApi(path: String)
