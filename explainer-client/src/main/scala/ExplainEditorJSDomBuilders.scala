@@ -151,7 +151,7 @@ object ExplainEditorJSDomBuilders {
 
     val titleTag = title(value := explainer.data.title).render
     titleTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("Explainer Title", titleTag.value)).map(republishStatusBar)
+      Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
     }
 
     val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
