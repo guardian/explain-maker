@@ -1,27 +1,10 @@
-import autowire.Macros.Check
-import autowire._
-import common.ExtAjax._
 import org.scalajs.dom
-import org.scalajs.dom.ext.Ajax
-import org.scalajs.dom.html.{Element, Input, Option, TextArea}
-import org.scalajs.dom.{Event, FocusEvent}
-import presence.StateChange.State
-import presence.{Person, PresenceGlobalScope, StateChange}
-import rx._
-import shared._
+import shared.models.{CsAtom, ExplainerUpdate}
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
 import scala.scalajs.js.annotation.JSExport
-import scalatags.JsDom._
-import scalatags.JsDom.all._
-import scalatags.JsDom.tags2.section
-import shared.models.{CsAtom, ExplainerUpdate}
-import shared.models.CsAtom._
-import upickle.Js
-import upickle.default._
 
 @JSExport
 object ExplainEditorJS {
