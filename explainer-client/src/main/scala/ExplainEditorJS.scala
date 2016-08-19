@@ -40,6 +40,7 @@ object ExplainEditorJS {
       dom.document.getElementById("content").appendChild(
         ExplainEditorJSDomBuilders.ExplainEditor(explainerId, explainer).render
       )
+
       dom.document.getElementById("sidebar").appendChild(
         ExplainEditorJSDomBuilders.SideBar(explainerId, explainer).render
       )
@@ -58,6 +59,11 @@ object ExplainEditorJS {
     Model.createNewExplainer().map{ explainer: CsAtom =>
       g.location.href = s"/explain/${explainer.id}"
     }
+  }
+
+  @JSExport
+  def publish(explainerId: String) = {
+    Model.publish(explainerId).map(ExplainEditorJSDomBuilders.republishStatusBar)
   }
 
   @JSExport

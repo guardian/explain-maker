@@ -154,10 +154,8 @@ object ExplainEditorJSDomBuilders {
       Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
     }
 
-    val interactiveUrlText: String = g.CONFIG.INTERACTIVE_URL.toString + "?id=" + explainerId
+    val interactiveUrlText: String = "INTERACTIVE"
 
-
-    println(g.CONFIG.INTERACTIVE_URL.toString)
 
     val interactiveUrl: TypedTag[TextArea] = textarea(
       cls:="form-field",
@@ -218,7 +216,6 @@ object ExplainEditorJSDomBuilders {
 
   def ExplainEditor(explainerId: String, explainer: CsAtom) = {
 
-
     val toolbarButtonTags = List(
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="bold")("Bold"),
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="italic")("Italic"),
@@ -250,59 +247,21 @@ object ExplainEditorJSDomBuilders {
     val bodyTag = scribeBodyEditorTextarea(raw(explainer.data.body)).render
 
 
-    val publishButton = button(
-      id:="explainer-editor__ops-wrapper__publish-button",
-      cls:="btn right",
-      `type`:="button"
-    )("Publish").render
-    publishButton.onclick = (x: Event) => {
-      Model.publish(explainerId).map(republishStatusBar)
-    }
-
-    val checkboxClassName: String = "explainer-editor__displayType-checkbox"
-    val checkbox: TypedTag[Input] = explainer.data.displayType match {
-      case "Expandable" => {
-        input(
-          cls:=checkboxClassName,
-          `type`:="checkbox",
-          `checked`:= "checked"
-        )
-      }
-      case "Flat" => {
-        input(
-          cls:=checkboxClassName,
-          `type`:="checkbox"
-        )
-      }
-    }
-    val checkboxTag = checkbox.render
-    checkboxTag.onchange = (x: Event) => {
-      g.updateCheckboxState()
-    }
 
     div(
       id:="explainer-editor",
       cls:="explainer container")(
-      div(
-        id:="explainer-editor__ops-wrapper",
-        cls:="section clearfix"
-      )(publishButton),
-      div(cls:="clearfix")(
-        div(cls:="right")(
-          checkboxTag, " Expandable explainer"
-        )
-      ),
       form()(
         div(
           id:="explainer-editor__body-wrapper",
           cls:="explainer__body")(
-            div(cls:="scribe-body-editor")(
-              toolbarTag.render,
-              bodyTag
-            )
-//          ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",)
+          div(cls:="scribe-body-editor")(
+            toolbarTag.render,
+            bodyTag
+          )
         )
       )
+
     )
 
   }

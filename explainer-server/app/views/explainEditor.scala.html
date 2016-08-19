@@ -35,9 +35,9 @@
                     <span class="label content-status"></span>
                 </div>
             </div>
-                    <li class="nav__item top-toolbar__item top-toolbar__item--no-spacing">
-                        <button class="top-toolbar__button" type="button" onclick="ExplainEditorJS().CreateNewExplainer()">Create New</button>
-                    </li>
+            <div class="top-toolbar__item top-toolbar__item--no-spacing">
+                <button class="top-toolbar__button" type="button" onclick="ExplainEditorJS().publish('@explainer.id')">Publish</button>
+            </div>
             <div class="top-toolbar__item">
                 <p class="top-toolbar__item-inner word-count">
                     word count: <span class="word-count__number"></span>
@@ -58,7 +58,7 @@
     </div>
 }
 
-@templates.main("Explainer Editor", header, toolbar) {
+@templates.main("Explainer Editor", header, content, toolbar, sidebar){
     <script src="@routes.Assets.at("lib/requirejs/require.min.js")"></script>
     @*Alert! Dirty dirty hack incoming..... we have to rename require to something else here so that our HTTP librarry
     (rosHTTP) doesn't find it and try to do a require('http') call when http hasn't yet been loaded*@
@@ -71,4 +71,6 @@
     <script src="@routes.Assets.at("lib/scribe-plugin-keyboard-shortcuts/scribe-plugin-keyboard-shortcuts.min.js")"></script>
     <script src="@routes.Assets.at("lib/scribe-plugin-link-prompt-command/scribe-plugin-link-prompt-command.min.js")"></script>
     <script src="@routes.Assets.at("lib/scribe-plugin-sanitizer/scribe-plugin-sanitizer.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/explain-editor-plain-js.js")"></script>
+
 }
