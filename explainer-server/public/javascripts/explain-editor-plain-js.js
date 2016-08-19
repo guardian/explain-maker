@@ -112,7 +112,9 @@ function initiateEditor(){
             }, 500));
         }
     });
+
 }
+
 
 ExplainEditorJS().main(EXPLAINER_IDENTIFIER)
 

@@ -3,8 +3,11 @@
 @import org.joda.time.DateTime
 @import org.joda.time.format.DateTimeFormat
 @import util.HelperFunctions._
+@import scala.concurrent.Future
+@import com.gu.contentapi.client.model.v1.Tag
+@import scala.concurrent.ExecutionContext.Implicits.global
 
-@(explainers: Seq[Atom], user: com.gu.pandomainauth.model.AuthenticatedUser)(implicit request: RequestHeader)
+@(explainers: Seq[Atom], user: com.gu.pandomainauth.model.AuthenticatedUser, trackingTags: Seq[Tag], desk: Option[String])(implicit request: RequestHeader)
 
 @toolbar = {
     <header class="top-toolbar">
@@ -17,6 +20,16 @@
         <div class="top-toolbar__container">
             <nav class="nav">
                 <ul class="nav__list">
+                    <li class="nav__item top-toolbar__item top-toolbar__item--no-spacing ">
+                        <label class="top-toolbar__item__dropdown-label top-toolbar__button" >Desk
+                            <select id="desk-dropdown" name="deskDropdown" onchange="deskChanged()" class="top-toolbar__item__dropdown">
+                                <option value="all-desks" @{if(desk.isEmpty){"selected"}}>All desks</option>
+                                @for(t <- trackingTags) {
+                                    <option value="@t.id" @{if(desk.contains(t.id)){"selected"}}>@t.webTitle</option>
+                                }
+                            </select>
+                        </label>
+                    </li>
                     <li class="nav__item top-toolbar__item top-toolbar__item--no-spacing">
                         <button class="top-toolbar__button" type="button" onclick="ExplainEditorJS().CreateNewExplainer()">Create New</button>
                     </li>
@@ -63,3 +76,5 @@
         </div>
     </div>
 }
+
+<script src="@routes.Assets.at("javascripts/explain-list-plain-js.js")"></script>

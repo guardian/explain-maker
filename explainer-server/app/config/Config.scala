@@ -27,7 +27,8 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val pandaDomain = configValueForStage("pandomain.domain").get
 
-  val capiKey = configValueForStage("capi.key")
+  val capiUrl = configValueForStage("capi.url")
+  val capiKey = configValueForStage("capi.key").get
 
   lazy val region = {
     val r = conf.getString("aws.region").map(Regions.fromName).getOrElse(Regions.EU_WEST_1)
