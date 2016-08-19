@@ -190,7 +190,8 @@ object ExplainEditorJSDomBuilders {
 
     form()(
       div(cls:="form-row")(
-        ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"Title",titleTag)
+          div(cls:="form-label")("Explainer Title"),
+          titleTag
       ),
       div(cls:="form-row")(
         div(cls:="form-label")("Interactive URL"),
