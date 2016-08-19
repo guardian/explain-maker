@@ -7,6 +7,7 @@
 /// @type List
 $text-font-stack: 'Guardian Agate Sans', Arial, sans-serif !default;
 $title-font-stack: 'Guardian Egyptian Text', Georgia, serif;
+$monospace-font-stack: 'Courier new', monospace;
 
 /// Copy text color
 /// @type Color
@@ -23,15 +24,15 @@ $brand-color-light: #00b0ce !default;
 
 /// Light grey
 /// @type Color
-$light-grey: #F5F5F5 !default;
+$light-grey: #f6f6f6 !default;
 
 /// Medium grey
 /// @type Color
-$mid-grey: #dee2e3 !default;
+$mid-grey: #ededed !default;
 
 /// Dark grey
 /// @type Color
-$dark-grey: #bdbdbd !default;
+$dark-grey: #dcdcdc !default;
 
 $toolbarHeight: 50px;
 

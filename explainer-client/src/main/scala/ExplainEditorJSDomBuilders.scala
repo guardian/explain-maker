@@ -107,7 +107,7 @@ object ExplainEditorJSDomBuilders {
     val suggestionsDivIdentifier = "explainer-editor__tags__suggestions"
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
-      cls:="form-field form-field--btn-height",
+      cls:="form-field",
       placeholder:="tag search"
     )
     val tagsSearchInputTag = tagsSearchInput().render
@@ -140,19 +140,83 @@ object ExplainEditorJSDomBuilders {
     g.updateStatusBar(ExplainEditorJSDomBuilders.statusBarText(explainer))
   }
 
-  def ExplainEditor(explainerId: String, explainer: CsAtom) = {
+  def SideBar(explainerId: String, explainer: CsAtom) = {
 
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
-      cls:="form-field form-field--large",
-      placeholder:="Explainer title",
+      cls:="form-field",
+      placeholder:="Explainer Title",
       autofocus:=true
     )
 
     val titleTag = title(value := explainer.data.title).render
     titleTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
+      Model.updateFieldContent(explainerId, ExplainerUpdate("Explainer Title", titleTag.value)).map(republishStatusBar)
     }
+
+    val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
+
+    val interactiveUrlText: String = s"$interactiveBaseUrl?id=$explainerId"
+
+
+    val interactiveUrl: TypedTag[TextArea] = textarea(
+      cls:="form-field form-field--text-area text-monospaced",
+      maxlength:=1800,
+      readonly:="true"
+    )
+
+    val interactiveUrlTag = interactiveUrl(interactiveUrlText).render
+
+    val checkboxClassName: String = "explainer-editor__displayType-checkbox"
+    val checkbox: TypedTag[Input] = explainer.data.displayType match {
+      case "Expandable" => {
+        input(
+          cls:=checkboxClassName,
+          `type`:="checkbox",
+          `checked`:= "checked"
+        )
+      }
+      case "Flat" => {
+        input(
+          cls:=checkboxClassName,
+          `type`:="checkbox"
+        )
+      }
+    }
+    val checkboxTag = checkbox.render
+    checkboxTag.onchange = (x: Event) => {
+      g.updateCheckboxState()
+    }
+
+    form()(
+      div(cls:="form-row")(
+        ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"Title",titleTag)
+      ),
+      div(cls:="form-row")(
+        div(cls:="form-label")("Interactive URL"),
+        interactiveUrlTag
+      ),
+      div(cls:="form-row")(
+        div()(
+          checkboxTag, " Expandable explainer"
+        )
+      ),
+      div(cls:="explainer-editor__tag-management-wrapper")(
+        div(
+          id:="explainer-editor__commissioning-desk-tags-wrapper",
+          cls:="form-row")(
+          ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
+        ),
+        div(
+          id:="explainer-editor__tags-wrapper",
+          cls:="form-row")(
+          ExplainEditorJSDomBuilders.makeTagArea(explainer)
+        )
+      )
+    )
+  }
+
+  def ExplainEditor(explainerId: String, explainer: CsAtom) = {
 
     val toolbarButtonTags = List(
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="bold")("Bold"),
@@ -185,73 +249,17 @@ object ExplainEditorJSDomBuilders {
     val bodyTag = scribeBodyEditorTextarea(raw(explainer.data.body)).render
 
 
-    val publishButton = button(
-      id:="explainer-editor__ops-wrapper__publish-button",
-      cls:="btn right",
-      `type`:="button"
-    )("Publish").render
-    publishButton.onclick = (x: Event) => {
-      Model.publish(explainerId).map(republishStatusBar)
-    }
-
-    val checkboxClassName: String = "explainer-editor__displayType-checkbox"
-    val checkbox: TypedTag[Input] = explainer.data.displayType match {
-      case "Expandable" => {
-        input(
-          cls:=checkboxClassName,
-          `type`:="checkbox",
-          `checked`:= "checked"
-        )
-      }
-      case "Flat" => {
-        input(
-          cls:=checkboxClassName,
-          `type`:="checkbox"
-        )
-      }
-    }
-    val checkboxTag = checkbox.render
-    checkboxTag.onchange = (x: Event) => {
-      g.updateCheckboxState()
-    }
 
     div(
       id:="explainer-editor",
-      cls:="explainer container")(
-      div(
-        id:="explainer-editor__ops-wrapper",
-        cls:="section clearfix"
-      )(publishButton),
-      div(cls:="clearfix")(
-        div(cls:="right")(
-          checkboxTag, " Expandable explainer"
-        )
-      ),
+      cls:="explainer")(
       form()(
-        div(
-          id:="explainer-editor__title-wrapper",
-          cls:="explainer__title")(
-          ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"title",titleTag)
-        ),
         div(
           id:="explainer-editor__body-wrapper",
           cls:="explainer__body")(
-            div(cls:="scribe-body-editor")(
-              toolbarTag.render,
-              bodyTag
-            )
-//          ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",)
-        ),
-        div(cls:="explainer-editor__tag-management-wrapper")(
-          div(
-            id:="explainer-editor__commissioning-desk-tags-wrapper",
-            cls:="column column--half")(
-            ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
-          ),
-          div(
-            id:="explainer-editor__tags-wrapper",
-            cls:="column column--half")(
-            ExplainEditorJSDomBuilders.makeTagArea(explainer)
+          div(cls:="scribe-body-editor")(
+            toolbarTag.render,
+            bodyTag
           )
         )
       )

@@ -2,6 +2,11 @@
 /* Dashboard                              */
 /* -------------------------------------- */
 
+.explainer {
+    width: 100%;
+    background: #FFFFFF;
+}
+
 .explainer-list {
     display: flex;
     flex-direction: column;
@@ -79,9 +84,4 @@
 .explainer__input {
     height:300px;
     padding: 6px;
-}
-
-.explainer-editor__tag-management-wrapper {
-    display: flex;
-    margin-top:30px;
 }

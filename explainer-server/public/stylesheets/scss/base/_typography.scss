@@ -16,3 +16,7 @@ h1, h2, h3, h4, h5, h6, .preview__title, .preview__score {
 h1 {
   font-size: 26px;
 }
+
+.text-monospaced {
+  font-family: $monospace-font-stack;
+}
