@@ -9,4 +9,5 @@
   border-right: 1px solid $dark-grey;
   padding: 15px 30px;
   height: calc(100vh - #{$toolbarHeight});
+  overflow: auto;
 }

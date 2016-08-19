@@ -16,7 +16,7 @@ object CAPIService {
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val parametersWithApiKey = ("api-key", g.CONFIG.CAPI_API_KEY.toString) +: parameters
-    println(parametersWithApiKey)
+
     val request = HttpRequest("https://content.guardianapis.com/tags")
       .withQueryParameters(parametersWithApiKey:_*)
 

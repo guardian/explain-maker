@@ -58,7 +58,17 @@
     </div>
 }
 
-@templates.main("Explainer Editor", header, content, toolbar, sidebar){
-    <script src="@routes.Assets.at("lib/tinymce/tinymce.min.js")"></script>
-    <script src="@routes.Assets.at("javascripts/explain-editor-plain-js.js")"></script>
+@templates.main("Explainer Editor", header, toolbar) {
+    <script src="@routes.Assets.at("lib/requirejs/require.min.js")"></script>
+    @*Alert! Dirty dirty hack incoming..... we have to rename require to something else here so that our HTTP librarry
+    (rosHTTP) doesn't find it and try to do a require('http') call when http hasn't yet been loaded*@
+    <script type="text/javascript">
+            window.requireRenamed = window.require;
+            window.require = undefined;
+    </script>
+    <script src="@routes.Assets.at("lib/scribe/scribe.min.js")"></script>
+    <script src="@routes.Assets.at("lib/scribe-plugin-toolbar/scribe-plugin-toolbar.min.js")"></script>
+    <script src="@routes.Assets.at("lib/scribe-plugin-keyboard-shortcuts/scribe-plugin-keyboard-shortcuts.min.js")"></script>
+    <script src="@routes.Assets.at("lib/scribe-plugin-link-prompt-command/scribe-plugin-link-prompt-command.min.js")"></script>
+    <script src="@routes.Assets.at("lib/scribe-plugin-sanitizer/scribe-plugin-sanitizer.min.js")"></script>
 }

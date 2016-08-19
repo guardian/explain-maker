@@ -34,13 +34,17 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
     "org.webjars" % "bootstrap" % "3.3.5",
     "org.webjars" % "jquery" % "2.1.4",
     "org.webjars" % "font-awesome" % "4.4.0",
-    "org.webjars" % "tinymce" % "4.2.1",
     "com.gu" %% "atom-publisher-lib" % "0.1.3-SNAPSHOT",
     "com.twitter" %% "scrooge-core" % "4.5.0",
     "com.gu" %% "scanamo-scrooge" % "0.1.2",
     "com.amazonaws" % "aws-java-sdk-ec2" % awsVersion,
     "com.gu" % "kinesis-logback-appender" % "1.2.0",
-    "net.logstash.logback" % "logstash-logback-encoder" % "4.2"
+    "net.logstash.logback" % "logstash-logback-encoder" % "4.2",
+    "org.webjars.bower" % "scribe" % "3.2.0",
+    "org.webjars.bower" % "scribe-plugin-sanitizer" % "0.1.10",
+    "org.webjars.bower" % "scribe-plugin-toolbar" % "1.0.0",
+    "org.webjars.bower" % "scribe-plugin-link-prompt-command" % "1.0.0",
+    "org.webjars.bower" % "scribe-plugin-keyboard-shortcuts" % "0.1.1"
   ),
   sources in (Compile,doc) := Seq.empty, publishArtifact in (Compile, packageDoc) := false, // Don't do slow ScalaDoc step for anything but a library!
   serverLoading in Debian := Systemd,
@@ -77,6 +81,7 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
   buildInfoPackage := "app"
 ).aggregate(clients.map(projectToRef): _*).
   dependsOn(explainMakerSharedJvm)
+
 
 lazy val explainMakerClient = (project in file("explainer-client")).settings(
   scalaVersion := scalaV,

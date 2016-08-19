@@ -27,7 +27,7 @@ import upickle.default._
 object ExplainEditorJS {
 
   @JSExport
-  def main(explainerId: String) = {
+  def main(explainerId: String, callback: js.Function0[Unit]) = {
     val articleId = "explain-"+explainerId
 
 //    ExplainEditorPresenceHelpers.presenceClient.startConnection()
@@ -44,9 +44,7 @@ object ExplainEditorJS {
         ExplainEditorJSDomBuilders.SideBar(explainerId, explainer).render
       )
       ExplainEditorJSDomBuilders.republishStatusBar(explainer)
-      g.updateWordCountDisplay()
-      g.updateWordCountWarningDisplay()
-      g.initiateEditor()
+      callback()
     }
   }
 

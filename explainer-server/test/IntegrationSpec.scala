@@ -12,7 +12,7 @@ import play.api.test.Helpers._
 @RunWith(classOf[JUnitRunner])
 class IntegrationSpec extends Specification {
 
-  "Application" should {
+  "ApiController" should {
 
     "work from within a browser" in new WithBrowser {
 
