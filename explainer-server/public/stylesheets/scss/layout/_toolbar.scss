@@ -10,10 +10,11 @@ $toolbarHeight: 50px;
   left: 0;
   width: 100%;
   height: $toolbarHeight;
-  background-color: $mid-grey;
+  background-color: #FFFFFF;
   display: flex;
   justify-content: space-between;
   z-index: 1;
+  border-bottom: 1px solid $dark-grey;
 }
 
 .top-toolbar__title {

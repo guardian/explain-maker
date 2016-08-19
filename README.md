@@ -30,6 +30,8 @@ DEV {
 }
 enable.kinesis.publishing=false
 enable.elk.logging=false
+
+include "application.conf"
 ```
 
 Configure the composer route in nginx:
