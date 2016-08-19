@@ -23,7 +23,8 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
 
   def get(id: String) = pandaAuthenticated.async { implicit request =>
     val viewConfig = Json.obj(
-      "CAPI_API_KEY" -> config.capiKey
+      "CAPI_API_KEY" -> config.capiKey,
+      "INTERACTIVE_URL" -> config.interactiveUrl
     )
 
     explainerDB.load(id).map(e => {

@@ -107,7 +107,7 @@ object ExplainEditorJSDomBuilders {
     val suggestionsDivIdentifier = "explainer-editor__tags__suggestions"
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
-      cls:="form-field form-field--btn-height",
+      cls:="form-field",
       placeholder:="tag search"
     )
     val tagsSearchInputTag = tagsSearchInput().render
@@ -145,20 +145,22 @@ object ExplainEditorJSDomBuilders {
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
       cls:="form-field",
-      placeholder:="title",
+      placeholder:="Explainer Title",
       autofocus:=true
     )
 
     val titleTag = title(value := explainer.data.title).render
     titleTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
+      Model.updateFieldContent(explainerId, ExplainerUpdate("Explainer Title", titleTag.value)).map(republishStatusBar)
     }
 
-    val interactiveUrlText: String = "INTERACTIVE"
+    val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
+
+    val interactiveUrlText: String = s"$interactiveBaseUrl?id=$explainerId"
 
 
     val interactiveUrl: TypedTag[TextArea] = textarea(
-      cls:="form-field",
+      cls:="form-field form-field--text-area text-monospaced",
       maxlength:=1800,
       readonly:="true"
     )
