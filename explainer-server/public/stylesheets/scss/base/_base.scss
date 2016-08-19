@@ -22,10 +22,12 @@ html {
 
 .wrap {
   padding-top: $toolbarHeight;
+  display: flex;
+  align-items: stretch;
 }
 
 .container {
-  padding:20px 0 50px;
-  margin:auto;
-  width:900px;
+  padding: 40px;
+  max-width: 900px;
+  width: 100%;
 }

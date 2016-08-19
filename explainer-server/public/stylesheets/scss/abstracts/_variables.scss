@@ -7,6 +7,7 @@
 /// @type List
 $text-font-stack: 'Guardian Agate Sans', Arial, sans-serif !default;
 $title-font-stack: 'Guardian Egyptian Text', Georgia, serif;
+$monospace-font-stack: 'Courier new', monospace;
 
 /// Copy text color
 /// @type Color
@@ -23,17 +24,59 @@ $brand-color-light: #00b0ce !default;
 
 /// Light grey
 /// @type Color
-$light-grey: #F5F5F5 !default;
+$light-grey: #f6f6f6 !default;
 
 /// Medium grey
 /// @type Color
-$mid-grey: #dee2e3 !default;
+$mid-grey: #ededed !default;
 
 /// Dark grey
 /// @type Color
-$dark-grey: #bdbdbd !default;
+$dark-grey: #dcdcdc !default;
 
 $toolbarHeight: 50px;
 
 
 $i-arrow-down: url(/assets/images/icons/arrow-down.svg);
+
+// Shades of grey
+$c-grey-100: #f6f6f6;
+$c-grey-150: #f1f1f1;
+$c-grey-170: #f1f1f1;
+$c-grey-200: #ededed;
+$c-grey-300: #dcdcdc;
+$c-grey-350: #bec5c6;
+$c-grey-400: #bdbdbd;
+$c-grey-500: #898989;
+$c-grey-600: #767676;
+$c-grey-650: #666666;
+$c-grey-700: #333333;
+
+// Primary accent colours
+$c-white: #ffffff;
+$c-blue: #148ad2;
+$c-green: #47ae38;
+$c-green-logo: #33a22b;
+$c-alt-green: #dee2e3;
+$c-yellow: #ffbc01;
+$c-orange: #ffb100;
+$c-red: #ed5935;
+$c-bluegrey: #dee2e3;
+$c-highlight-blue: #00adee;
+$c-presence-purple: #474D80;
+
+// Secondary accent colours
+$c-light-green: #f3faf2;
+$c-light-orange: #fbf8ec;
+
+// Link colour
+$c-blue-link: #005689;
+
+// Body text colour
+$c-text: $c-grey-700;
+
+// Borrowed from Composer
+$c-composer-blue: #00adee;
+$c-composer-dark-blue: #008fc5;
+
+$standard-padding: 10px;

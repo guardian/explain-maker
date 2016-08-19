@@ -107,7 +107,7 @@ object ExplainEditorJSDomBuilders {
     val suggestionsDivIdentifier = "explainer-editor__tags__suggestions"
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
-      cls:="form-field form-field--btn-height",
+      cls:="form-field",
       placeholder:="tag search"
     )
     val tagsSearchInputTag = tagsSearchInput().render
@@ -140,12 +140,12 @@ object ExplainEditorJSDomBuilders {
     g.updateStatusBar(ExplainEditorJSDomBuilders.statusBarText(explainer))
   }
 
-  def ExplainEditor(explainerId: String, explainer: CsAtom) = {
+  def SideBar(explainerId: String, explainer: CsAtom) = {
 
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
-      cls:="form-field form-field--large",
-      placeholder:="title",
+      cls:="form-field",
+      placeholder:="Explainer Title",
       autofocus:=true
     )
 
@@ -154,27 +154,18 @@ object ExplainEditorJSDomBuilders {
       Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
     }
 
-    val body: TypedTag[TextArea] = textarea(
-      id:="explainer-input-text-area",
-      cls:="form-field",
+    val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
+
+    val interactiveUrlText: String = s"$interactiveBaseUrl?id=$explainerId"
+
+
+    val interactiveUrl: TypedTag[TextArea] = textarea(
+      cls:="form-field form-field--text-area text-monospaced",
       maxlength:=1800,
-      placeholder:="body"
+      readonly:="true"
     )
 
-    val bodyTag = body(explainer.data.body).render
-    bodyTag.oninput = (x: Event) => {
-      g.updateWordCountDisplay()
-      g.updateWordCountWarningDisplay()
-    }
-
-    val publishButton = button(
-      id:="explainer-editor__ops-wrapper__publish-button",
-      cls:="btn right",
-      `type`:="button"
-    )("Publish").render
-    publishButton.onclick = (x: Event) => {
-      Model.publish(explainerId).map(republishStatusBar)
-    }
+    val interactiveUrlTag = interactiveUrl(interactiveUrlText).render
 
     val checkboxClassName: String = "explainer-editor__displayType-checkbox"
     val checkbox: TypedTag[Input] = explainer.data.displayType match {
@@ -197,42 +188,83 @@ object ExplainEditorJSDomBuilders {
       g.updateCheckboxState()
     }
 
-    div(
-      id:="explainer-editor",
-      cls:="explainer container")(
-      div(
-        id:="explainer-editor__ops-wrapper",
-        cls:="section clearfix"
-      )(publishButton),
-      div(cls:="clearfix")(
-        div(cls:="right")(
+    form()(
+      div(cls:="form-row")(
+          div(cls:="form-label")("Explainer Title"),
+          titleTag
+      ),
+      div(cls:="form-row")(
+        div(cls:="form-label")("Interactive URL"),
+        interactiveUrlTag
+      ),
+      div(cls:="form-row")(
+        div()(
           checkboxTag, " Expandable explainer"
         )
       ),
-      form()(
+      div(cls:="explainer-editor__tag-management-wrapper")(
         div(
-          id:="explainer-editor__title-wrapper",
-          cls:="explainer__title")(
-          ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"title",titleTag)
+          id:="explainer-editor__commissioning-desk-tags-wrapper",
+          cls:="form-row")(
+          ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
         ),
+        div(
+          id:="explainer-editor__tags-wrapper",
+          cls:="form-row")(
+          ExplainEditorJSDomBuilders.makeTagArea(explainer)
+        )
+      )
+    )
+  }
+
+  def ExplainEditor(explainerId: String, explainer: CsAtom) = {
+
+    val toolbarButtonTags = List(
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="bold")("Bold"),
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="italic")("Italic"),
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="linkPrompt")("Link"),
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="unLink")("Unlink")
+    )
+
+    val preventDefaultToolbarButtons = toolbarButtonTags.map(b => {
+      val button = b.render
+      button.onmousedown = (e: Event) => {
+        e.preventDefault()
+      }
+      button
+    })
+
+    val toolbarTag: TypedTag[Div] = div(
+      id:="scribe-toolbar",
+      cls:="scribe-body-editor__toolbar"
+    )(
+      preventDefaultToolbarButtons
+    )
+
+    val scribeBodyEditorTextarea: TypedTag[Div] = div(
+      id:="explainer-input-text-area",
+      cls:="scribe-body-editor__textarea",
+      maxlength:=1800,
+      placeholder:="Explainer body text"
+    )
+    val bodyTag = scribeBodyEditorTextarea(raw(explainer.data.body)).render
+
+
+
+    div(
+      id:="explainer-editor",
+      cls:="explainer")(
+      form()(
         div(
           id:="explainer-editor__body-wrapper",
           cls:="explainer__body")(
-          ExplainEditorPresenceHelpers.turnOnPresenceFor(explainerId,"body",bodyTag)
-        ),
-        div(cls:="explainer-editor__tag-management-wrapper")(
-          div(
-            id:="explainer-editor__commissioning-desk-tags-wrapper",
-            cls:="column column--half")(
-            ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer)
-          ),
-          div(
-            id:="explainer-editor__tags-wrapper",
-            cls:="column column--half")(
-            ExplainEditorJSDomBuilders.makeTagArea(explainer)
+          div(cls:="scribe-body-editor")(
+            toolbarTag.render,
+            bodyTag
           )
         )
       )
+
     )
 
   }

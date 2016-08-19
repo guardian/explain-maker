@@ -19,7 +19,8 @@
 // 4. Layout-related sections
 @import
   'layout/toolbar',
-  'layout/explainer';
+  'layout/explainer',
+  'layout/sidebar';
 
 // 5. Components
 @import
@@ -29,4 +30,5 @@
   'components/blocks',
   'components/tags',
   'components/icons',
-  'components/toolbar-dropdown';
+  'components/toolbar-dropdown',
+  'components/scribe-body-editor';

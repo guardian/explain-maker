@@ -14,6 +14,7 @@ import play.api.cache.CacheApi
 import play.api.libs.json.Json
 import services.PublicSettingsService
 import shared._
+import shared.models.CsAtom
 import shared.util.ExplainerAtomImplicits
 import services.CAPIService
 
@@ -25,11 +26,15 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
   val explainerDB = new ExplainerDB(config)
   val capiService = new CAPIService(config, cache)
 
-  def get(id: String) = pandaAuthenticated { implicit request =>
+  def get(id: String) = pandaAuthenticated.async { implicit request =>
     val viewConfig = Json.obj(
-      "CAPI_API_KEY" -> config.capiKey
+      "CAPI_API_KEY" -> config.capiKey,
+      "INTERACTIVE_URL" -> config.interactiveUrl
     )
-    Ok(views.html.explainEditor(id,request.user,viewConfig))
+
+    explainerDB.load(id).map(e => {
+      Ok(views.html.explainEditor(e,request.user,viewConfig))
+    })
   }
 
   def listExplainers(desk: Option[String]) = pandaAuthenticated.async{ implicit request =>
