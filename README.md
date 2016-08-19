@@ -39,6 +39,12 @@ cd <path_of_dev_nginx>
 sudo ./setup-app.rb <path_of_explainer>/nginx/nginx-mapping.yml
 ```
 
+Ensure that you have the required node version available. You should be using `nvm` to manage your node dependencies, then run:
+
+```
+nvm install 6
+```
+
 Install dependencies and build CSS:
 
 ```
