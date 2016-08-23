@@ -6,6 +6,9 @@
     <script type="text/javascript">
         CONFIG = @Html(config.toString);
         EXPLAINER_IDENTIFIER = "@explainer.id"
+        USER_FIRSTNAME     = "@{user.user.firstName}"
+        USER_LASTNAME      = "@{user.user.lastName}"
+        USER_EMAIL_ADDRESS = "@{user.user.email}"
     </script>
 }
 
@@ -30,6 +33,11 @@
             </div>
         </div>
         <div class="top-toolbar__container">
+            <div class="top-toolbar__item">
+                <div class="top-toolbar__item-inner">
+                    <div id="presence-names-display-wrapper"></div>
+                </div>
+            </div>
             <div class="top-toolbar__item">
                 <div class="top-toolbar__item-inner">
                     <span class="label content-status"></span>

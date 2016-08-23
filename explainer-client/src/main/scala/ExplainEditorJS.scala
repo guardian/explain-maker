@@ -12,17 +12,16 @@ object ExplainEditorJS {
 
   @JSExport
   def main(explainerId: String, callback: js.Function0[Unit]) = {
-    val articleId = "explain-"+explainerId
 
-//    ExplainEditorPresenceHelpers.presenceClient.startConnection()
-//
-//    ExplainEditorPresenceHelpers.presenceClient.on("connection.open", { data:js.Object =>
-//      ExplainEditorPresenceHelpers.presenceClient.subscribe(articleId)
-//    })
+    val articleId = "explain-"+explainerId
+    ExplainEditorPresenceHelpers.presenceClient.startConnection()
+    ExplainEditorPresenceHelpers.presenceClient.on("connection.open", { data:js.Object =>
+      ExplainEditorPresenceHelpers.presenceClient.subscribe(articleId)
+    })
 
     Model.extractExplainer(explainerId).map { explainer: CsAtom =>
       dom.document.getElementById("content").appendChild(
-        ExplainEditorJSDomBuilders.ExplainEditor(explainerId, explainer).render
+        ExplainEditorJSDomBuilders.ExplainEditor(explainerId, explainer)
       )
 
       dom.document.getElementById("sidebar").appendChild(
@@ -30,6 +29,7 @@ object ExplainEditorJS {
       )
       ExplainEditorJSDomBuilders.republishStatusBar(explainer)
       callback()
+
     }
   }
 
@@ -65,6 +65,11 @@ object ExplainEditorJS {
     Model.removeTagFromExplainer(explainerId, tagId).map { explainer =>
       ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
     }
+  }
+
+  @JSExport
+  def presenceEnterDocument(explainerId: String) = {
+    ExplainEditorPresenceHelpers.enterDocument(explainerId)
   }
 
 }

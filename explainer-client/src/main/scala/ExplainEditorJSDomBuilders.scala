@@ -13,9 +13,11 @@ import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scalatags.JsDom
 import fr.hmil.roshttp.HttpRequest
 import models.Tag
+import org.scalajs.dom.raw.MouseEvent
 import services.CAPIService
 import upickle.Js
 import upickle.default._
+
 import scala.scalajs.js.JSON
 
 object ExplainEditorJSDomBuilders {
@@ -158,7 +160,6 @@ object ExplainEditorJSDomBuilders {
 
     val interactiveUrlText: String = s"$interactiveBaseUrl?id=$explainerId"
 
-
     val interactiveUrl: TypedTag[TextArea] = textarea(
       cls:="form-field form-field--text-area text-monospaced",
       maxlength:=1800,
@@ -249,9 +250,7 @@ object ExplainEditorJSDomBuilders {
     )
     val bodyTag = scribeBodyEditorTextarea(raw(explainer.data.body)).render
 
-
-
-    div(
+    val editor = div(
       id:="explainer-editor",
       cls:="explainer")(
       form()(
@@ -264,10 +263,10 @@ object ExplainEditorJSDomBuilders {
           )
         )
       )
-
     )
+
+    ExplainEditorPresenceHelpers.attachPresenceEventHandlerToElement(explainerId, editor.render)
 
   }
 
 }
-

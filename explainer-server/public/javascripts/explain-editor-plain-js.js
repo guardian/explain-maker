@@ -94,7 +94,6 @@ function readValueAtDiv(id){
     return $("#"+id).val();
 }
 
-
 function setupScribe() {
     requireRenamed(['scribe', 'scribe-plugin-toolbar', 'scribe-plugin-link-prompt-command', 'scribe-plugin-keyboard-shortcuts', 'scribe-plugin-sanitizer'],
         function (Scribe, scribePluginToolbar, scribePluginLinkPromptCommand, scribePluginkeyboardShorcuts, scribePluginSanitizer) {
@@ -137,11 +136,13 @@ function setupScribe() {
         });
 }
 
-
 function afterDOMRendered() {
     setupScribe();
     updateWordCountDisplay();
     updateWordCountWarningDisplay();
+    setInterval(function(){
+        ExplainEditorJS().presenceEnterDocument(EXPLAINER_IDENTIFIER);
+    },2000);
 }
 
 ExplainEditorJS().main(EXPLAINER_IDENTIFIER, afterDOMRendered);
