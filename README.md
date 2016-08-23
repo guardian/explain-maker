@@ -27,6 +27,7 @@ DEV {
     }
   }
   capi.key = "CAPI-API-KEY"
+  presence.endpoint = "PRESENCE-ENDPOINT-URL"
 }
 enable.kinesis.publishing=false
 enable.elk.logging=false

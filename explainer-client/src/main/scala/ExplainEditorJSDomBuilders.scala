@@ -160,7 +160,6 @@ object ExplainEditorJSDomBuilders {
 
     val interactiveUrlText: String = s"$interactiveBaseUrl?id=$explainerId"
 
-
     val interactiveUrl: TypedTag[TextArea] = textarea(
       cls:="form-field form-field--text-area text-monospaced",
       maxlength:=1800,

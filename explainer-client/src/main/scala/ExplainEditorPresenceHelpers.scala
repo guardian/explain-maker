@@ -12,7 +12,7 @@ import scalatags.JsDom.all._
 import upickle.default._
 
 object ExplainEditorPresenceHelpers {
-  val endpoint = "wss://presence.code.dev-gutools.co.uk/socket"
+  val endpoint = g.CONFIG.PRESENCE_ENDPOINT_URL.toString()
   val person = new Person(g.USER_FIRSTNAME.toString(),g.USER_LASTNAME.toString(),g.USER_EMAIL_ADDRESS.toString())
   val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
   def attachPresenceEventHandlerToElement(explainerId: String, element: Element) = {
