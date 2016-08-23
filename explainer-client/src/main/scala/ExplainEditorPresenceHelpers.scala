@@ -30,7 +30,7 @@ object ExplainEditorPresenceHelpers {
     presenceClient.on("visitor-list-updated", { data: js.Object =>
       val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
       val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == "document")
-      dom.document.getElementById("presence-names-display-wrapper").innerHTML = statesOnThisArea.map(_.clientId.person.initials).map( i => s"<span class=${ "presence-names-single" }>${i}<span>" ).mkString(" ")
+      dom.document.getElementById("presence-names-display-wrapper").innerHTML = statesOnThisArea.map(_.clientId.person.initials).map( i => s"<span class=${ "presence-names-single" }>${i}</span>" ).mkString(" ")
       ()
     })
   }
