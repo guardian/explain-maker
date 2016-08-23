@@ -161,3 +161,14 @@ $toolbarHeight: 50px;
 .word-count__message {
   display: none;
 }
+
+.presence-names-single {
+  color: $mid-grey;
+  border: 1px solid currentColor;
+  padding: 5px;
+  border-radius: 50%;
+
+  &:not(:last-of-type) {
+    margin-right: 5px;
+  }
+}
