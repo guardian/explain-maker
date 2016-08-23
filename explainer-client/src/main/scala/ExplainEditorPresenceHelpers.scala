@@ -13,8 +13,8 @@ import upickle.default._
 
 object ExplainEditorPresenceHelpers {
   val endpoint = "wss://presence.code.dev-gutools.co.uk/socket"
-  var person = new Person(g.USER_FIRSTNAME.toString(),g.USER_LASTNAME.toString(),g.USER_EMAIL_ADDRESS.toString())
-  var presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
+  val person = new Person(g.USER_FIRSTNAME.toString(),g.USER_LASTNAME.toString(),g.USER_EMAIL_ADDRESS.toString())
+  val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
   def attachPresenceEventHandlerToElement(explainerId: String, element: Element) = {
     element.onmouseover = (x: MouseEvent) => {
       presenceClient.enter("explain-" + explainerId, "document")
