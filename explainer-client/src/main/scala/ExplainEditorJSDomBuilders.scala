@@ -5,7 +5,7 @@ import org.scalajs.dom.Event
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
 import scalatags.JsDom._
-import scalatags.JsDom.all._
+import scalatags.JsDom.all.{Tag => _, _}
 import shared.models.{CsAtom, ExplainerUpdate}
 
 import scala.concurrent.Future
@@ -226,7 +226,8 @@ object ExplainEditorJSDomBuilders {
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="bold")("Bold"),
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="italic")("Italic"),
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="linkPrompt")("Link"),
-      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="unLink")("Unlink")
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="unLink")("Unlink"),
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="insertUnorderedList")("Unordered List")
     )
 
     val preventDefaultToolbarButtons = toolbarButtonTags.map(b => {
