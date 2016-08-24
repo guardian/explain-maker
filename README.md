@@ -72,7 +72,7 @@ Explain Maker should now be found at [https://explainer.local.dev-gutools.co.uk/
 
 In order to get the Panda authentication cookie needed to access Explain Maker, you might want to, for instance, first visit your local instance of Composer or Workflow. Alternatively (better option) you can run [login.gutools](https://github.com/guardian/login.gutools) for a seamless experience.
 
-Note that when running on local the presence endpoint is the CODE Presence. This implies that to get Presence display correctly when running on local, you need to have a CODE Panda cookie (to get one just visit the CODE instance of Composer or Workflow). 
+Note that, when running on local, the presence endpoint is the CODE Presence. This implies that to get Presence display correctly when running on local, you need to have a CODE Panda cookie (to get one just visit the CODE instance of Composer or Workflow). 
 
 ## Troubleshooting
 
