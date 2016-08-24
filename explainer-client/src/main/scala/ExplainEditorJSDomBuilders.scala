@@ -5,7 +5,7 @@ import org.scalajs.dom.Event
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
 import scalatags.JsDom._
-import scalatags.JsDom.all.{Tag => _, _}
+import scalatags.JsDom.all._
 import shared.models.{CsAtom, ExplainerUpdate}
 
 import scala.concurrent.Future
