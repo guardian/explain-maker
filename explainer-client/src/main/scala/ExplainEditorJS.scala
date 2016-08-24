@@ -20,6 +20,7 @@ object ExplainEditorJS {
     })
 
     Model.extractExplainer(explainerId).map { explainer: CsAtom =>
+
       dom.document.getElementById("content").appendChild(
         ExplainEditorJSDomBuilders.ExplainEditor(explainerId, explainer)
       )
