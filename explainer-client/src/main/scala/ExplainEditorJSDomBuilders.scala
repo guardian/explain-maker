@@ -188,16 +188,18 @@ object ExplainEditorJSDomBuilders {
     checkboxTag.onchange = (x: Event) => {
       g.updateCheckboxState()
     }
+    
+    val interactiveURLWrapperDisplay = explainer.contentChangeDetails.published match {
+      case Some(thing) => div(cls:="form-row")( div(cls:="form-label")("Interactive URL"), interactiveUrlTag )
+      case None => div()("")
+    }
 
     form()(
       div(cls:="form-row")(
           div(cls:="form-label")("Explainer Title"),
           titleTag
       ),
-      div(cls:="form-row")(
-        div(cls:="form-label")("Interactive URL"),
-        interactiveUrlTag
-      ),
+      interactiveURLWrapperDisplay,
       div(cls:="form-row")(
         div()(
           checkboxTag, " Expandable explainer"
