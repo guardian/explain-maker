@@ -65,7 +65,7 @@
                         <td class="explainer-list__item">@{
                             val time:Long = e.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
                             val datetime = new DateTime(time)
-                            val fmt = DateTimeFormat.forPattern("MM/dd/YYYY HH:MM");
+                            val fmt = DateTimeFormat.forPattern("dd/MM/YYYY HH:MM");
                             fmt.print(datetime);
                         }</td>
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
