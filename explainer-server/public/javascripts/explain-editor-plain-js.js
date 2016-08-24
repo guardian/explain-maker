@@ -103,8 +103,8 @@ function setupScribe() {
             // Create an instance of Scribe
             var scribe = new Scribe(scribeElement);
 
-
             var toolbarElement = document.querySelector('.scribe-body-editor__toolbar');
+
             scribe.use(scribePluginToolbar(toolbarElement));
             scribe.use(scribePluginLinkPromptCommand());
 
@@ -121,7 +121,9 @@ function setupScribe() {
                     b: {},
                     a: {
                         href: true
-                    }
+                    },
+                    ul: {},
+                    li: {}
                 }
             }));
             scribe.on('content-changed', function(){

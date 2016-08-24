@@ -226,7 +226,8 @@ object ExplainEditorJSDomBuilders {
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="bold")("Bold"),
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="italic")("Italic"),
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="linkPrompt")("Link"),
-      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="unLink")("Unlink")
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="unLink")("Unlink"),
+      div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="insertUnorderedList")("Unordered List")
     )
 
     val preventDefaultToolbarButtons = toolbarButtonTags.map(b => {
