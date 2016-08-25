@@ -48,7 +48,10 @@ object ExplainEditorJS {
 
   @JSExport
   def publish(explainerId: String) = {
-    Model.publish(explainerId).map(ExplainEditorJSDomBuilders.republishStatusBar)
+    Model.publish(explainerId).map{ explainer =>
+      ExplainEditorJSDomBuilders.republishStatusBar(explainer)
+      ExplainEditorJSDomBuilders.republishInteractiveURL(explainerId)
+    }
   }
 
   @JSExport
