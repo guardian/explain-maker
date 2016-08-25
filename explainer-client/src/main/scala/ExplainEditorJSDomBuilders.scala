@@ -142,6 +142,12 @@ object ExplainEditorJSDomBuilders {
     g.updateStatusBar(ExplainEditorJSDomBuilders.statusBarText(explainer))
   }
 
+  def republishInteractiveURL(explainerId: String) = {
+    val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
+    val interactiveUrlText: String = s"$interactiveBaseUrl?id=${explainerId}"
+    g.updateInteractiveURL(interactiveUrlText)
+  }
+
   def SideBar(explainerId: String, explainer: CsAtom) = {
 
     val title: TypedTag[Input] = input(
@@ -158,15 +164,20 @@ object ExplainEditorJSDomBuilders {
 
     val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
 
-    val interactiveUrlText: String = s"$interactiveBaseUrl?id=$explainerId"
+    val interactiveUrlText: String = explainer.contentChangeDetails.published match {
+      case Some(thing) => s"$interactiveBaseUrl?id=$explainerId"
+      case None => "Explainer has not been published yet"
+    }
 
     val interactiveUrl: TypedTag[TextArea] = textarea(
+      id:="interactive-url-text",
       cls:="form-field form-field--text-area text-monospaced",
       maxlength:=1800,
       readonly:="true"
     )
 
     val interactiveUrlTag = interactiveUrl(interactiveUrlText).render
+    val interactiveURLWrapperDisplay = div(cls:="form-row")( div(cls:="form-label")("Interactive URL"), interactiveUrlTag )
 
     val checkboxClassName: String = "explainer-editor__displayType-checkbox"
     val checkbox: TypedTag[Input] = explainer.data.displayType match {
@@ -187,11 +198,6 @@ object ExplainEditorJSDomBuilders {
     val checkboxTag = checkbox.render
     checkboxTag.onchange = (x: Event) => {
       g.updateCheckboxState()
-    }
-    
-    val interactiveURLWrapperDisplay = explainer.contentChangeDetails.published match {
-      case Some(thing) => div(cls:="form-row")( div(cls:="form-label")("Interactive URL"), interactiveUrlTag )
-      case None => div()("")
     }
 
     form()(
