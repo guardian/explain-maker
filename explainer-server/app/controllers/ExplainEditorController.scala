@@ -47,7 +47,11 @@ object Paginator {
     }
   }
   def maxPageNumber(numberOfExplainers: Int): Int = {
-    (numberOfExplainers.toFloat/pageSize).toInt+1
+    if (numberOfExplainers % pageSize == 0){
+      (numberOfExplainers.toFloat/pageSize).toInt
+    }else{
+      (numberOfExplainers.toFloat/pageSize).toInt+1
+    }
   }
 }
 
