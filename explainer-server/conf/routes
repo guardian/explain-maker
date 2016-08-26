@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET           /                            controllers.ExplainEditorController.listExplainers(desk: Option[String])
+GET           /                            controllers.ExplainEditorController.listExplainers(desk: Option[String], pageNumber: Option[Int])
 GET           /healthcheck                 controllers.Healthcheck.healthcheck
 
 GET           /explain/:id                 controllers.ExplainEditorController.get(id)

@@ -7,7 +7,7 @@
 @import com.gu.contentapi.client.model.v1.Tag
 @import scala.concurrent.ExecutionContext.Implicits.global
 
-@(explainers: Seq[Atom], user: com.gu.pandomainauth.model.AuthenticatedUser, trackingTags: Seq[Tag], desk: Option[String])(implicit request: RequestHeader)
+@(explainers: Seq[Atom], user: com.gu.pandomainauth.model.AuthenticatedUser, trackingTags: Seq[Tag], desk: Option[String], pageNumber: Int, previousFragmentHTML: String, nextFragmentHTML: String)(implicit request: RequestHeader)
 
 @toolbar = {
     <header class="top-toolbar">
@@ -57,7 +57,7 @@
                     <tr class="explainer-list__row">
                         <td class="explainer-list__item">
                             <a class="explainer-list__link" href="/explain/@e.id">@{if(ExplainerAtomImplicits.AtomWithData(e).tdata.title.trim.length>0){
-                            ExplainerAtomImplicits.AtomWithData(e).tdata.title
+                                ExplainerAtomImplicits.AtomWithData(e).tdata.title
                             }else{
                                 "untitled"
                             }}</a>
@@ -73,6 +73,9 @@
                     </tr>
                 }
             </table>
+            <div class="pagination" style="text-align:center;margin:10px 0px 0px 0px;">
+                Page @{pageNumber} @Html(previousFragmentHTML)@Html(nextFragmentHTML)
+            <div>
         </div>
     </div>
 }
