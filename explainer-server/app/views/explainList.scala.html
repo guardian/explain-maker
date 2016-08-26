@@ -73,8 +73,10 @@
                     </tr>
                 }
             </table>
-            <div class="pagination" style="text-align:center;margin:10px 0px 0px 0px;">
-                Page @{pageNumber} @Html(previousFragmentHTML)@Html(nextFragmentHTML)
+            <div class="pagination">
+                @Html(previousFragmentHTML)
+                <p class="pagination__label">Page@{pageNumber}</p>
+                @Html(nextFragmentHTML)
             <div>
         </div>
     </div>
