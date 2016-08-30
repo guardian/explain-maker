@@ -33,7 +33,7 @@ object ExplainEditorJSDomBuilders {
     
     if(explainer.contentChangeDetails.published.isDefined) {
       if ( getLongFromOptionCSChangeRecordForComparison(explainer.contentChangeDetails.published) < getLongFromOptionCSChangeRecordForComparison(explainer.contentChangeDetails.lastModified) ){
-        "draft"
+        "unseen"
       }else{
         "published"
       }
