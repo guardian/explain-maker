@@ -19,24 +19,45 @@ function updateWordCountWarningDisplay() {
 }
 function updateStatusBar(message){
     var status = $(".content-status"),
+        statusMessage = $(".content-message"),
         labelClass = "",
-        labelRemovedClass = "";
+        labelStatus = "",
+        labelMessage = "";
 
     if (message.length) {
+        switch(message) {
+            case "published":
+                labelClass = "label--success";
+                labelStatus = "Available";
+                break;
+            case "draft":
+                labelClass="label--warning";
+                labelStatus = "Draft";
+                break;
+            case "unseen":
+                labelStatus = "Available";
+                labelClass = "label--success";
+                labelMessage = "Unlaunched Changes";
+                break;
 
-        if (message === "published") {
-            labelClass = "label--success";
-            labelRemovedClass = "label--warning";
-        } else {
-            labelClass="label--warning";
-            labelRemovedClass = "label--success";
         }
-        status.text(message)
-            .removeClass(labelRemovedClass)
+
+        status.text(labelStatus)
+            .removeClass()
+            .addClass("label")
             .addClass(labelClass)
             .show();
+
+        if (labelMessage) {
+            statusMessage.text(labelMessage)
+                .show();
+        } else {
+            statusMessage.hide();
+        }
+
     } else {
         status.hide();
+        statusMessage.hide();
     }
 }
 
