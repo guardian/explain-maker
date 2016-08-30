@@ -11,7 +11,34 @@ The sbt build file contains 3 modules
 - `ExplainMakerClient` Scala.js application (client side)
 - `ExplainMakerShared` Scala code that you want to share between the server and the client.
 
-### Setup
+
+### Setup Nginx
+
+To run explain maker locally you will need ngnix.
+
+1. Install nginx:
+  * *Linux:*   ```sudo apt-get install nginx```
+  * *Mac OSX:* ```brew install nginx```
+
+2. Make sure you have a sites-enabled folder under your nginx home. This should be
+  * *Linux:* ```/etc/nginx/sites-enabled```
+  * *Mac OSX:* ```/usr/local/etc/nginx/```
+
+3. Make sure your nginx.conf (found in your nginx home) contains the following line in the http{} block:
+`include sites-enabled/*;`
+  * you may also want to disable the default server on 8080
+
+4. Get the [dev-nginx](https://github.com/guardian/dev-nginx) repo checked out on your machine
+
+5. Set up certs if you've not already done so (see dev-nginx readme)
+
+6. Configure the workflow route in nginx
+
+```
+sudo /path/to/dev-nginx/setup-app.rb /path/to/explain-maker/nginx/nginx-mapping.yml
+```
+
+### Setup Explainer 
 You'll need to create ~/.gu/explainer.local.conf, with the following fields:
 
 ```
