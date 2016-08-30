@@ -6,7 +6,7 @@ import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
 import scalatags.JsDom._
 import scalatags.JsDom.all._
-import shared.models.{CsAtom, ExplainerUpdate}
+import shared.models.{CsAtom, CsChangeRecord, ExplainerUpdate}
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -23,10 +23,20 @@ import scala.scalajs.js.JSON
 object ExplainEditorJSDomBuilders {
 
   def statusBarText(explainer: CsAtom) = {
-    val isPublished = explainer.contentChangeDetails.published.isDefined
 
-    if(isPublished) {
-      "published"
+    def getLongFromOptionCSChangeRecordForComparison(optionCSChangeRecord : scala.Option[CsChangeRecord]) : Long = {
+      optionCSChangeRecord match {
+        case Some(cr) => cr.date
+        case None => 0L
+      }
+    }
+    
+    if(explainer.contentChangeDetails.published.isDefined) {
+      if ( getLongFromOptionCSChangeRecordForComparison(explainer.contentChangeDetails.published) < getLongFromOptionCSChangeRecordForComparison(explainer.contentChangeDetails.lastModified) ){
+        "draft"
+      }else{
+        "published"
+      }
     } else {
       "draft"
     }
