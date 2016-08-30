@@ -22,24 +22,16 @@ import scala.scalajs.js.JSON
 
 object ExplainEditorJSDomBuilders {
 
-  def statusBarText(explainer: CsAtom) = {
+  def statusBarText(explainer: CsAtom): String = {
 
-    def getLongFromOptionCSChangeRecordForComparison(optionCSChangeRecord : scala.Option[CsChangeRecord]) : Long = {
-      optionCSChangeRecord match {
-        case Some(cr) => cr.date
-        case None => 0L
-      }
+    val changesSincePublication = for {
+      p <- explainer.contentChangeDetails.published
+      lm <- explainer.contentChangeDetails.lastModified
+    } yield {
+      if (p.date < lm.date) "unseen" else "seen"
     }
-    
-    if(explainer.contentChangeDetails.published.isDefined) {
-      if ( getLongFromOptionCSChangeRecordForComparison(explainer.contentChangeDetails.published) < getLongFromOptionCSChangeRecordForComparison(explainer.contentChangeDetails.lastModified) ){
-        "unseen"
-      }else{
-        "published"
-      }
-    } else {
-      "draft"
-    }
+    changesSincePublication.getOrElse("draft")
+
   }
 
   def redisplayExplainerTagManagementAreas(explainerId: String): Unit = {
