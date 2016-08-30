@@ -6,7 +6,7 @@ import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
 import scalatags.JsDom._
 import scalatags.JsDom.all._
-import shared.models.{CsAtom, ExplainerUpdate}
+import shared.models.{CsAtom, CsChangeRecord, ExplainerUpdate}
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -22,14 +22,16 @@ import scala.scalajs.js.JSON
 
 object ExplainEditorJSDomBuilders {
 
-  def statusBarText(explainer: CsAtom) = {
-    val isPublished = explainer.contentChangeDetails.published.isDefined
+  def statusBarText(explainer: CsAtom): String = {
 
-    if(isPublished) {
-      "published"
-    } else {
-      "draft"
+    val changesSincePublication = for {
+      p <- explainer.contentChangeDetails.published
+      lm <- explainer.contentChangeDetails.lastModified
+    } yield {
+      if (p.date < lm.date) "unseen" else "seen"
     }
+    changesSincePublication.getOrElse("draft")
+
   }
 
   def redisplayExplainerTagManagementAreas(explainerId: String): Unit = {
