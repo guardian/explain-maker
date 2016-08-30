@@ -34,14 +34,14 @@ object Paginator {
   val pageSize: Int = 12
   def previousFragment(desk:Option[String], pageNumber: Int): String = {
     if(pageNumber>1){
-      " | <a href=\"/?" +DeskStringUtilities.deskToQueryStringWithTrailingAmpersand(desk)+ "pageNumber=" + (pageNumber-1).toString() + "\">previous</a>"
+      "<a class=\"pagination__link\" href=\"/?" +DeskStringUtilities.deskToQueryStringWithTrailingAmpersand(desk)+ "pageNumber=" + (pageNumber-1).toString() + "\">< Previous</a>"
     }else{
       ""
     }
   }
   def nextFragment(desk:Option[String], pageNumber: Int, maxPageNumber: Int): String = {
     if(pageNumber<maxPageNumber){
-      " | <a href=\"?" +DeskStringUtilities.deskToQueryStringWithTrailingAmpersand(desk)+ "pageNumber=" + (pageNumber+1).toString() + "\">next</a>"
+      "<a class=\"pagination__link\" href=\"?" +DeskStringUtilities.deskToQueryStringWithTrailingAmpersand(desk)+ "pageNumber=" + (pageNumber+1).toString() + "\">Next ></a>"
     }else{
       ""
     }

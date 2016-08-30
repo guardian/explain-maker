@@ -1,0 +1,20 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__label {
+    font-weight: bold;
+    padding: 0 5px;
+  }
+
+  &__link {
+    color: $brand-color;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
