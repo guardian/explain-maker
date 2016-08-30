@@ -22,9 +22,6 @@ function updateStatusBar(message){
         labelClass = "",
         labelRemovedClass = "";
 
-    // Asumming it saved correctly for now
-    $(".save-state").removeClass("save-state--loading");
-
     if (message.length) {
 
         if (message === "published") {
@@ -130,15 +127,19 @@ function setupScribe() {
                     li: {}
                 }
             }));
-            scribe.on('content-changed', function(){
+            
+            scribe.on('content-changed', function() {
                 $(".save-state").addClass("save-state--loading");
-                debounce(function(){
-                    var bodyString = scribeElement.innerHTML;
-                    updateWordCountDisplay();
-                    updateWordCountWarningDisplay();
-                    ExplainEditorJS().updateBodyContents(EXPLAINER_IDENTIFIER, bodyString);
-                }, 500)()
             });
+
+            scribe.on('content-changed',  debounce(function() {
+                var bodyString = scribeElement.innerHTML;
+                updateWordCountDisplay();
+                updateWordCountWarningDisplay();
+                ExplainEditorJS().updateBodyContents(EXPLAINER_IDENTIFIER, bodyString);
+                $(".save-state").removeClass("save-state--loading");
+            }, 500));
+
         });
 }
 
