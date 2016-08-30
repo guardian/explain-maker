@@ -110,7 +110,7 @@ object ExplainEditorJSDomBuilders {
     val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__tags__tag-search-input-field",
       cls:="form-field",
-      placeholder:="tag search"
+      placeholder:="Tag search"
     )
     val tagsSearchInputTag = tagsSearchInput().render
     tagsSearchInputTag.oninput = (x: Event) => {
@@ -125,17 +125,20 @@ object ExplainEditorJSDomBuilders {
 
   def makeCommissioningDeskArea(explainer: CsAtom) = {
     val suggestionsDivIdentifier = "explainer-editor__commissioning-desk-tags__suggestions"
-    val tagsSearchInput = button(
+    val tagsSearchInput: TypedTag[Input] = input(
       id:="explainer-editor__commissioning-desk-tags__tag-search-input-field",
-      cls:="btn btn--secondary",
-      `type`:="button"
-    )("Add a commissioning desk").render
-    tagsSearchInput.onclick = (x: Event) => {
-      CAPIService.capiTagRequest(Seq("type" -> "tracking", "page-size" -> "200"))
-        .map(renderSuggestionSet(_, explainer.id, suggestionsDivIdentifier)
-      )
+      cls:="form-field",
+      placeholder:="Commissioning desk"
+    )
+    val tagsSearchInputTag = tagsSearchInput().render
+    tagsSearchInputTag.oninput = (x: Event) => {
+      val queryValue: String = g.readValueAtDiv("explainer-editor__commissioning-desk-tags__tag-search-input-field").asInstanceOf[String]
+
+      CAPIService.capiTagRequest(Seq("type" -> "tracking", "q" -> queryValue))
+        .map(renderSuggestionSet(_, explainer.id, suggestionsDivIdentifier))
+
     }
-    renderTaggingArea(explainer, suggestionsDivIdentifier, "Commissioning Desk", tagsSearchInput, { tagId => tagId.startsWith("tracking") })
+    renderTaggingArea(explainer, suggestionsDivIdentifier, "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
   }
 
   def republishStatusBar(explainer: CsAtom) = {
