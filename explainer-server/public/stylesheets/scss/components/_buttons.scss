@@ -22,16 +22,4 @@ button {
   &:hover {
     background: $brand-color-light;
   }
-
-  &--secondary {
-    background: transparent;
-    color: $brand-color;
-    border: 2px solid $brand-color;
-
-    &:hover {
-      color: $brand-color-light;
-      border-color: $brand-color-light;
-      background: transparent;
-    }
-  }
 }
