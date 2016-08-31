@@ -62,7 +62,12 @@ function updateStatusBar(message){
 }
 
 function updatePublishButtonStyle(text){
-    // code to update publish button's style.
+    var element = $("#publish-button");
+    if(text=="seen"){
+        element.addClass("disabled")
+    }else{
+        element.removeClass("disabled")
+    }
 }
 
 function updateInteractiveURL(url){
