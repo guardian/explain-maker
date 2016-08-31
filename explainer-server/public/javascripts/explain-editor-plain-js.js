@@ -12,7 +12,7 @@ function getBodyWordCount(){
 const maxWordCount = 150;
 function updateWordCountDisplay() {
     var count = getBodyWordCount(),
-        sentence = count>1 ? count+" words" : count+" word";
+        sentence = ( count===0 || count>1 ) ? count+" words" : count+" word";
     $(".word-count__number").text(sentence)
 }
 function updateWordCountWarningDisplay() {
