@@ -4,7 +4,7 @@
  */
 function getBodyWordCount(){
     var trimmedInnerText = $.trim($(".scribe-body-editor__textarea")[0].innerText);
-    if (trimmedInnerText.length){
+    if (!trimmedInnerText.length){
         return 0;
     }
     return trimmedInnerText.split(" ").length;
