@@ -145,6 +145,7 @@ function setupScribe() {
                         href: true
                     },
                     ul: {},
+                    ol: {},
                     li: {}
                 }
             }));
