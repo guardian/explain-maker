@@ -4,6 +4,9 @@
  */
 function getBodyWordCount(){
     var trimmedInnerText = $.trim($(".scribe-body-editor__textarea")[0].innerText);
+    if (trimmedInnerText.length==0){
+        return 0;
+    }
     return trimmedInnerText.split(" ").length;
 }
 const maxWordCount = 150;
