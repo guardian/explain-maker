@@ -8,7 +8,9 @@ function getBodyWordCount(){
 }
 const maxWordCount = 150;
 function updateWordCountDisplay() {
-    $(".word-count__number").text(getBodyWordCount())
+    var count = getBodyWordCount()
+    var sentence = getBodyWordCount()>1 ? getBodyWordCount()+" words" : getBodyWordCount()+" word"
+    $(".word-count__number").text(sentence)
 }
 function updateWordCountWarningDisplay() {
     if (getBodyWordCount() > maxWordCount) {
