@@ -29,8 +29,6 @@ function updateStatusBar(message){
         labelStatus = "",
         labelMessage = "";
 
-    console.log(message);
-
     if (message.length) {
         switch(message) {
             case "seen":
