@@ -14,7 +14,7 @@ $toolbarHeight: 50px;
   display: flex;
   justify-content: space-between;
   z-index: 1;
-  border-bottom: 1px solid $dark-grey;
+  border-bottom: 1px solid $border-grey;
 }
 
 .top-toolbar__title {
@@ -82,11 +82,11 @@ $toolbarHeight: 50px;
   align-items: stretch;
 
   &:not(:last-child) {
-    border-right: 1px solid $dark-grey;
+    border-right: 1px solid $border-grey;
   }
 
   &:not(:first-child) {
-    border-left: 1px solid $dark-grey;
+    border-left: 1px solid $border-grey;
   }
 }
 
@@ -99,7 +99,7 @@ $toolbarHeight: 50px;
   text-align: center;
 
   &:not(:last-child) {
-    border-right: 1px solid $dark-grey;
+    border-right: 1px solid $border-grey;
   }
 
   &--no-spacing {
@@ -123,7 +123,7 @@ $toolbarHeight: 50px;
   flex-grow: 2;
 
   &:not(:last-child) {
-    border-right: 1px solid $dark-grey;
+    border-right: 1px solid $border-grey;
   }
 }
 
