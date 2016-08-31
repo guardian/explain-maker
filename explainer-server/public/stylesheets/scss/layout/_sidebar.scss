@@ -6,7 +6,7 @@
   background: $light-grey;
   flex-shrink: 0;
   width: 400px;
-  border-right: 1px solid $dark-grey;
+  border-right: 1px solid $border-grey;
   padding: 15px 30px;
   height: calc(100vh - #{$toolbarHeight});
   overflow: auto;

@@ -66,6 +66,15 @@ function updateStatusBar(message){
     }
 }
 
+function updatePublishButtonStyle(text){
+    var element = $("#publish-button");
+    if(text==="seen"){
+        element.attr("disabled", true)
+    }else{
+        element.attr("disabled", false)
+    }
+}
+
 function updateInteractiveURL(url){
     $("#interactive-url-text").text(url)
 }

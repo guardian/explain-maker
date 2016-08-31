@@ -144,7 +144,9 @@ object ExplainEditorJSDomBuilders {
   }
 
   def republishStatusBar(explainer: CsAtom) = {
-    g.updateStatusBar(ExplainEditorJSDomBuilders.statusBarText(explainer))
+    val text = ExplainEditorJSDomBuilders.statusBarText(explainer)
+    g.updateStatusBar(text)
+    g.updatePublishButtonStyle(text)
   }
 
   def republishInteractiveURL(explainerId: String) = {
