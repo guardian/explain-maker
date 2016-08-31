@@ -4,11 +4,16 @@
  */
 function getBodyWordCount(){
     var trimmedInnerText = $.trim($(".scribe-body-editor__textarea")[0].innerText);
+    if (!trimmedInnerText.length){
+        return 0;
+    }
     return trimmedInnerText.split(" ").length;
 }
 const maxWordCount = 150;
 function updateWordCountDisplay() {
-    $(".word-count__number").text(getBodyWordCount())
+    var count = getBodyWordCount(),
+        sentence = ( count===0 || count>1 ) ? count+" words" : count+" word";
+    $(".word-count__number").text(sentence)
 }
 function updateWordCountWarningDisplay() {
     if (getBodyWordCount() > maxWordCount) {
