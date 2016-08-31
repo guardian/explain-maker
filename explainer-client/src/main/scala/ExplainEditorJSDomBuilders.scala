@@ -184,19 +184,22 @@ object ExplainEditorJSDomBuilders {
     val interactiveUrlTag = interactiveUrl(interactiveUrlText).render
     val interactiveURLWrapperDisplay = div(cls:="form-row")( div(cls:="form-label")("Interactive URL"), interactiveUrlTag )
 
-    val checkboxClassName: String = "explainer-editor__displayType-checkbox"
+    val checkboxClassName: String = "form-checkbox__input"
+    val checkboxId: String = "expandable"
     val checkbox: TypedTag[Input] = explainer.data.displayType match {
       case "Expandable" => {
         input(
           cls:=checkboxClassName,
           `type`:="checkbox",
-          `checked`:= "checked"
+          checked:=true,
+          id:=checkboxId
         )
       }
       case "Flat" => {
         input(
           cls:=checkboxClassName,
-          `type`:="checkbox"
+          `type`:="checkbox",
+          id:=checkboxId
         )
       }
     }
@@ -212,8 +215,13 @@ object ExplainEditorJSDomBuilders {
       ),
       interactiveURLWrapperDisplay,
       div(cls:="form-row")(
-        div()(
-          checkboxTag, " Expandable explainer"
+        p(cls:="form-label")("Expandable Explainer"),
+        div(cls:="form-checkbox")(
+          checkboxTag,
+          label(
+            cls:="form-checkbox__toggle",
+            `for`:=checkboxId
+          )
         )
       ),
       div(cls:="explainer-editor__tag-management-wrapper")(
