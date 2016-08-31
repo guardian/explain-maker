@@ -63,10 +63,10 @@ function updateStatusBar(message){
 
 function updatePublishButtonStyle(text){
     var element = $("#publish-button");
-    if(text=="seen"){
-        element.addClass("disabled")
+    if(text==="seen"){
+        element.attr("disabled", true)
     }else{
-        element.removeClass("disabled")
+        element.attr("disabled", false)
     }
 }
 
