@@ -29,9 +29,11 @@ function updateStatusBar(message){
         labelStatus = "",
         labelMessage = "";
 
+    console.log(message);
+
     if (message.length) {
         switch(message) {
-            case "published":
+            case "seen":
                 labelClass = "label--success";
                 labelStatus = "Available";
                 break;
@@ -68,7 +70,7 @@ function updateStatusBar(message){
 
 function updatePublishButtonStyle(text){
     var element = $("#publish-button");
-    if(text==="seen"){
+    if(text === "seen"){
         element.attr("disabled", true)
     }else{
         element.attr("disabled", false)
