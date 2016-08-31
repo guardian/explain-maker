@@ -61,6 +61,10 @@ function updateStatusBar(message){
     }
 }
 
+function updatePublishButtonStyle(text){
+    // code to update publish button's style.
+}
+
 function updateInteractiveURL(url){
     $("#interactive-url-text").text(url)
 }
