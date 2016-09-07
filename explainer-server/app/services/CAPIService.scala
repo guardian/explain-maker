@@ -2,18 +2,24 @@ package services
 
 import javax.inject.Inject
 
-import com.gu.contentapi.client.GuardianContentClient
-import com.gu.contentapi.client.model.TagsQuery
-import com.gu.contentapi.client.model.v1.Tag
+import com.gu.contentapi.client.{ContentApiClientLogic, GuardianContentClient}
+import com.gu.contentapi.client.model.{ItemQuery, TagsQuery}
+import com.gu.contentapi.client.model.v1.{ItemResponse, Tag}
 import config.Config
 import play.api.cache._
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.util.{Failure, Success}
+
+class CustomUrlGuardianContentClient(val apiKey: String, val apiUrl: String) extends ContentApiClientLogic {
+  val useThrift = false
+  override val targetUrl = apiUrl
+}
 
 class CAPIService @Inject() (config: Config, cache: CacheApi) {
 
-  val client = new GuardianContentClient(config.capiKey)
+  val client = new CustomUrlGuardianContentClient(config.capiKey, config.capiUrl)
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -29,6 +35,14 @@ class CAPIService @Inject() (config: Config, cache: CacheApi) {
 
   def getTrackingTags: Future[Seq[Tag]] = {
     cache.get[Seq[Tag]]("trackingTags").fold(getTrackingTagsFromCapi)(Future(_))
+  }
+
+  def checkExplainerInCapi(id: String): Future[Boolean] = {
+    val itemQuery = ItemQuery(s"/atom/explainer/$id")
+
+    client.getResponse(itemQuery).map(_ => true) recover {
+      case _ => false
+    }
   }
 
 }

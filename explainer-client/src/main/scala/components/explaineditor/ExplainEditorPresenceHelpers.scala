@@ -1,19 +1,19 @@
-import org.scalajs.dom
+package components.explaineditor
+
 import org.scalajs.dom.html.Element
-import org.scalajs.dom.html.Div
-import org.scalajs.dom.FocusEvent
-import org.scalajs.dom.raw.MouseEvent
+import presence.Person
+import presence._
+import scala.scalajs.js
+import org.scalajs.dom
+import org.scalajs.dom._
 import presence.StateChange.State
-import presence.{Person, PresenceGlobalScope, StateChange}
 
 import scala.scalajs.js.Dynamic.{global => g}
-import scala.scalajs.js
-import scalatags.JsDom.all._
-import upickle.default._
+
 
 object ExplainEditorPresenceHelpers {
-  val endpoint = g.CONFIG.PRESENCE_ENDPOINT_URL.toString()
-  val person = new Person(g.USER_FIRSTNAME.toString(),g.USER_LASTNAME.toString(),g.USER_EMAIL_ADDRESS.toString())
+  val endpoint = g.CONFIG.PRESENCE_ENDPOINT_URL.toString
+  val person = new Person(g.CONFIG.USER_FIRSTNAME.toString, g.CONFIG.USER_LASTNAME.toString, g.CONFIG.USER_EMAIL_ADDRESS.toString)
   val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
   def attachPresenceEventHandlerToElement(explainerId: String, element: Element) = {
     element.onmouseover = (x: MouseEvent) => {

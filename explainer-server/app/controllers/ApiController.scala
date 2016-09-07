@@ -11,20 +11,22 @@ import com.gu.atom.publish.{AtomPublisher, LiveAtomPublisher, PreviewAtomPublish
 import com.gu.contentatom.thrift.{Atom, ContentAtomEvent, EventType}
 import config.Config
 import db.ExplainerDB
-import models.{ExplainerStore, PublishResult, Success => PublishSuccess, Fail => PublishFail, Disabled => PublishDisabled}
+import models.{ExplainerStore, PublishResult, Disabled => PublishDisabled, Fail => PublishFail, Success => PublishSuccess}
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Controller
-import services.PublicSettingsService
-import shared._
-import models.{CsAtom, CsExplainerAtom}
+import services.{PublicSettingsService, CAPIService}
+import shared.ExplainerApi
+import shared.models.CsAtom
 import upickle.Js
 import upickle.default._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import com.gu.pandomainauth.model.{User => PandaUser}
+import play.api.cache.CacheApi
+import shared.models.PublicationStatus._
+import util.HelperFunctions
 
 object AutowireServer extends autowire.Server[Js.Value, Reader, Writer]{
   def read[Result: Reader](p: Js.Value) = upickle.default.readJs[Result](p)
@@ -36,14 +38,16 @@ class ExplainerApiImpl(
   previewAtomPublisher: PreviewAtomPublisher,
   liveAtomPublisher: LiveAtomPublisher,
   val publicSettingsService: PublicSettingsService,
-  user: PandaUser) extends ExplainerApi {
+  user: PandaUser,
+  cache: CacheApi) extends ExplainerApi {
 
   val explainerDB = new ExplainerDB(config)
   val explainerStore = new ExplainerStore(config)
+  val capiService = new CAPIService(config, cache)
 
-  def publishExplainerToKinesis(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {
+  def sendKinesisEvent(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {
     if (config.publishToKinesis) {
-      val event = ContentAtomEvent(explainer, EventType.Update, DateTime.now.getMillis)
+      val event = ContentAtomEvent(explainer, eventType, DateTime.now.getMillis)
       atomPublisher.publishAtomEvent(event) match {
         case Success(_) => {
           Logger.info(s"$actionMessage succeeded")
@@ -62,25 +66,40 @@ class ExplainerApiImpl(
   }
 
   override def update(id: String, fieldName: String, value: String): Future[CsAtom] = {
-    val updatedExplainer = explainerStore.update(id, Symbol(fieldName), value, user)
-    updatedExplainer.map(publishExplainerToKinesis(_, "Publishing explainer update to PREVIEW kinesis", previewAtomPublisher))
-    updatedExplainer.map(CsAtom.atomToCsAtom)
+    explainerStore.update(id, Symbol(fieldName), value, user).map( e => {
+      sendKinesisEvent(e, s"Publishing update for explainer ${e.id} to PREVIEW kinesis", previewAtomPublisher)
+      CsAtom.atomToCsAtom(e)
+    })
   }
 
   override def load(id: String): Future[CsAtom] = explainerDB.load(id).map(CsAtom.atomToCsAtom)
 
   override def create(): Future[CsAtom] = {
-    val newExplainer = explainerStore.create(user)
-    newExplainer.map(publishExplainerToKinesis(_, "Publishing new explainer to PREVIEW kinesis", previewAtomPublisher))
-    newExplainer.map(e => CsAtom.atomToCsAtom(e))
-
+    explainerStore.create(user).map(e => {
+      sendKinesisEvent(e, s"Publishing new explainer ${e.id} to PREVIEW kinesis", previewAtomPublisher)
+      CsAtom.atomToCsAtom(e)
+    })
   }
 
   override def publish(id: String): Future[CsAtom] = {
-    explainerStore.publish(id, user).map(explainerToPublish => {
-      publishExplainerToKinesis(explainerToPublish, "Publishing explainer to LIVE kinesis", liveAtomPublisher)
-      CsAtom.atomToCsAtom(explainerToPublish)
+    explainerStore.publish(id, user).map(e => {
+      sendKinesisEvent(e, s"Publishing explainer ${e.id} to LIVE kinesis", liveAtomPublisher)
+      CsAtom.atomToCsAtom(e)
     })
+  }
+
+  override def takeDown(id: String): Future[CsAtom] = {
+    explainerStore.takeDown(id, user).map(explainerToTakeDown => {
+      sendKinesisEvent(explainerToTakeDown, s"Sending takedown event for explainer ${explainerToTakeDown.id} to LIVE kinesis.", liveAtomPublisher, EventType.Takedown)
+      CsAtom.atomToCsAtom(explainerToTakeDown)
+    })
+  }
+
+  override def getStatus(id:String, checkCapiStatus: Boolean): Future[PublicationStatus] = {
+    for {
+      e <- explainerDB.load(id)
+      s <- HelperFunctions.getExplainerStatus(e, capiService, checkCapiStatus, config.stage)
+    } yield s
   }
 
 }
@@ -88,7 +107,8 @@ class ExplainerApiImpl(
 class ApiController @Inject() (val config: Config,
   val previewAtomPublisher: PreviewAtomPublisher,
   val publicSettingsService: PublicSettingsService,
-  val liveAtomPublisher: LiveAtomPublisher) extends Controller with AuthActions {
+  val liveAtomPublisher: LiveAtomPublisher,
+  cache: CacheApi) extends Controller with AuthActions {
 
   val pandaAuthenticated = new PandaAuthenticated(config)
 
@@ -97,7 +117,7 @@ class ApiController @Inject() (val config: Config,
       path.split("/"),
       upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
     )
-    val api = new ExplainerApiImpl(config, previewAtomPublisher, liveAtomPublisher, publicSettingsService, request.user.user)
+    val api = new ExplainerApiImpl(config, previewAtomPublisher, liveAtomPublisher, publicSettingsService, request.user.user, cache)
     AutowireServer.route[ExplainerApi](api)(autowireRequest).map(responseJS => {
       Ok(upickle.json.write(responseJS))
     })

@@ -1,9 +1,10 @@
+package components.explainlist
+
 import org.scalajs.dom
 import org.scalajs.dom.html.Select
 
-import scala.scalajs.js.annotation.JSExport
-import org.scalajs.jquery.jQuery
 import scala.scalajs.js.URIUtils
+import scala.scalajs.js.annotation.JSExport
 
 @JSExport
 object ExplainListJS {

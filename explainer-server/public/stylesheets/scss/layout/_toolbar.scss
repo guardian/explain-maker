@@ -116,6 +116,14 @@ $toolbarHeight: 50px;
     background: darken($mid-grey, 5);
     box-shadow: inset 0 3px 0 0 $brand-color-light;
   }
+
+  &:disabled {
+    color: $c-grey-500;
+    &:hover {
+      background: #FFFFFF;
+      box-shadow: none;
+    }
+  }
 }
 
 // Abstracted class to relate nav items

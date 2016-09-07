@@ -1,38 +1,24 @@
-import org.scalajs.dom
-import org.scalajs.dom.html._
-import org.scalajs.dom.Event
+package components.explaineditor
 
-import scala.scalajs.js
+import api.Model
+import components.statusbar.StatusBar
+import models.{Tag => CapiTag}
+import org.scalajs.dom
+import org.scalajs.dom.Event
+import org.scalajs.dom.html._
+import services.CAPIService
+import shared.models.PublicationStatus._
+import shared.models.{CsAtom, ExplainerUpdate}
+
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scala.scalajs.js.Dynamic.{global => g}
+import scala.util.{Failure, Success}
+import scalatags.JsDom
 import scalatags.JsDom._
 import scalatags.JsDom.all._
-import shared.models.{CsAtom, CsChangeRecord, ExplainerUpdate}
 
-import scala.concurrent.Future
-import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-import scalatags.JsDom
-import fr.hmil.roshttp.HttpRequest
-import models.Tag
-import org.scalajs.dom.raw.MouseEvent
-import services.CAPIService
-import upickle.Js
-import upickle.default._
-
-import scala.scalajs.js.JSON
 
 object ExplainEditorJSDomBuilders {
-
-  def statusBarText(explainer: CsAtom): String = {
-
-    val changesSincePublication = for {
-      p <- explainer.contentChangeDetails.published
-      lm <- explainer.contentChangeDetails.lastModified
-    } yield {
-      if (p.date < lm.date) "unseen" else "seen"
-    }
-    changesSincePublication.getOrElse("draft")
-
-  }
 
   def redisplayExplainerTagManagementAreas(explainerId: String): Unit = {
     Model.extractExplainer(explainerId).map{ explainer =>
@@ -62,16 +48,12 @@ object ExplainEditorJSDomBuilders {
   }
 
   def explainerToDivTags(explainer:CsAtom, filterLambda: String => Boolean) = {
-    explainer.data.tags match {
-      case None => List()
-      case Some(list) => list.filter( tagId => filterLambda(tagId) ).map(tagId => {
+    explainer.data.tags.map(_.filter(filterLambda).map(tagId => {
         div(cls:="tag")(
-            tagId,tagDeleteButton(explainer,tagId)
-          )
-        }
-      )
+          tagId,tagDeleteButton(explainer,tagId)
+        )
+      })).getOrElse(List())
     }
-  }
 
   def renderTaggingArea(explainer:CsAtom, suggestionsDomId: String, fieldDescription:String, inputTag: JsDom.Modifier, explainerToDivFilterLambda: String => Boolean) ={
     div()(
@@ -94,7 +76,7 @@ object ExplainEditorJSDomBuilders {
     )
   }
 
-  def renderSuggestionSet(tags:List[Tag], explainerId:String, suggestionsDivIdentifier:String) = {
+  def renderSuggestionSet(tags:List[CapiTag], explainerId:String, suggestionsDivIdentifier:String) = {
       g.jQuery(s"#$suggestionsDivIdentifier").empty()
       tags.foreach( tagObject => {
         val node = div(cls:="tag__result")(tagObject.webTitle).render
@@ -143,14 +125,13 @@ object ExplainEditorJSDomBuilders {
     renderTaggingArea(explainer, suggestionsDivIdentifier, "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
   }
 
-  def republishStatusBar(explainer: CsAtom) = {
-    g.updateStatusBar(ExplainEditorJSDomBuilders.statusBarText(explainer))
-  }
-
-  def republishInteractiveURL(explainerId: String) = {
-    val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
-    val interactiveUrlText: String = s"$interactiveBaseUrl?id=${explainerId}"
-    g.updateInteractiveURL(interactiveUrlText)
+  def republishembedURL(explainerId: String, status: PublicationStatus = Available) = {
+    val interactiveUrlText = status match {
+      case Available | UnlaunchedChanges => s"${g.CONFIG.INTERACTIVE_URL.toString}?id=$explainerId"
+      case Draft => "Publish explainer to get embed URL."
+      case TakenDown => "The explainer has beeen taken down. Republish to get URL."
+    }
+    dom.document.getElementById("interactive-url-text").textContent = interactiveUrlText
   }
 
   def SideBar(explainerId: String, explainer: CsAtom) = {
@@ -164,7 +145,10 @@ object ExplainEditorJSDomBuilders {
 
     val titleTag = title(value := explainer.data.title).render
     titleTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)).map(republishStatusBar)
+      Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)) onComplete {
+        case Success(_) => ExplainEditorJS.updateEmbedUrlAndStatusLabel(explainerId, checkCapi=false)
+        case Failure(_) => g.console.error(s"Failed to update title with string ${titleTag.value}")
+      }
     }
 
     val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
@@ -279,7 +263,12 @@ object ExplainEditorJSDomBuilders {
       )
     )
 
-    ExplainEditorPresenceHelpers.attachPresenceEventHandlerToElement(explainerId, editor.render)
+    if (g.CONFIG.PRESENCE_ENABLED.toString == "true") {
+      ExplainEditorPresenceHelpers.attachPresenceEventHandlerToElement(explainerId, editor.render)
+    } else {
+      editor.render
+    }
+
 
   }
 

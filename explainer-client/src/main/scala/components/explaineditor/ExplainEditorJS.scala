@@ -1,3 +1,7 @@
+package components.explaineditor
+
+import api.Model
+import components.statusbar.StatusBar
 import org.scalajs.dom
 import shared.models.{CsAtom, ExplainerUpdate}
 
@@ -6,18 +10,35 @@ import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
 import scala.scalajs.js.annotation.JSExport
+import scala.util.{Failure, Success}
 
 @JSExport
 object ExplainEditorJS {
+
+  def getStatus(id: String, checkCapi: Boolean) = {
+    Model.getExplainerStatus(id, checkCapi)
+  }
+
+  def updateEmbedUrlAndStatusLabel(id: String, checkCapi: Boolean = true) = {
+    val status = getStatus(id, checkCapi)
+    status.map(s => {
+      StatusBar.updateStatusBar(s)
+      ExplainEditorJSDomBuilders.republishembedURL(id, s)
+    })
+  }
 
   @JSExport
   def main(explainerId: String, callback: js.Function0[Unit]) = {
 
     val articleId = "explain-"+explainerId
-    ExplainEditorPresenceHelpers.presenceClient.startConnection()
-    ExplainEditorPresenceHelpers.presenceClient.on("connection.open", { data:js.Object =>
-      ExplainEditorPresenceHelpers.presenceClient.subscribe(articleId)
-    })
+
+    if(g.CONFIG.PRESENCE_ENABLED.toString == "true") {
+      ExplainEditorPresenceHelpers.presenceClient.startConnection()
+      ExplainEditorPresenceHelpers.presenceClient.on("connection.open", { data:js.Object =>
+        ExplainEditorPresenceHelpers.presenceClient.subscribe(articleId)
+      })
+    }
+
 
     Model.extractExplainer(explainerId).map { explainer: CsAtom =>
 
@@ -28,7 +49,7 @@ object ExplainEditorJS {
       dom.document.getElementById("sidebar").appendChild(
         ExplainEditorJSDomBuilders.SideBar(explainerId, explainer).render
       )
-      ExplainEditorJSDomBuilders.republishStatusBar(explainer)
+      updateEmbedUrlAndStatusLabel(explainerId)
       callback()
 
     }
@@ -40,7 +61,7 @@ object ExplainEditorJS {
   }
 
   @JSExport
-  def CreateNewExplainer() = {
+  def createNewExplainer() = {
     Model.createNewExplainer().map{ explainer: CsAtom =>
       g.location.href = s"/explain/${explainer.id}"
     }
@@ -48,9 +69,17 @@ object ExplainEditorJS {
 
   @JSExport
   def publish(explainerId: String) = {
-    Model.publish(explainerId).map{ explainer =>
-      ExplainEditorJSDomBuilders.republishStatusBar(explainer)
-      ExplainEditorJSDomBuilders.republishInteractiveURL(explainerId)
+    Model.publish(explainerId) onComplete {
+      case Success(_) => updateEmbedUrlAndStatusLabel(explainerId)
+      case Failure(_) => g.console.error(s"Failed to publish explainer")
+    }
+  }
+
+  @JSExport
+  def takeDown(explainerId: String) = {
+    Model.takeDown(explainerId) onComplete {
+      case Success(_) => updateEmbedUrlAndStatusLabel(explainerId)
+      case Failure(_) => g.console.error(s"Failed to take down explainer")
     }
   }
 
@@ -61,7 +90,10 @@ object ExplainEditorJS {
 
   @JSExport
   def updateBodyContents(explainerId: String, bodyString: String) = {
-    Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyString)).map(ExplainEditorJSDomBuilders.republishStatusBar)
+    Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyString)) onComplete {
+      case Success(_) => updateEmbedUrlAndStatusLabel(explainerId, checkCapi=false)
+      case Failure(_) => g.console.error(s"Failed to update body with string $bodyString")
+    }
   }
 
   @JSExport
