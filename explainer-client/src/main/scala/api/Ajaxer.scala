@@ -28,7 +28,7 @@ object Ajaxer extends autowire.Client[Js.Value, Reader, Writer]{
 
 object Model {
 
-  def extractExplainer(id: String): Future[CsAtom] = {
+  def getExplainer(id: String): Future[CsAtom] = {
     Ajaxer[ExplainerApi].load(id).call()
   }
 

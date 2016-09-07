@@ -31,7 +31,7 @@ function updateCheckboxState() {
     } else {
         explainEditorJS.setDisplayType(CONFIG.EXPLAINER_IDENTIFIER,"Flat")
     }
-};
+}
 
 /*
  * Tag Search

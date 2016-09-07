@@ -20,16 +20,12 @@ import scalatags.JsDom.all._
 
 object ExplainEditorJSDomBuilders {
 
-  def redisplayExplainerTagManagementAreas(explainerId: String): Unit = {
-    Model.extractExplainer(explainerId).map{ explainer =>
+  def redisplayExplainerTagManagementAreas(explainer: CsAtom): Unit = {
+    dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").innerHTML = ""
+    dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer).render)
 
-      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").innerHTML = ""
-      dom.document.getElementById("explainer-editor__commissioning-desk-tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeCommissioningDeskArea(explainer).render)
-
-      dom.document.getElementById("explainer-editor__tags-wrapper").innerHTML = ""
-      dom.document.getElementById("explainer-editor__tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeTagArea(explainer).render)
-
-    }
+    dom.document.getElementById("explainer-editor__tags-wrapper").innerHTML = ""
+    dom.document.getElementById("explainer-editor__tags-wrapper").appendChild(ExplainEditorJSDomBuilders.makeTagArea(explainer).render)
   }
 
   def tagDeleteButton(explainer:CsAtom, tagId:String) = {
@@ -41,7 +37,7 @@ object ExplainEditorJSDomBuilders {
     )("Delete").render
     deleteButton.onclick = (x: Event) => {
       Model.removeTagFromExplainer(explainer.id, tagId).map { explainer =>
-        redisplayExplainerTagManagementAreas(explainer.id)
+        redisplayExplainerTagManagementAreas(explainer)
       }
     }
     deleteButton
@@ -82,7 +78,7 @@ object ExplainEditorJSDomBuilders {
         val node = div(cls:="tag__result")(tagObject.webTitle).render
         node.onclick = (x: Event) => {
           Model.addTagToExplainer(explainerId, tagObject.id).map { explainer =>
-            ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer.id)
+            ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer)
           }
         }
         dom.document.getElementById(suggestionsDivIdentifier).appendChild(node)
@@ -134,7 +130,7 @@ object ExplainEditorJSDomBuilders {
     dom.document.getElementById("interactive-url-text").textContent = interactiveUrlText
   }
 
-  def SideBar(explainerId: String, explainer: CsAtom) = {
+  def SideBar(explainer: CsAtom) = {
 
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
@@ -145,8 +141,8 @@ object ExplainEditorJSDomBuilders {
 
     val titleTag = title(value := explainer.data.title).render
     titleTag.onchange = (x: Event) => {
-      Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)) onComplete {
-        case Success(_) => ExplainEditorJS.updateEmbedUrlAndStatusLabel(explainerId, checkCapi=false)
+      Model.updateFieldContent(explainer.id, ExplainerUpdate("title", titleTag.value)) onComplete {
+        case Success(_) => ExplainEditorJS.updateEmbedUrlAndStatusLabel(explainer.id, checkCapi=false)
         case Failure(_) => g.console.error(s"Failed to update title with string ${titleTag.value}")
       }
     }
@@ -154,7 +150,7 @@ object ExplainEditorJSDomBuilders {
     val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
 
     val interactiveUrlText: String = explainer.contentChangeDetails.published match {
-      case Some(thing) => s"$interactiveBaseUrl?id=$explainerId"
+      case Some(thing) => s"$interactiveBaseUrl?id=${explainer.id}"
       case None => "Explainer has not been published yet"
     }
 
@@ -215,7 +211,7 @@ object ExplainEditorJSDomBuilders {
     )
   }
 
-  def ExplainEditor(explainerId: String, explainer: CsAtom) = {
+  def ExplainEditor(explainer: CsAtom) = {
 
     val toolbarButtonTags = List(
       div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="bold")("Bold"),
@@ -264,7 +260,7 @@ object ExplainEditorJSDomBuilders {
     )
 
     if (g.CONFIG.PRESENCE_ENABLED.toString == "true") {
-      ExplainEditorPresenceHelpers.attachPresenceEventHandlerToElement(explainerId, editor.render)
+      ExplainEditorPresenceHelpers.attachPresenceEventHandlerToElement(explainer.id, editor.render)
     } else {
       editor.render
     }
