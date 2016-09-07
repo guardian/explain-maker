@@ -1,10 +1,14 @@
 package components.explainlist
 
+import api.Model
 import org.scalajs.dom
 import org.scalajs.dom.html.Select
+import shared.models.CsAtom
 
 import scala.scalajs.js.URIUtils
 import scala.scalajs.js.annotation.JSExport
+import scala.scalajs.js.Dynamic.{global => g}
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 @JSExport
 object ExplainListJS {
@@ -25,6 +29,13 @@ object ExplainListJS {
       dom.document.location.assign(urlWithoutQueryParameters)
     } else {
       replaceParams("desk", selectedDesk)
+    }
+  }
+
+  @JSExport
+  def createNewExplainer() = {
+    Model.createNewExplainer().map{ explainer: CsAtom =>
+      g.location.href = s"/explain/${explainer.id}"
     }
   }
 }

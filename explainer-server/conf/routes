@@ -2,10 +2,9 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET           /                            controllers.ExplainEditorController.listExplainers(desk: Option[String], pageNumber: Option[Int])
-GET           /healthcheck                 controllers.Healthcheck.healthcheck
-
+# Explain List
+GET           /                            controllers.ExplainEditorController.listExplainers(desk: Option[String], pageNumber: Int = 1)
+# Explain Editor
 GET           /explain/:id                 controllers.ExplainEditorController.get(id)
 
 # Autowire calls
@@ -13,3 +12,11 @@ POST          /api/*path                   controllers.ApiController.autowireApi
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                controllers.Assets.at(path="/public", file)
+
+GET           /healthcheck                 controllers.Healthcheck.healthcheck
+
+
+
+
+
+

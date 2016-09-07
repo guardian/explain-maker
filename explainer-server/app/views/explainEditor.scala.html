@@ -65,7 +65,7 @@
     </div>
 }
 
-@templates.main("Explainer Editor", header, content, toolbar, sidebar){
+@main("Explainer Editor", header, content, toolbar, sidebar){
     <script src="@routes.Assets.at("lib/requirejs/require.min.js")"></script>
     @*Alert! Dirty dirty hack incoming..... we have to rename require to something else here so that our HTTP library
     (rosHTTP) doesn't find it and try to do a require('http') call when http hasn't yet been loaded*@

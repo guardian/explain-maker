@@ -39,7 +39,6 @@ object ExplainEditorJS {
       })
     }
 
-
     Model.extractExplainer(explainerId).map { explainer: CsAtom =>
 
       dom.document.getElementById("content").appendChild(
@@ -58,13 +57,6 @@ object ExplainEditorJS {
   @JSExport
   def generateExplainerTagManagement(explainerId: String): Future[String] = {
     Model.extractExplainer(explainerId).map( explainer => ExplainEditorJSDomBuilders.makeTagArea(explainer).render.outerHTML )
-  }
-
-  @JSExport
-  def createNewExplainer() = {
-    Model.createNewExplainer().map{ explainer: CsAtom =>
-      g.location.href = s"/explain/${explainer.id}"
-    }
   }
 
   @JSExport
