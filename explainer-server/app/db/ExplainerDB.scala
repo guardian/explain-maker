@@ -1,16 +1,14 @@
 package db
 
 import javax.inject.Inject
-
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import cats.data.Xor
+
 import com.gu.contentatom.thrift._
 import config.Config
 import com.gu.scanamo.scrooge.ScroogeDynamoFormat._
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import com.gu.atom.data.DynamoDataStore
-import com.gu.atom.data.ScanamoUtil._
 import com.gu.contentatom.thrift.atom.explainer._
 import shared.util.ExplainerAtomImplicits
 
