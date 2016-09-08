@@ -1,17 +1,17 @@
-package components.explainlist
+package views
 
 import api.Model
 import org.scalajs.dom
 import org.scalajs.dom.html.Select
 import shared.models.CsAtom
 
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+import scala.scalajs.js.Dynamic.{global => g}
 import scala.scalajs.js.URIUtils
 import scala.scalajs.js.annotation.JSExport
-import scala.scalajs.js.Dynamic.{global => g}
-import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 @JSExport
-object ExplainListJS {
+object ExplainList {
 
   def replaceParams(key: String, value: String): Unit = {
     val keyEnc = URIUtils.encodeURI(key)

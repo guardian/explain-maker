@@ -1,34 +1,28 @@
-package components.explaineditor
+package views
 
 import api.Model
 import components.statusbar.StatusBar
+import components.{ScribeBodyEditor, Sidebar, TagPickers}
 import org.scalajs.dom
+import services.PresenceClient
 import shared.models.{CsAtom, ExplainerUpdate}
 
-import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
 import scala.scalajs.js.annotation.JSExport
 import scala.util.{Failure, Success}
+import scala.scalajs.js.{Function0, Object => JsObject}
 
 @JSExport
-object ExplainEditorJS {
-
-  def updateEmbedUrlAndStatusLabel(id: String, checkCapi: Boolean = true) = {
-      Model.getExplainerStatus(id, checkCapi).map(s => {
-        StatusBar.updateStatusBar(s)
-        ExplainEditorJSDomBuilders.republishembedURL(id, s)
-      })
-  }
+object ExplainEditor {
 
   @JSExport
-  def main(explainerId: String, callback: js.Function0[Unit]) = {
+  def main(explainerId: String, callback: Function0[Unit]) = {
 
     if(g.CONFIG.PRESENCE_ENABLED.toString == "true") {
-      ExplainEditorPresenceHelpers.presenceClient.startConnection()
-      ExplainEditorPresenceHelpers.presenceClient.on("connection.open", { data:js.Object =>
-        ExplainEditorPresenceHelpers.presenceClient.subscribe(s"explain-$explainerId")
+      PresenceClient.presenceClient.startConnection()
+      PresenceClient.presenceClient.on("connection.open", { data:JsObject =>
+        PresenceClient.presenceClient.subscribe(s"explain-$explainerId")
       })
     }
 
@@ -36,14 +30,21 @@ object ExplainEditorJS {
     Model.getExplainer(explainerId).map { explainer: CsAtom =>
 
       dom.document.getElementById("content").appendChild(
-        ExplainEditorJSDomBuilders.ExplainEditor(explainer)
+        ScribeBodyEditor.renderedBodyEditor(explainer)
       )
 
       dom.document.getElementById("sidebar").appendChild(
-        ExplainEditorJSDomBuilders.SideBar(explainer).render
+        Sidebar.sidebar(explainer)
       )
       callback()
     }
+  }
+
+  def updateEmbedUrlAndStatusLabel(id: String, checkCapi: Boolean = true) = {
+    Model.getExplainerStatus(id, checkCapi).map(s => {
+      StatusBar.updateStatusBar(s)
+      Sidebar.republishembedURL(id, s)
+    })
   }
 
   @JSExport
@@ -78,13 +79,13 @@ object ExplainEditorJS {
   @JSExport
   def removeTagFromExplainer(explainerId: String, tagId: String) = {
     Model.removeTagFromExplainer(explainerId, tagId).map { explainer =>
-      ExplainEditorJSDomBuilders.redisplayExplainerTagManagementAreas(explainer)
+      TagPickers.redisplayExplainerTagManagementAreas(explainer)
     }
   }
 
   @JSExport
   def presenceEnterDocument(explainerId: String) = {
-    ExplainEditorPresenceHelpers.enterDocument(explainerId)
+    PresenceClient.enterDocument(explainerId)
   }
 
 }

@@ -1,4 +1,4 @@
-var explainEditorJS = components.explaineditor.ExplainEditorJS();
+var explainEditor = views.ExplainEditor();
 
 /*
  * This function was put here at opposition to within the scala code because
@@ -27,9 +27,9 @@ function updateWordCountWarningDisplay() {
 function updateCheckboxState() {
     var $this = $(".explainer-editor__displayType-checkbox");
     if ($this.is(':checked')) {
-        explainEditorJS.setDisplayType(CONFIG.EXPLAINER_IDENTIFIER,"Expandable")
+        explainEditor.setDisplayType(CONFIG.EXPLAINER_IDENTIFIER,"Expandable")
     } else {
-        explainEditorJS.setDisplayType(CONFIG.EXPLAINER_IDENTIFIER,"Flat")
+        explainEditor.setDisplayType(CONFIG.EXPLAINER_IDENTIFIER,"Flat")
     }
 }
 
@@ -40,7 +40,7 @@ function updateCheckboxState() {
 $(document).delegate( ".explainer-editor__tags-common__tag-delete-icon", "click", function() {
     var explainerId = $(this).data("explainer-id");
     var tagId = $(this).data("tag-id");
-    explainEditorJS.removeTagFromExplainer(explainerId,tagId);
+    explainEditor.removeTagFromExplainer(explainerId,tagId);
 });
 
 /*
@@ -112,7 +112,7 @@ function setupScribe() {
                 var bodyString = scribeElement.innerHTML;
                 updateWordCountDisplay();
                 updateWordCountWarningDisplay();
-                explainEditorJS.updateBodyContents(CONFIG.EXPLAINER_IDENTIFIER, bodyString);
+                explainEditor.updateBodyContents(CONFIG.EXPLAINER_IDENTIFIER, bodyString);
                 $(".save-state").removeClass("save-state--loading");
             }, 500));
 
@@ -125,11 +125,11 @@ function afterDOMRendered() {
     updateWordCountWarningDisplay();
     if (CONFIG.PRESENCE_ENABLED) {
         setInterval(function(){
-            explainEditorJS.presenceEnterDocument(CONFIG.EXPLAINER_IDENTIFIER);
+            explainEditor.presenceEnterDocument(CONFIG.EXPLAINER_IDENTIFIER);
         },2000);
     }
 
 }
 
-explainEditorJS.main(CONFIG.EXPLAINER_IDENTIFIER, afterDOMRendered);
+explainEditor.main(CONFIG.EXPLAINER_IDENTIFIER, afterDOMRendered);
 

@@ -2,7 +2,7 @@ package components.statusbar
 
 import models.{RenderedStatusLabel, StatusLabel}
 import org.scalajs.dom
-import services.CAPIService
+import services.CAPIClient
 import shared.models.{CsAtom, PublicationStatus}
 import shared.models.PublicationStatus._
 
