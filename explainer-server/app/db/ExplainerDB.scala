@@ -51,19 +51,6 @@ class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
 
   def load(id: String): Future[Atom] = {
     val explainer = dynamoDataStore.getAtom(id).get
-    /*
-
-     The return value of `dynamoDataStore.getAtom(id)` is `Option[Atom]`
-     but above we optimistically assume that it will be Some(thing)
-
-     Attempt at correcting this by returning a `Future[Option[Atom]]` to correctly handle
-     the display on the client side when navigating to
-        /explain/INVALID-IDENTIFIER
-
-     (to avoid a blank editor and a 500 at `/api/shared/ExplainerApi/load`)
-     turned out to have too many ripple effects.
-
-     */
 
     val sanitisedExplainer = emptyStringConversion(explainer, emptyStringMarkerToEmptyString)
     Future(sanitisedExplainer)
