@@ -11,6 +11,7 @@ import com.gu.scanamo.scrooge.ScroogeDynamoFormat._
 import com.gu.atom.data.DynamoDataStore
 import com.gu.contentatom.thrift.atom.explainer._
 import shared.util.ExplainerAtomImplicits
+import com.gu.atom.data.ScanamoUtil._
 
 
 class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {

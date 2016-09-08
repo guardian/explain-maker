@@ -27,7 +27,6 @@ object ExplainEditor {
       })
     }
 
-    updateEmbedUrlAndStatusLabel(explainerId)
     Model.getExplainer(explainerId).map { explainer: CsAtom =>
 
       dom.document.getElementById("content").appendChild(
@@ -37,6 +36,7 @@ object ExplainEditor {
       dom.document.getElementById("sidebar").appendChild(
         Sidebar.sidebar(explainer)
       )
+      updateEmbedUrlAndStatusLabel(explainerId)
       callback()
     }
   }
