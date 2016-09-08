@@ -11,6 +11,7 @@ import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all._
 import org.scalajs.dom
 import shared.models.PublicationStatus._
+import shared.models.UpdateField.Title
 import views.ExplainEditor
 
 import scala.scalajs.js.Dynamic.{global => g}
@@ -28,7 +29,7 @@ object Sidebar {
     )(value := explainer.data.title).render
 
     titleInput.onchange = (x: Event) => {
-      Model.updateFieldContent(explainer.id, ExplainerUpdate("title", titleInput.value)) onComplete {
+      Model.updateFieldContent(explainer.id, ExplainerUpdate(Title, titleInput.value)) onComplete {
         case Success(_) => ExplainEditor.updateEmbedUrlAndStatusLabel(explainer.id, checkCapi=false)
         case Failure(_) => g.console.error(s"Failed to update title with string ${titleInput.value}")
       }

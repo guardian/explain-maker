@@ -6,8 +6,10 @@ import org.scalajs.dom
 import org.scalajs.dom._
 import org.scalajs.dom.html._
 import services.CAPIClient
-import shared.models.CsAtom
+import shared.models.{CsAtom, ExplainerUpdate}
 import models.{Tag => CapiTag}
+import shared.models.UpdateField.{AddTag, RemoveTag}
+
 import scala.scalajs.js.Dynamic._
 import scalatags.JsDom
 import scalatags.JsDom.TypedTag
@@ -33,7 +35,7 @@ object TagPickers {
       data("tag-id"):=tagId
     )("Delete").render
     deleteButton.onclick = (x: Event) => {
-      Model.removeTagFromExplainer(explainer.id, tagId).map { explainer =>
+      Model.updateFieldContent(explainer.id, ExplainerUpdate(RemoveTag, tagId)).map { explainer =>
         redisplayExplainerTagManagementAreas(explainer)
       }
     }
@@ -74,7 +76,7 @@ object TagPickers {
     tags.foreach( tagObject => {
       val node = div(cls:="tag__result")(tagObject.webTitle).render
       node.onclick = (x: Event) => {
-        Model.addTagToExplainer(explainerId, tagObject.id).map { explainer =>
+        Model.updateFieldContent(explainerId, ExplainerUpdate(AddTag, tagObject.id)).map { explainer =>
           redisplayExplainerTagManagementAreas(explainer)
         }
       }

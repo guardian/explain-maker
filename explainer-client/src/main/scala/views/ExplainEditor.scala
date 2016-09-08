@@ -5,6 +5,7 @@ import components.statusbar.StatusBar
 import components.{ScribeBodyEditor, Sidebar, TagPickers}
 import org.scalajs.dom
 import services.PresenceClient
+import shared.models.UpdateField.{Body, DisplayType, RemoveTag}
 import shared.models.{CsAtom, ExplainerUpdate}
 
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -65,12 +66,12 @@ object ExplainEditor {
 
   @JSExport
   def setDisplayType(explainerId: String, displayType: String) = {
-    Model.updateFieldContent(explainerId, ExplainerUpdate("displayType", displayType))
+    Model.updateFieldContent(explainerId, ExplainerUpdate(DisplayType, displayType))
   }
 
   @JSExport
   def updateBodyContents(explainerId: String, bodyString: String) = {
-    Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyString)) onComplete {
+    Model.updateFieldContent(explainerId, ExplainerUpdate(Body, bodyString)) onComplete {
       case Success(_) => updateEmbedUrlAndStatusLabel(explainerId, checkCapi=false)
       case Failure(_) => g.console.error(s"Failed to update body with string $bodyString")
     }
@@ -78,7 +79,7 @@ object ExplainEditor {
 
   @JSExport
   def removeTagFromExplainer(explainerId: String, tagId: String) = {
-    Model.removeTagFromExplainer(explainerId, tagId).map { explainer =>
+    Model.updateFieldContent(explainerId, ExplainerUpdate(RemoveTag, tagId)).map { explainer =>
       TagPickers.redisplayExplainerTagManagementAreas(explainer)
     }
   }
