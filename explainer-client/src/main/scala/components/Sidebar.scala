@@ -10,8 +10,10 @@ import scala.util.{Failure, Success}
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all._
 import org.scalajs.dom
+import services.State
 import shared.models.PublicationStatus._
 import shared.models.UpdateField.Title
+import shared.util.SharedHelperFunctions
 import views.ExplainEditor
 
 import scala.scalajs.js.Dynamic.{global => g}
@@ -30,13 +32,13 @@ object Sidebar {
 
     titleInput.onchange = (x: Event) => {
       Model.updateFieldContent(explainer.id, ExplainerUpdate(Title, titleInput.value)) onComplete {
-        case Success(_) => ExplainEditor.updateEmbedUrlAndStatusLabel(explainer.id, checkCapi=false)
+        case Success(e) => ExplainEditor.updateEmbedUrlAndStatusLabel(explainer.id, SharedHelperFunctions.getExplainerStatusNoTakeDownCheck(e, State.takenDown))
         case Failure(_) => g.console.error(s"Failed to update title with string ${titleInput.value}")
       }
     }
   }
 
-  val embedUrlBox =
+  def embedUrlBox(embedUrlText: String) =
     div(cls:="form-row")(
       div(cls:="form-label")("Embed URL"),
       textarea(
@@ -44,16 +46,17 @@ object Sidebar {
         cls:="form-field form-field--text-area text-monospaced",
         maxlength:=1800,
         readonly:="true"
-      )("Unable to determine interactive url")
+      )(embedUrlText)
     )
 
+  def embedUrlText(explainerId: String, status:PublicationStatus) = status match {
+    case Available | UnlaunchedChanges => s"${g.CONFIG.INTERACTIVE_URL.toString}?id=$explainerId"
+    case Draft => "Publish explainer to get embed URL."
+    case TakenDown => "The explainer has been taken down. Republish to get URL."
+  }
+
   def republishembedURL(explainerId: String, status: PublicationStatus = Available) = {
-    val interactiveUrlText = status match {
-      case Available | UnlaunchedChanges => s"${g.CONFIG.INTERACTIVE_URL.toString}?id=$explainerId"
-      case Draft => "Publish explainer to get embed URL."
-      case TakenDown => "The explainer has been taken down. Republish to get URL."
-    }
-    dom.document.getElementById("interactive-url-text").textContent = interactiveUrlText
+    dom.document.getElementById("interactive-url-text").textContent = embedUrlText(explainerId, status)
   }
 
   def displayTypeToggle(displayType: String) = {
@@ -77,13 +80,13 @@ object Sidebar {
     }
   }
 
-  def sidebar(explainer: CsAtom) = {
+  def sidebar(explainer: CsAtom, status: PublicationStatus) = {
     form()(
       div(cls:="form-row")(
         div(cls:="form-label")("Explainer Title"),
         title(explainer)
       ),
-      embedUrlBox,
+      embedUrlBox(embedUrlText(explainer.id, status)),
       div(cls:="form-row")(
         div()(
           displayTypeToggle(explainer.data.displayType), " Expandable explainer"

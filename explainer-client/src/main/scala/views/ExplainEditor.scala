@@ -13,6 +13,10 @@ import scala.scalajs.js.Dynamic.{global => g}
 import scala.scalajs.js.annotation.JSExport
 import scala.util.{Failure, Success}
 import scala.scalajs.js.{Function0, Object => JsObject}
+import services.State
+import shared.models.PublicationStatus.{Available, PublicationStatus, TakenDown}
+import shared.util.SharedHelperFunctions
+
 
 @JSExport
 object ExplainEditor {
@@ -33,25 +37,32 @@ object ExplainEditor {
         ScribeBodyEditor.renderedBodyEditor(explainer)
       )
 
-      dom.document.getElementById("sidebar").appendChild(
-        Sidebar.sidebar(explainer)
-      )
-      updateEmbedUrlAndStatusLabel(explainerId)
+      getStatus(explainerId).map(s => {
+        if (s == TakenDown) State.takenDown = true
+        dom.document.getElementById("sidebar").appendChild(
+          Sidebar.sidebar(explainer, s)
+        )
+        updateEmbedUrlAndStatusLabel(explainerId, s)
+        })
       callback()
     }
   }
 
-  def updateEmbedUrlAndStatusLabel(id: String, checkCapi: Boolean = true) = {
-    Model.getExplainerStatus(id, checkCapi).map(s => {
-      StatusBar.updateStatusBar(s)
-      Sidebar.republishembedURL(id, s)
-    })
+  def getStatus(id: String, checkCapi: Boolean = true) = {
+    Model.getExplainerStatus(id, checkCapi)
+  }
+
+  def updateEmbedUrlAndStatusLabel(id: String, status: PublicationStatus) = {
+    StatusBar.updateStatusBar(status)
+    Sidebar.republishembedURL(id, status)
   }
 
   @JSExport
   def publish(explainerId: String) = {
     Model.publish(explainerId) onComplete {
-      case Success(_) => updateEmbedUrlAndStatusLabel(explainerId)
+      case Success(_) =>
+        State.takenDown = false
+        updateEmbedUrlAndStatusLabel(explainerId, Available)
       case Failure(_) => g.console.error(s"Failed to publish explainer")
     }
   }
@@ -59,7 +70,9 @@ object ExplainEditor {
   @JSExport
   def takeDown(explainerId: String) = {
     Model.takeDown(explainerId) onComplete {
-      case Success(_) => updateEmbedUrlAndStatusLabel(explainerId)
+      case Success(_) =>
+        State.takenDown = true
+        updateEmbedUrlAndStatusLabel(explainerId, TakenDown)
       case Failure(_) => g.console.error(s"Failed to take down explainer")
     }
   }
@@ -72,7 +85,7 @@ object ExplainEditor {
   @JSExport
   def updateBodyContents(explainerId: String, bodyString: String) = {
     Model.updateFieldContent(explainerId, ExplainerUpdate(Body, bodyString)) onComplete {
-      case Success(_) => updateEmbedUrlAndStatusLabel(explainerId, checkCapi=false)
+      case Success(e) => ExplainEditor.updateEmbedUrlAndStatusLabel(explainerId, SharedHelperFunctions.getExplainerStatusNoTakeDownCheck(e, State.takenDown))
       case Failure(_) => g.console.error(s"Failed to update body with string $bodyString")
     }
   }
