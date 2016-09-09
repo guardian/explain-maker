@@ -52,6 +52,7 @@
                     <th class="explainer-list__header">Last modified</th>
                     <th class="explainer-list__header">Created by</th>
                     <th class="explainer-list__header">Status</th>
+                    <th class="explainer-list__header">Commissioning Desk</th>
                 </tr>
                 @for(e <- explainers) {
                     <tr class="explainer-list__row">
@@ -70,6 +71,19 @@
                         }</td>
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
                         <td class="explainer-list__item">@{isPublished(e)}</td>
+                        <td class="explainer-list__item">@{
+                            ExplainerAtomImplicits.AtomWithData(e).tdata.tags match {
+                                case None => ""
+                                case Some(sequence) => {
+                                    val elements = sequence.filter( s => s.startsWith("tracking/commissioningdesk") )
+                                    if(elements.size>0){
+                                        elements.head
+                                    }else {
+                                        ""
+                                    }
+                                }
+                            }
+                        }</td>
                     </tr>
                 }
             </table>
