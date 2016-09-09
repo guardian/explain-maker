@@ -18,12 +18,13 @@ function updateWordCountDisplay() {
     $(".word-count__number").text(sentence)
 }
 function updateWordCountWarningDisplay() {
+    var msg = $(".word-count__message");
     if ( (getBodyWordCount()>maxWordCount) && !$("#expandable").is(':checked') ) {
-        $(".word-count__message").show();
-        $(".word-count__message").text("Too long for flat explainer");
+        msg.show();
+        msg.text("Too long for flat explainer");
     } else {
-        $(".word-count__message").hide();
-        $(".word-count__message").text("");
+        msg.hide();
+        msg.text("");
     }
 }
 
