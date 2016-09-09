@@ -12,7 +12,7 @@ import scalatags.JsDom.all._
 import org.scalajs.dom
 import services.State
 import shared.models.PublicationStatus._
-import shared.models.UpdateField.Title
+import shared.models.UpdateField.{Body, Title}
 import shared.util.SharedHelperFunctions
 import views.ExplainEditor
 
@@ -31,10 +31,7 @@ object Sidebar {
     )(value := explainer.data.title).render
 
     titleInput.onchange = (x: Event) => {
-      Model.updateFieldContent(explainer.id, ExplainerUpdate(Title, titleInput.value)) onComplete {
-        case Success(e) => ExplainEditor.updateEmbedUrlAndStatusLabel(explainer.id, SharedHelperFunctions.getExplainerStatusNoTakeDownCheck(e, State.takenDown))
-        case Failure(_) => g.console.error(s"Failed to update title with string ${titleInput.value}")
-      }
+      ExplainEditor.updateFieldAndRefresh(explainer.id, Title, titleInput.value, s"Failed to update title with string ${titleInput.value}")
     }
   }
 

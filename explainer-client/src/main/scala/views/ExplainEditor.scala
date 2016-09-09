@@ -5,7 +5,7 @@ import components.statusbar.StatusBar
 import components.{ScribeBodyEditor, Sidebar, TagPickers}
 import org.scalajs.dom
 import services.PresenceClient
-import shared.models.UpdateField.{Body, DisplayType, RemoveTag}
+import shared.models.UpdateField.{Body, DisplayType, RemoveTag, UpdateField}
 import shared.models.{CsAtom, ExplainerUpdate}
 
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -48,6 +48,13 @@ object ExplainEditor {
     }
   }
 
+  def updateFieldAndRefresh(explainerId: String, updateField: UpdateField, updateValue: String, errorMessage: String) = {
+    Model.updateFieldContent(explainerId, ExplainerUpdate(Body, updateValue)) onComplete {
+      case Success(e) => ExplainEditor.updateEmbedUrlAndStatusLabel(explainerId, SharedHelperFunctions.getExplainerStatusNoTakeDownCheck(e, State.takenDown))
+      case Failure(_) => g.console.error(errorMessage)
+    }
+  }
+
   def getStatus(id: String, checkCapi: Boolean = true) = {
     Model.getExplainerStatus(id, checkCapi)
   }
@@ -79,16 +86,12 @@ object ExplainEditor {
 
   @JSExport
   def setDisplayType(explainerId: String, displayType: String) = {
-    Model.updateFieldContent(explainerId, ExplainerUpdate(DisplayType, displayType))
+    updateFieldAndRefresh(explainerId, DisplayType, displayType, s"Failed to update displayType with string $displayType")
   }
 
   @JSExport
-  def updateBodyContents(explainerId: String, bodyString: String) = {
-    Model.updateFieldContent(explainerId, ExplainerUpdate(Body, bodyString)) onComplete {
-      case Success(e) => ExplainEditor.updateEmbedUrlAndStatusLabel(explainerId, SharedHelperFunctions.getExplainerStatusNoTakeDownCheck(e, State.takenDown))
-      case Failure(_) => g.console.error(s"Failed to update body with string $bodyString")
-    }
-  }
+  def updateBodyContents(explainerId: String, bodyString: String) =
+    updateFieldAndRefresh(explainerId, Body, bodyString, s"Failed to update body with string $bodyString")
 
   @JSExport
   def removeTagFromExplainer(explainerId: String, tagId: String) = {
