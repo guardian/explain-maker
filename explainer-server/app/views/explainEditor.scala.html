@@ -40,15 +40,15 @@
                 </div>
             </div>
             <div class="top-toolbar__item top-toolbar__item--no-spacing">
-                <button class="top-toolbar__button" type="button" onclick="components.explaineditor.ExplainEditorJS().publish('@explainerId')">Publish</button>
+                <button id="publish-button" class="top-toolbar__button" type="button" onclick="components.explaineditor.ExplainEditorJS().publish('@explainerId')">Publish</button>
             </div>
             <div class="top-toolbar__item top-toolbar__item--no-spacing">
                 <button id="toolbar-takedown-button" class="top-toolbar__button" type="button" onclick="components.explaineditor.ExplainEditorJS().takeDown('@explainerId')">Take Down</button>
             </div>
             <div class="top-toolbar__item">
                 <p class="top-toolbar__item-inner word-count">
-                    word count: <span class="word-count__number"></span>
-                    <span class="word-count__message">Max word count exceeded</span>
+                    <span class="word-count__number"></span>
+                    <span id="word-count__message" class="word-count__message label--important"></span>
                 </p>
             </div>
             <div class="top-toolbar__item">
