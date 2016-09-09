@@ -125,16 +125,19 @@ object ExplainEditorJSDomBuilders {
     renderTaggingArea(explainer, suggestionsDivIdentifier, "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
   }
 
-  def republishembedURL(explainerId: String, status: PublicationStatus = Available) = {
-    val interactiveUrlText = status match {
-      case Available | UnlaunchedChanges => s"${g.CONFIG.INTERACTIVE_URL.toString}?id=$explainerId"
+  def getInteractiveUrlText(id: String, status: PublicationStatus) = {
+    status match {
+      case Available | UnlaunchedChanges => s"${g.CONFIG.INTERACTIVE_URL.toString}?id=$id"
       case Draft => "Publish explainer to get embed URL."
       case TakenDown => "The explainer has beeen taken down. Republish to get URL."
     }
-    dom.document.getElementById("interactive-url-text").textContent = interactiveUrlText
   }
 
-  def SideBar(explainerId: String, explainer: CsAtom) = {
+  def republishembedURL(explainerId: String, status: PublicationStatus = Available) = {
+    dom.document.getElementById("interactive-url-text").textContent = getInteractiveUrlText(explainerId, status)
+  }
+
+  def SideBar(explainerId: String, explainer: CsAtom, status: PublicationStatus) = {
 
     val title: TypedTag[Input] = input(
       id:="explainer-editor__title-wrapper__input",
@@ -146,17 +149,12 @@ object ExplainEditorJSDomBuilders {
     val titleTag = title(value := explainer.data.title).render
     titleTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)) onComplete {
-        case Success(_) => ExplainEditorJS.updateEmbedUrlAndStatusLabel(explainerId, checkCapi=false)
+        case Success(_) => ExplainEditorJS.updateEmbedUrlAndStatusLabel(explainerId, UnlaunchedChanges)
         case Failure(_) => g.console.error(s"Failed to update title with string ${titleTag.value}")
       }
     }
 
-    val interactiveBaseUrl = g.CONFIG.INTERACTIVE_URL.toString
-
-    val interactiveUrlText: String = explainer.contentChangeDetails.published match {
-      case Some(thing) => s"$interactiveBaseUrl?id=$explainerId"
-      case None => "Explainer has not been published yet"
-    }
+    val interactiveUrlText: String = getInteractiveUrlText(explainerId, status)
 
     val interactiveUrl: TypedTag[TextArea] = textarea(
       id:="interactive-url-text",
