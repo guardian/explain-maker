@@ -49,6 +49,7 @@ object ExplainEditorJS {
 
 
       getStatus(explainerId).map(s => {
+        if (s == TakenDown) State.takenDown = true
         dom.document.getElementById("sidebar").appendChild(
           ExplainEditorJSDomBuilders.SideBar(explainerId, explainer, s).render
         )
