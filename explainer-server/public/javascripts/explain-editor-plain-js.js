@@ -16,7 +16,7 @@ function updateWordCountDisplay() {
     $(".word-count__number").text(sentence)
 }
 function updateWordCountWarningDisplay() {
-    if ( (getBodyWordCount()>maxWordCount) && $("#expandable").is(':checked') ) {
+    if ( (getBodyWordCount()>maxWordCount) && !$("#expandable").is(':checked') ) {
         $(".word-count__message").show();
         $(".word-count__message").text("Too long for flat explainer");
     } else {
