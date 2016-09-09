@@ -59,28 +59,32 @@ object Sidebar {
     dom.document.getElementById("interactive-url-text").textContent = embedUrlText(explainerId, status)
   }
 
-  def displayTypeToggle(displayType: String) = {
-    val checkboxClassName = "explainer-editor__displayType-checkbox"
+  def displayTypeToggle(displayType: String, checkboxId: String) = {
+    val checkboxClassName = "form-checkbox__input"
     val checkbox: TypedTag[Input] = displayType match {
       case "Expandable" =>
         input(
           cls:=checkboxClassName,
           `type`:="checkbox",
-          `checked`:= "checked"
+          checked:= true,
+          id := checkboxId
         )
       case "Flat" =>
         input(
           cls:=checkboxClassName,
-          `type`:="checkbox"
+          `type`:="checkbox",
+          id := checkboxId
         )
     }
     val checkboxTag = checkbox.render
     checkboxTag.onchange = (x: Event) => {
       g.updateCheckboxState()
     }
+    checkboxTag
   }
 
   def sidebar(explainer: CsAtom, status: PublicationStatus) = {
+    val checkboxId = "expandable"
     form()(
       div(cls:="form-row")(
         div(cls:="form-label")("Explainer Title"),
@@ -88,8 +92,13 @@ object Sidebar {
       ),
       embedUrlBox(embedUrlText(explainer.id, status)),
       div(cls:="form-row")(
-        div()(
-          displayTypeToggle(explainer.data.displayType), " Expandable explainer"
+        p(cls:="form-label")("Expandable Explainer"),
+        div(cls:="form-checkbox")(
+          displayTypeToggle(explainer.data.displayType, checkboxId),
+          label(
+            cls:="form-checkbox__toggle",
+            `for`:=checkboxId
+          )
         )
       ),
       div(cls:="explainer-editor__tag-management-wrapper")(
