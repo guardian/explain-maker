@@ -33,6 +33,7 @@ object Sidebar {
     titleInput.onchange = (x: Event) => {
       ExplainEditor.updateFieldAndRefresh(explainer.id, Title, titleInput.value, s"Failed to update title with string ${titleInput.value}")
     }
+    titleInput
   }
 
   def embedUrlBox(embedUrlText: String) =
