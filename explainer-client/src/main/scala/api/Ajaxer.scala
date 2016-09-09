@@ -1,10 +1,12 @@
-import autowire.Macros.Check
+package api
+
 import autowire._
 
 import common.ExtAjax._
 import org.scalajs.dom.ext.Ajax
 import rx._
 import shared.ExplainerApi
+import shared.models.PublicationStatus.PublicationStatus
 import shared.models.{CsAtom, ExplainerUpdate}
 
 import scala.concurrent.Future
@@ -42,12 +44,20 @@ object Model {
     Ajaxer[ExplainerApi].publish(id).call()
   }
 
+  def takeDown(id: String): Future[CsAtom] = {
+    Ajaxer[ExplainerApi].takeDown(id).call()
+  }
+
   def addTagToExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
     Ajaxer[ExplainerApi].update(explainerId, "addTag", tagId).call()
   }
 
   def removeTagFromExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
     Ajaxer[ExplainerApi].update(explainerId, "removeTag", tagId).call()
+  }
+
+  def getExplainerStatus(explainerId: String, checkCapiStatus: Boolean): Future[PublicationStatus] = {
+    Ajaxer[ExplainerApi].getStatus(explainerId, checkCapiStatus).call()
   }
 
 }

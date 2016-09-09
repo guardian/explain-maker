@@ -28,7 +28,14 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
   val pandaDomain = configValueForStage("pandomain.domain").get
 
   val capiKey = configValueForStage("capi.key").get
-  val presenceEndpointURL = configValueForStage("presence.endpoint").get
+  val capiUrl = stage match {
+    case "CODE" => "http://content.code.dev-guardianapis.com"
+    case "PROD" => "https://content.guardianapis.com"
+    case "DEV" => "http://content.code.dev-guardianapis.com"
+  }
+
+  val presenceEnabled = conf.getBoolean("enable.presence") getOrElse true
+  val presenceEndpointURL = fetchOrErrorOptionalProperty(presenceEnabled, "presence.endpoint", "presence endpoint required when presence enabled")
 
   val interactiveUrl = conf.getString("interactive.url")
 
