@@ -86,6 +86,7 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
       time1 > time2
     }
 
+
     def selectPageExplainers(explainers: Seq[Atom], pageNumber: Int, pageSize: Int) = {
       // Here we drop pageNumber*pageSize and then keep the next pageSize elements.
       explainers.drop((pageNumber-1)*pageSize).take(pageSize)

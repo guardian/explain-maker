@@ -72,12 +72,16 @@
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
                         <td class="explainer-list__item">@{isPublished(e)}</td>
                         <td class="explainer-list__item">@{
+                            def selectTagByIdFromTrackingTags(trackingTags:Seq[Tag],id: String): Tag = {
+                                trackingTags.filter(t => t._1 == id).head
+                            }
                             ExplainerAtomImplicits.AtomWithData(e).tdata.tags match {
                                 case None => ""
                                 case Some(sequence) => {
                                     val elements = sequence.filter( s => s.startsWith("tracking/commissioningdesk") )
                                     if(elements.size>0){
                                         elements.head
+                                        selectTagByIdFromTrackingTags(trackingTags,elements.head)._5
                                     }else {
                                         ""
                                     }
