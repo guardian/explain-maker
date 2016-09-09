@@ -1,14 +1,10 @@
-@import com.gu.contentatom.thrift.Atom
+@import com.gu.pandomainauth.model.AuthenticatedUser
 
-@(explainer: Atom, user: com.gu.pandomainauth.model.AuthenticatedUser, config: play.api.libs.json.JsObject)(implicit request: RequestHeader)
+@(explainerId: String, user:AuthenticatedUser, config: play.api.libs.json.JsObject)(implicit request: RequestHeader)
 
 @header = {
     <script type="text/javascript">
         CONFIG = @Html(config.toString);
-        EXPLAINER_IDENTIFIER = "@explainer.id"
-        USER_FIRSTNAME     = "@{user.user.firstName}"
-        USER_LASTNAME      = "@{user.user.lastName}"
-        USER_EMAIL_ADDRESS = "@{user.user.email}"
     </script>
 }
 
@@ -40,13 +36,14 @@
             </div>
             <div class="top-toolbar__item">
                 <div class="top-toolbar__item-inner">
-                    <div class="label-container">
-                        <p class="content-status label"></p><p class="label label--warning content-message"></p>
-                    </div>
+                    <div id = "explainer-publication-status" class="label-container"></div>
                 </div>
             </div>
             <div class="top-toolbar__item top-toolbar__item--no-spacing">
-                <button id="publish-button" class="top-toolbar__button" type="button" onclick="ExplainEditorJS().publish('@explainer.id')">Publish</button>
+                <button id="publish-button" class="top-toolbar__button" type="button" onclick="components.explaineditor.ExplainEditorJS().publish('@explainerId')">Publish</button>
+            </div>
+            <div class="top-toolbar__item top-toolbar__item--no-spacing">
+                <button id="toolbar-takedown-button" class="top-toolbar__button" type="button" onclick="components.explaineditor.ExplainEditorJS().takeDown('@explainerId')">Take Down</button>
             </div>
             <div class="top-toolbar__item">
                 <p class="top-toolbar__item-inner word-count">
@@ -70,7 +67,7 @@
 
 @templates.main("Explainer Editor", header, content, toolbar, sidebar){
     <script src="@routes.Assets.at("lib/requirejs/require.min.js")"></script>
-    @*Alert! Dirty dirty hack incoming..... we have to rename require to something else here so that our HTTP librarry
+    @*Alert! Dirty dirty hack incoming..... we have to rename require to something else here so that our HTTP library
     (rosHTTP) doesn't find it and try to do a require('http') call when http hasn't yet been loaded*@
     <script type="text/javascript">
             window.requireRenamed = window.require;

@@ -22,7 +22,7 @@
                 <ul class="nav__list">
                     <li class="nav__item top-toolbar__item top-toolbar__item--no-spacing ">
                         <label class="top-toolbar__item__dropdown-label top-toolbar__button" >Desk
-                            <select id="desk-dropdown" name="deskDropdown" onchange="ExplainListJS().deskChanged()" class="top-toolbar__item__dropdown">
+                            <select id="desk-dropdown" name="deskDropdown" onchange="components.explainlist.ExplainListJS().deskChanged()" class="top-toolbar__item__dropdown">
                                 <option value="all-desks" @{if(desk.isEmpty){"selected"}}>All desks</option>
                                 @for(t <- trackingTags) {
                                     <option value="@t.id" @{if(desk.contains(t.id)){"selected"}}>@t.webTitle</option>
@@ -31,7 +31,7 @@
                         </label>
                     </li>
                     <li class="nav__item top-toolbar__item top-toolbar__item--no-spacing">
-                        <button class="top-toolbar__button" type="button" onclick="ExplainEditorJS().CreateNewExplainer()">Create New</button>
+                        <button class="top-toolbar__button" type="button" onclick="components.explaineditor.ExplainEditorJS().createNewExplainer()">Create New</button>
                     </li>
                 </ul>
             </nav>

@@ -118,7 +118,13 @@ $toolbarHeight: 50px;
   }
 
   &:disabled {
+    color: $c-grey-500;
+    &:hover {
+      background: #FFFFFF;
+      box-shadow: none;
+    }
     opacity: 0.5;
+
   }
 }
 

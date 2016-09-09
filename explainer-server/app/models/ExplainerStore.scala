@@ -33,8 +33,8 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
     Some(User(user.email,Some(user.firstName),Some(user.lastName)))
   }
 
-  def contentChangeDetailsBuilder(user: PandaUser, existingContentChangeDetails: Option[ContentChangeDetails], updateCreated: Boolean,
-    updateLastModified: Boolean, updatePublished: Boolean): ContentChangeDetails = {
+  def contentChangeDetailsBuilder(user: PandaUser, existingContentChangeDetails: Option[ContentChangeDetails], updateCreated: Boolean = false,
+    updateLastModified: Boolean = false, updatePublished: Boolean = false): ContentChangeDetails = {
     def buildChangeRecord(existingRecord: Option[ChangeRecord], shouldUpdate: Boolean) = {
       if (shouldUpdate) {
         Some(ChangeRecord(DateTime.now.getMillis, user=pandaUserToAtomUser(user)))
@@ -75,7 +75,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
       }
       val updatedExplainer = explainer.copy(
         data = AtomData.Explainer(newExplainerAtom),
-        contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = true, updatePublished = false)
+        contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails),updateLastModified = true)
       )
       explainerDB.update(updatedExplainer)
       updatedExplainer
@@ -85,7 +85,7 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
   def create(user: PandaUser): Future[Atom] = {
     val uuid = java.util.UUID.randomUUID.toString
     val explainerAtom = ExplainerAtom("", "", DisplayType.Expandable)
-    val contentChangeDetails = contentChangeDetailsBuilder(user, None, updateCreated = true, updateLastModified = true, updatePublished = false)
+    val contentChangeDetails = contentChangeDetailsBuilder(user, None, updateCreated = true, updateLastModified = true)
     val explainer = buildAtomWithDefaults(uuid, explainerAtom, contentChangeDetails)
     explainerDB.create(explainer)
     Future(explainer)
@@ -93,22 +93,21 @@ class ExplainerStore @Inject() (config: Config) extends ExplainerAtomImplicits  
 
   def publish(id: String, user: PandaUser): Future[Atom] = {
     explainerDB.load(id).map{ explainer =>
-      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = false, updatePublished = true)
+      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updatePublished = true)
       val updatedExplainer = explainer.copy(contentChangeDetails=contentChangeDetails)
       explainerDB.update(updatedExplainer)
       updatedExplainer
     }
   }
 
-  //TODO: Takedowns are not currently supported for atoms in CAPI. This logic might be useful once we decided what to do about them!
-//  def takeDown(id: String, user:PandaUser): Future[Atom] = {
-//    explainerDB.load(id).map( explainer => {
-//      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateCreated = false, updateLastModified = true, updatePublished = false, removePublished = true)
-//      val updatedExplainer = explainer.copy(contentChangeDetails=contentChangeDetails)
-//      explainerDB.update(updatedExplainer)
-//      updatedExplainer
-//    })
-//  }
+  def takeDown(id: String, user:PandaUser): Future[Atom] = {
+    explainerDB.load(id).map( explainer => {
+      val contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateLastModified = true)
+      val updatedExplainer = explainer.copy(contentChangeDetails=contentChangeDetails)
+      explainerDB.update(updatedExplainer)
+      updatedExplainer
+    })
+  }
 
 }
 

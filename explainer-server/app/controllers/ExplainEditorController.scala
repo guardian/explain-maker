@@ -61,15 +61,19 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
   val explainerDB = new ExplainerDB(config)
   val capiService = new CAPIService(config, cache)
 
-  def get(id: String) = pandaAuthenticated.async { implicit request =>
+  def get(id: String) = pandaAuthenticated { implicit request =>
     val viewConfig = Json.obj(
-      "CAPI_API_KEY" -> config.capiKey,
+      "CAPI_KEY" -> config.capiKey,
+      "CAPI_URL" -> config.capiUrl,
       "INTERACTIVE_URL" -> config.interactiveUrl,
-      "PRESENCE_ENDPOINT_URL" -> config.presenceEndpointURL
+      "PRESENCE_ENDPOINT_URL" -> config.presenceEndpointURL,
+      "PRESENCE_ENABLED" -> config.presenceEnabled,
+      "EXPLAINER_IDENTIFIER" -> id,
+      "USER_FIRSTNAME"     -> request.user.user.firstName,
+      "USER_LASTNAME"      -> request.user.user.lastName,
+      "USER_EMAIL_ADDRESS" -> request.user.user.email
     )
-    explainerDB.load(id).map(e => {
-      Ok(views.html.explainEditor(e,request.user,viewConfig))
-    })
+    Ok(views.html.explainEditor(id, request.user, viewConfig))
   }
 
   def listExplainers(desk: Option[String], maybePageNumber: Option[Int]) = pandaAuthenticated.async{ implicit request =>
