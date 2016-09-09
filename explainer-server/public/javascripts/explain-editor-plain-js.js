@@ -9,17 +9,19 @@ function getBodyWordCount(){
     }
     return trimmedInnerText.split(" ").length;
 }
-const maxWordCount = 150;
+const maxWordCount = 100;
 function updateWordCountDisplay() {
     var count = getBodyWordCount(),
         sentence = ( count===0 || count>1 ) ? count+" words" : count+" word";
     $(".word-count__number").text(sentence)
 }
 function updateWordCountWarningDisplay() {
-    if (getBodyWordCount() > maxWordCount) {
+    if ( (getBodyWordCount()>maxWordCount) && $("#expandable").is(':checked') ) {
         $(".word-count__message").show();
+        $(".word-count__message").text("Too long for flat explainer");
     } else {
         $(".word-count__message").hide();
+        $(".word-count__message").text("");
     }
 }
 function updateStatusBar(message){
@@ -90,6 +92,7 @@ function updateCheckboxState() {
     } else {
         ExplainEditorJS().setDisplayType(EXPLAINER_IDENTIFIER,"Flat")
     }
+    updateWordCountWarningDisplay();
 };
 
 /*
