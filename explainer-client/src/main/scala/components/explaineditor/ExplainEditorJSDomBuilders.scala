@@ -6,9 +6,10 @@ import models.{Tag => CapiTag}
 import org.scalajs.dom
 import org.scalajs.dom.Event
 import org.scalajs.dom.html._
-import services.CAPIService
+import services.{CAPIService, State}
 import shared.models.PublicationStatus._
 import shared.models.{CsAtom, ExplainerUpdate}
+import shared.util.SharedHelperFunctions
 
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scala.scalajs.js.Dynamic.{global => g}
@@ -149,7 +150,7 @@ object ExplainEditorJSDomBuilders {
     val titleTag = title(value := explainer.data.title).render
     titleTag.onchange = (x: Event) => {
       Model.updateFieldContent(explainerId, ExplainerUpdate("title", titleTag.value)) onComplete {
-        case Success(_) => ExplainEditorJS.updateEmbedUrlAndStatusLabel(explainerId, UnlaunchedChanges)
+        case Success(e) => ExplainEditorJS.updateEmbedUrlAndStatusLabel(explainerId, SharedHelperFunctions.getExplainerStatusNoTakeDownCheck(e, State.takenDown))
         case Failure(_) => g.console.error(s"Failed to update title with string ${titleTag.value}")
       }
     }

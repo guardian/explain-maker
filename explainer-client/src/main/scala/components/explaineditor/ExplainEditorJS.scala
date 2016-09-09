@@ -3,8 +3,10 @@ package components.explaineditor
 import api.Model
 import components.statusbar.StatusBar
 import org.scalajs.dom
+import services.State
 import shared.models.PublicationStatus.{Available, PublicationStatus, TakenDown, UnlaunchedChanges}
 import shared.models.{CsAtom, ExplainerUpdate}
+import shared.util.SharedHelperFunctions
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -47,10 +49,11 @@ object ExplainEditorJS {
 
 
       getStatus(explainerId).map(s => {
-        updateEmbedUrlAndStatusLabel(explainerId, s)
         dom.document.getElementById("sidebar").appendChild(
           ExplainEditorJSDomBuilders.SideBar(explainerId, explainer, s).render
         )
+        updateEmbedUrlAndStatusLabel(explainerId, s)
+
       })
 
       callback()
@@ -73,7 +76,9 @@ object ExplainEditorJS {
   @JSExport
   def publish(explainerId: String) = {
     Model.publish(explainerId) onComplete {
-      case Success(_) => updateEmbedUrlAndStatusLabel(explainerId, Available)
+      case Success(_) =>
+        State.takenDown = false
+        updateEmbedUrlAndStatusLabel(explainerId, Available)
       case Failure(_) => g.console.error(s"Failed to publish explainer")
     }
   }
@@ -81,7 +86,9 @@ object ExplainEditorJS {
   @JSExport
   def takeDown(explainerId: String) = {
     Model.takeDown(explainerId) onComplete {
-      case Success(_) => updateEmbedUrlAndStatusLabel(explainerId, TakenDown)
+      case Success(_) =>
+        State.takenDown = true
+        updateEmbedUrlAndStatusLabel(explainerId, TakenDown)
       case Failure(_) => g.console.error(s"Failed to take down explainer")
     }
   }
@@ -94,7 +101,7 @@ object ExplainEditorJS {
   @JSExport
   def updateBodyContents(explainerId: String, bodyString: String) = {
     Model.updateFieldContent(explainerId, ExplainerUpdate("body", bodyString)) onComplete {
-      case Success(_) => updateEmbedUrlAndStatusLabel(explainerId, UnlaunchedChanges)
+      case Success(e) => updateEmbedUrlAndStatusLabel(explainerId, SharedHelperFunctions.getExplainerStatusNoTakeDownCheck(e, State.takenDown))
       case Failure(_) => g.console.error(s"Failed to update body with string $bodyString")
     }
   }
