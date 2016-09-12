@@ -93,7 +93,7 @@
                                             elements.head
                                             selectTagByIdFromTrackingTags(trackingTags,elements.head) match {
                                                 case None => ""
-                                                case Some(tag) => "Pascal"
+                                                case Some(tag) => tag.webTitle
                                             }
                                         }else {
                                             ""
