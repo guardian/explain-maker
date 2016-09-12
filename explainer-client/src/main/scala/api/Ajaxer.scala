@@ -1,12 +1,12 @@
 package api
 
 import autowire._
-
 import common.ExtAjax._
 import org.scalajs.dom.ext.Ajax
 import rx._
 import shared.ExplainerApi
 import shared.models.PublicationStatus.PublicationStatus
+import shared.models.UpdateField.{AddTag, RemoveTag}
 import shared.models.{CsAtom, ExplainerUpdate}
 
 import scala.concurrent.Future
@@ -28,12 +28,12 @@ object Ajaxer extends autowire.Client[Js.Value, Reader, Writer]{
 
 object Model {
 
-  def extractExplainer(id: String): Future[CsAtom] = {
+  def getExplainer(id: String): Future[CsAtom] = {
     Ajaxer[ExplainerApi].load(id).call()
   }
 
-  def updateFieldContent(id: String, explainer: ExplainerUpdate) = {
-    Ajaxer[ExplainerApi].update(id, explainer.field, explainer.value).call()
+  def updateFieldContent(id: String, explainerUpdate: ExplainerUpdate) = {
+    Ajaxer[ExplainerApi].update(id, explainerUpdate).call()
   }
 
   def createNewExplainer() = {
@@ -46,14 +46,6 @@ object Model {
 
   def takeDown(id: String): Future[CsAtom] = {
     Ajaxer[ExplainerApi].takeDown(id).call()
-  }
-
-  def addTagToExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
-    Ajaxer[ExplainerApi].update(explainerId, "addTag", tagId).call()
-  }
-
-  def removeTagFromExplainer(explainerId: String, tagId: String): Future[CsAtom] = {
-    Ajaxer[ExplainerApi].update(explainerId, "removeTag", tagId).call()
   }
 
   def getExplainerStatus(explainerId: String, checkCapiStatus: Boolean): Future[PublicationStatus] = {

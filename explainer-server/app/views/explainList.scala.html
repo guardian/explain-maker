@@ -3,11 +3,13 @@
 @import org.joda.time.DateTime
 @import org.joda.time.format.DateTimeFormat
 @import util.HelperFunctions._
-@import scala.concurrent.Future
 @import com.gu.contentapi.client.model.v1.Tag
 @import scala.concurrent.ExecutionContext.Implicits.global
+@import com.gu.pandomainauth.model.User
+@import util.PaginationConfig
 
-@(explainers: Seq[Atom], user: com.gu.pandomainauth.model.AuthenticatedUser, trackingTags: Seq[Tag], desk: Option[String], pageNumber: Int, previousFragmentHTML: String, nextFragmentHTML: String)(implicit request: RequestHeader)
+@(explainers: Seq[Atom], user: User, trackingTags: Seq[Tag], desk: Option[String],
+        paginationConfig: PaginationConfig)(implicit request: RequestHeader)
 
 @toolbar = {
     <header class="top-toolbar">
@@ -22,7 +24,11 @@
                 <ul class="nav__list">
                     <li class="nav__item top-toolbar__item top-toolbar__item--no-spacing ">
                         <label class="top-toolbar__item__dropdown-label top-toolbar__button" >Desk
-                            <select id="desk-dropdown" name="deskDropdown" onchange="components.explainlist.ExplainListJS().deskChanged()" class="top-toolbar__item__dropdown">
+                            <select id="desk-dropdown"
+                               name="deskDropdown"
+                               onchange="views.ExplainList().deskChanged()"
+                               class="top-toolbar__item__dropdown">
+
                                 <option value="all-desks" @{if(desk.isEmpty){"selected"}}>All desks</option>
                                 @for(t <- trackingTags) {
                                     <option value="@t.id" @{if(desk.contains(t.id)){"selected"}}>@t.webTitle</option>
@@ -31,18 +37,21 @@
                         </label>
                     </li>
                     <li class="nav__item top-toolbar__item top-toolbar__item--no-spacing">
-                        <button class="top-toolbar__button" type="button" onclick="components.explaineditor.ExplainEditorJS().createNewExplainer()">Create New</button>
+                        <button class="top-toolbar__button"
+                           type="button" onclick="views.ExplainList().createNewExplainer()">
+                            Create New
+                        </button>
                     </li>
                 </ul>
             </nav>
             <div class="top-toolbar__user top-toolbar__item">
-                <span class="user__name">@{user.user.firstName} @{user.user.lastName}</span>
+                <span class="user__name">@{user.firstName} @{user.lastName}</span>
             </div>
         </div>
     </header>
 }
 
-@templates.main("Explainers", toolbar){
+@main("Explainers", toolbar){
     <div class="container block-center">
         <div id="dashboard" class="explainer-list">
             <h1>Explainers</h1>
@@ -59,7 +68,7 @@
                         <td class="explainer-list__item">
                             <a class="explainer-list__link" href="/explain/@e.id">@{if(ExplainerAtomImplicits.AtomWithData(e).tdata.title.trim.length>0){
                                 ExplainerAtomImplicits.AtomWithData(e).tdata.title
-                            }else{
+                            } else {
                                 "untitled"
                             }}</a>
                         </td>
@@ -75,27 +84,30 @@
                             def selectTagByIdFromTrackingTags(trackingTags:Seq[Tag],id: String): Tag = {
                                 trackingTags.filter(t => t._1 == id).head
                             }
-                            ExplainerAtomImplicits.AtomWithData(e).tdata.tags match {
-                                case None => ""
-                                case Some(sequence) => {
-                                    val elements = sequence.filter( s => s.startsWith("tracking/commissioningdesk") )
-                                    if(elements.size>0){
-                                        elements.head
-                                        selectTagByIdFromTrackingTags(trackingTags,elements.head)._5
-                                    }else {
-                                        ""
+                            def selectFirstDeskOrEmptyString(e: Atom): String = {
+                                ExplainerAtomImplicits.AtomWithData(e).tdata.tags match {
+                                    case None => ""
+                                    case Some(sequence) => {
+                                        val elements = sequence.filter( s => s.startsWith("tracking/commissioningdesk") )
+                                        if(elements.size>0){
+                                            elements.head
+                                            selectTagByIdFromTrackingTags(trackingTags,elements.head)._5
+                                        }else {
+                                            ""
+                                        }
                                     }
                                 }
                             }
+                            selectFirstDeskOrEmptyString(e)
                         }</td>
                     </tr>
                 }
             </table>
             <div class="pagination">
-                @Html(previousFragmentHTML)
-                <p class="pagination__label">Page @{pageNumber}</p>
-                @Html(nextFragmentHTML)
-            <div>
+                @Html(paginationConfig.previousFragmentHTML)
+                <p class="pagination__label">Page @{paginationConfig.pageNumber}</p>
+                @Html(paginationConfig.nextFragmentHTML)
+            </div>
         </div>
     </div>
 }
