@@ -11,7 +11,7 @@ import scala.scalajs.js.Dynamic.{global => g}
 
 
 
-object CAPIService {
+object CAPIClient {
 
   val apiKeyParam = ("api-key", g.CONFIG.CAPI_KEY.toString)
 

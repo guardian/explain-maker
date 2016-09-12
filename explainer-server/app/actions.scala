@@ -1,17 +1,15 @@
 package actions
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
 import com.gu.pandomainauth.model._
-import com.gu.pandomainauth.{PanDomain, PublicKey, PublicSettings}
+import com.gu.pandomainauth.{PanDomain, PublicKey}
 import play.api.mvc.Results._
 import play.api.mvc.Security.AuthenticatedBuilder
 import play.api.mvc._
 import config.Config
-import dispatch.Http
 import services.PublicSettingsService
 
-import scala.util.{Failure, Success}
 
 trait AuthActions {
 

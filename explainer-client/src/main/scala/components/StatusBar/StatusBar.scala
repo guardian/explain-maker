@@ -2,15 +2,9 @@ package components.statusbar
 
 import models.{RenderedStatusLabel, StatusLabel}
 import org.scalajs.dom
-import services.CAPIService
-import shared.models.{CsAtom, PublicationStatus}
 import shared.models.PublicationStatus._
 
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
 import scalatags.JsDom.all._
-import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-import api.Model
 import org.scalajs.dom.html.Button
 
 object StatusBar {

@@ -40,10 +40,11 @@
                 </div>
             </div>
             <div class="top-toolbar__item top-toolbar__item--no-spacing">
-                <button id="publish-button" class="top-toolbar__button" type="button" onclick="components.explaineditor.ExplainEditorJS().publish('@explainerId')">Publish</button>
+                <button id="publish-button" class="top-toolbar__button" type="button" onclick="views.ExplainEditor().publish('@explainerId')">Publish</button>
+
             </div>
             <div class="top-toolbar__item top-toolbar__item--no-spacing">
-                <button id="toolbar-takedown-button" class="top-toolbar__button" type="button" onclick="components.explaineditor.ExplainEditorJS().takeDown('@explainerId')">Take Down</button>
+                <button id="toolbar-takedown-button" class="top-toolbar__button" type="button" onclick="views.ExplainEditor().takeDown('@explainerId')">Take Down</button>
             </div>
             <div class="top-toolbar__item">
                 <p class="top-toolbar__item-inner word-count">
@@ -65,7 +66,7 @@
     </div>
 }
 
-@templates.main("Explainer Editor", header, content, toolbar, sidebar){
+@main("Explainer Editor", header, content, toolbar, sidebar){
     <script src="@routes.Assets.at("lib/requirejs/require.min.js")"></script>
     @*Alert! Dirty dirty hack incoming..... we have to rename require to something else here so that our HTTP library
     (rosHTTP) doesn't find it and try to do a require('http') call when http hasn't yet been loaded*@

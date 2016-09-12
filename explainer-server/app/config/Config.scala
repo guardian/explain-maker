@@ -31,7 +31,7 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
   val capiUrl = stage match {
     case "CODE" => "http://content.code.dev-guardianapis.com"
     case "PROD" => "https://content.guardianapis.com"
-    case "DEV" => "http://content.code.dev-guardianapis.com"
+    case "DEV" => "http://content.guardianapis.com"
   }
 
   val presenceEnabled = conf.getBoolean("enable.presence") getOrElse true

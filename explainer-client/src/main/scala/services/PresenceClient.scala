@@ -1,17 +1,14 @@
-package components.explaineditor
+package services
 
-import org.scalajs.dom.html.Element
-import presence.Person
-import presence._
-import scala.scalajs.js
+import jslibwrappers.{Person, PresenceGlobalScope}
 import org.scalajs.dom
 import org.scalajs.dom._
-import presence.StateChange.State
+import org.scalajs.dom.html.Element
 
+import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
 
-
-object ExplainEditorPresenceHelpers {
+object PresenceClient {
   val endpoint = g.CONFIG.PRESENCE_ENDPOINT_URL.toString
   val person = new Person(g.CONFIG.USER_FIRSTNAME.toString, g.CONFIG.USER_LASTNAME.toString, g.CONFIG.USER_EMAIL_ADDRESS.toString)
   val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
@@ -29,9 +26,22 @@ object ExplainEditorPresenceHelpers {
   def activatePresenceHandler() = {
     presenceClient.on("visitor-list-updated", { data: js.Object =>
       val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
-      val statesOnThisArea: Seq[State] = stateChange.currentState.filter(_.location == "document")
+      val statesOnThisArea: Seq[StateChange.State] = stateChange.currentState.filter(_.location == "document")
       dom.document.getElementById("presence-names-display-wrapper").innerHTML = statesOnThisArea.map(_.clientId.person.initials).map( i => s"<span class=${ "presence-names-single" }>${i}</span>" ).mkString(" ")
       ()
     })
   }
 }
+
+object StateChange {
+
+  case class Person(firstName: String, lastName: String, email: String) {
+    val initials = Seq(firstName, lastName).flatMap(_.headOption).mkString
+  }
+
+  case class ClientId(connId: String, person: Person)
+
+  case class State(clientId: ClientId, location: String)
+}
+
+case class StateChange(currentState: Seq[StateChange.State])

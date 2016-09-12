@@ -1,4 +1,4 @@
-package presence
+package jslibwrappers
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.ScalaJSDefined
@@ -22,18 +22,3 @@ trait PresenceClient extends js.Object {
 
   def enter(articleId: String, articleLocation: String): Unit = js.native
 }
-
-
-
-object StateChange {
-
-  case class Person(firstName: String, lastName: String, email: String) {
-    val initials = Seq(firstName, lastName).flatMap(_.headOption).mkString
-  }
-
-  case class ClientId(connId: String, person: Person)
-
-  case class State(clientId: ClientId, location: String)
-}
-
-case class StateChange(currentState: Seq[StateChange.State])
