@@ -81,7 +81,6 @@
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
                         <td class="explainer-list__item">@{isPublished(e)}</td>
                         <td class="explainer-list__item">@{
-                            println(trackingTags)
                             def selectTagByIdFromTrackingTags(trackingTags:Seq[Tag],id: String): Option[Tag] = {
                                 trackingTags.filter(t => t.id == id).headOption
                             }
@@ -104,6 +103,7 @@
                             }
                             selectFirstDeskOrEmptyString(e)
                         }</td>
+                        <td>@{trackingTags.toString()}</td>
                     </tr>
                 }
             </table>
