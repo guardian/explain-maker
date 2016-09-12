@@ -81,8 +81,8 @@
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
                         <td class="explainer-list__item">@{isPublished(e)}</td>
                         <td class="explainer-list__item">@{
-                            def selectTagByIdFromTrackingTags(trackingTags:Seq[Tag],id: String): Tag = {
-                                trackingTags.filter(t => t.id == id).head
+                            def selectTagByIdFromTrackingTags(trackingTags:Seq[Tag],id: String): Option[Tag] = {
+                                trackingTags.filter(t => t.id == id).headOption
                             }
                             def selectFirstDeskOrEmptyString(e: Atom): String = {
                                 ExplainerAtomImplicits.AtomWithData(e).tdata.tags match {
@@ -91,7 +91,10 @@
                                         val elements = sequence.filter( s => s.startsWith("tracking/commissioningdesk") )
                                         if(elements.size>0){
                                             elements.head
-                                            selectTagByIdFromTrackingTags(trackingTags,elements.head)._5
+                                            selectTagByIdFromTrackingTags(trackingTags,elements.head) match {
+                                                case None => ""
+                                                case Some(tag) => "Pascal"
+                                            }
                                         }else {
                                             ""
                                         }
