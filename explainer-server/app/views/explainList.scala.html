@@ -82,7 +82,7 @@
                         <td class="explainer-list__item">@{isPublished(e)}</td>
                         <td class="explainer-list__item">@{
                             def selectTagByIdFromTrackingTags(trackingTags:Seq[Tag],id: String): Tag = {
-                                trackingTags.filter(t => t._1 == id).head
+                                trackingTags.filter(t => t.id == id).head
                             }
                             def selectFirstDeskOrEmptyString(e: Atom): String = {
                                 ExplainerAtomImplicits.AtomWithData(e).tdata.tags match {
