@@ -11,3 +11,12 @@
   height: calc(100vh - #{$toolbarHeight});
   overflow: auto;
 }
+
+.preview-link {
+  display: inline;
+  color: $c-blue-link;
+
+  &--hidden {
+    display: none;
+  }
+}
