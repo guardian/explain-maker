@@ -49,7 +49,7 @@ object ExplainEditor {
   }
 
   def updateFieldAndRefresh(explainerId: String, updateField: UpdateField, updateValue: String, errorMessage: String) = {
-    Model.updateFieldContent(explainerId, ExplainerUpdate(Body, updateValue)) onComplete {
+    Model.updateFieldContent(explainerId, ExplainerUpdate(updateField, updateValue)) onComplete {
       case Success(e) => ExplainEditor.updateEmbedUrlAndStatusLabel(explainerId, SharedHelperFunctions.getExplainerStatusNoTakeDownCheck(e, State.takenDown))
       case Failure(_) => g.console.error(errorMessage)
     }
