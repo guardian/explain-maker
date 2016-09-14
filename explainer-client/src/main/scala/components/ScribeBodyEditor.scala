@@ -15,7 +15,10 @@ object ScribeBodyEditor {
     div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="italic")("Italic"),
     div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="linkPrompt")("Link"),
     div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="unLink")("Unlink"),
-    div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="insertUnorderedList")("Unordered List")
+    div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="insertUnorderedList")("Unordered List"),
+    div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="note")("Note"),
+    div(cls:="scribe-body-editor__toolbar-item", "data-command-name".attr:="noteCollapseToggleAll")("Toggle All Notes")
+
   )
 
   val preventDefaultToolbarButtons = toolbarButtonTags.map(b => {
