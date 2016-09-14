@@ -9,6 +9,14 @@
             "Description": "Code preview dynamo table name",
             "Type": "String"
         },
+        "ProdLiveTableName": {
+            "Description": "Prod live dynamo table name",
+            "Type": "String"
+        },
+        "CodeLiveTableName": {
+            "Description": "Code live dynamo table name",
+            "Type": "String"
+        },
         "ProdReadWriteCapacity":{
             "Description": "Prod Read/Write Capacity",
             "Type": "String"
@@ -45,6 +53,50 @@
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "TableName": { "Ref": "CodePreviewTableName" },
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": { "Ref": "CodeReadWriteCapacity" },
+                    "WriteCapacityUnits": { "Ref": "CodeReadWriteCapacity"}
+                }
+            }
+        },
+        "ExplainMakerProdLiveDynamoTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": { "Ref": "ProdLiveTableName" },
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": { "Ref": "ProdReadWriteCapacity" },
+                    "WriteCapacityUnits": { "Ref": "ProdReadWriteCapacity" }
+                }
+            }
+        },
+        "ExplainMakerCodeLiveDynamoTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": { "Ref": "CodeLiveTableName" },
                 "AttributeDefinitions": [
                     {
                         "AttributeName": "id",
