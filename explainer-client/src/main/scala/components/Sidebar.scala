@@ -20,13 +20,15 @@ import scala.scalajs.js.Dynamic.{global => g}
 
 object Sidebar {
 
+  val embedUrlString = s"${g.CONFIG.INTERACTIVE_URL.toString}?id=${g.CONFIG.EXPLAINER_IDENTIFIER.toString}"
+
   def title(explainer:CsAtom) = {
 
     import scala.concurrent.ExecutionContext.Implicits.global
     val titleInput  = input(
       id:="explainer-editor__title-wrapper__input",
       cls:="form-field",
-      placeholder:="Explainer Title",
+      placeholder:="Text Atom Title",
       autofocus:=true
     )(value := explainer.data.title).render
 
@@ -38,7 +40,7 @@ object Sidebar {
 
   def embedUrlBox(embedUrlText: String) =
     div(cls:="form-row")(
-      div(cls:="form-label")("Embed URL"),
+      div(cls:="form-label")("Embed URL ", span(id:="embed-preview-link", cls:="preview-link")(a(href:=embedUrlString, target:="_blank")("Preview"))),
       textarea(
         id:="interactive-url-text",
         cls:="form-field form-field--text-area text-monospaced",
@@ -48,13 +50,30 @@ object Sidebar {
     )
 
   def embedUrlText(explainerId: String, status:PublicationStatus) = status match {
-    case Available | UnlaunchedChanges => s"${g.CONFIG.INTERACTIVE_URL.toString}?id=$explainerId"
-    case Draft => "Publish explainer to get embed URL."
-    case TakenDown => "The explainer has been taken down. Republish to get URL."
+    case Available | UnlaunchedChanges => embedUrlString
+    case Draft => "Publish text atom to get embed URL."
+    case TakenDown => "The text atom has been taken down. Republish to get URL."
+  }
+
+  def updatePreviewLink(status: PublicationStatus, embedUrl: String) ={
+    val interactivePreviewLink = dom.document.getElementById("embed-preview-link")
+    status match {
+
+      case Available | UnlaunchedChanges => {
+        interactivePreviewLink.asInstanceOf[Span].classList.remove("preview-link--hidden")
+        interactivePreviewLink.asInstanceOf[Span].classList.add("preview-link")
+      }
+      case _ => {
+        interactivePreviewLink.asInstanceOf[Span].classList.remove("preview-link")
+        interactivePreviewLink.asInstanceOf[Span].classList.add("preview-link--hidden")
+      }
+    }
   }
 
   def republishembedURL(explainerId: String, status: PublicationStatus = Available) = {
-    dom.document.getElementById("interactive-url-text").textContent = embedUrlText(explainerId, status)
+    val urlText = embedUrlText(explainerId, status)
+    updatePreviewLink(status, urlText)
+    dom.document.getElementById("interactive-url-text").textContent = urlText
   }
 
   def displayTypeToggle(displayType: String, checkboxId: String) = {
@@ -85,12 +104,12 @@ object Sidebar {
     val checkboxId = "expandable"
     form()(
       div(cls:="form-row")(
-        div(cls:="form-label")("Explainer Title"),
+        div(cls:="form-label")("Text Atom Title"),
         title(explainer)
       ),
       embedUrlBox(embedUrlText(explainer.id, status)),
       div(cls:="form-row")(
-        p(cls:="form-label")("Expandable Explainer"),
+        p(cls:="form-label")("Expandable Text Atom"),
         div(cls:="form-checkbox")(
           displayTypeToggle(explainer.data.displayType, checkboxId),
           label(

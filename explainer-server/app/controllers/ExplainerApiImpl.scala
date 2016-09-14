@@ -67,7 +67,7 @@ class ExplainerApiImpl(
         contentChangeDetails=contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updatePublished = true)
       )
       explainerDB.update(updatedExplainer)
-      sendKinesisEvent(updatedExplainer, s"Publishing explainer $updatedExplainer.id} to LIVE kinesis", liveAtomPublisher)
+      sendKinesisEvent(updatedExplainer, s"Publishing explainer ${updatedExplainer.id} to LIVE kinesis", liveAtomPublisher)
       CsAtom.atomToCsAtom(updatedExplainer)
     }
   }
