@@ -66,7 +66,7 @@ class ExplainerApiImpl(
         contentChangeDetails=contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updatePublished = true)
       )
       explainerDB.update(updatedExplainer)
-
+      explainerDB.publish(updatedExplainer)
       sendKinesisEvent(updatedExplainer, s"Publishing explainer ${updatedExplainer.id} to LIVE kinesis", liveAtomPublisher)
       CsAtom.atomToCsAtom(updatedExplainer)
     }
@@ -79,6 +79,7 @@ class ExplainerApiImpl(
       )
 
       explainerDB.update(updatedExplainer)
+      explainerDB.takeDown(updatedExplainer)
       sendKinesisEvent(updatedExplainer, s"Sending takedown event for explainer ${updatedExplainer.id} to LIVE kinesis.", liveAtomPublisher, EventType.Takedown)
       CsAtom.atomToCsAtom(updatedExplainer)
     })
