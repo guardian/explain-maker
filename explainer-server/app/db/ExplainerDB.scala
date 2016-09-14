@@ -1,25 +1,33 @@
 package db
 
 import javax.inject.Inject
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import cats.data.Xor
-
 import com.gu.contentatom.thrift._
 import config.Config
 import com.gu.scanamo.scrooge.ScroogeDynamoFormat._
-import com.gu.atom.data.DynamoDataStore
+import com.gu.atom.data.{PreviewDynamoDataStore, PublishedDynamoDataStore}
 import com.gu.contentatom.thrift.atom.explainer._
 import shared.util.ExplainerAtomImplicits
 import com.gu.atom.data.ScanamoUtil._
+import com.gu.scanamo.syntax._
+import com.gu.scanamo.{DynamoFormat, Scanamo, Table}
 
 
 class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
 
-  val dynamoDataStore = new DynamoDataStore[ExplainerAtom](config.dynamoClient, config.tableName) {
+  val previewDynamoDataStore = new PreviewDynamoDataStore[ExplainerAtom](config.dynamoClient, config.previewTableName) {
     def fromAtomData = { case AtomData.Explainer(data) => data }
     def toAtomData(data: ExplainerAtom) = AtomData.Explainer(data)
   }
+
+  val liveDynamoDataStore = new PublishedDynamoDataStore[ExplainerAtom](config.dynamoClient, config.liveTableName) {
+    def fromAtomData = { case AtomData.Explainer(data) => data }
+    def toAtomData(data: ExplainerAtom) = AtomData.Explainer(data)
+  }
+
   def emptyStringMarkerToEmptyString(s: String) = if (s == "-") "" else s
   def emptyStringToEmptyStringMarker(s: String) = if (s == "") "-" else s
 
@@ -32,28 +40,38 @@ class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
 
   def create(explainer: Atom) = {
     val sanitisedAtom = emptyStringConversion(explainer, emptyStringToEmptyStringMarker)
-    dynamoDataStore.createAtom(sanitisedAtom)
+    previewDynamoDataStore.createAtom(sanitisedAtom)
   }
 
   def update(explainer: Atom): Unit = {
     val sanitisedAtom = emptyStringConversion(explainer, emptyStringToEmptyStringMarker)
-    dynamoDataStore.updateAtom(sanitisedAtom)
+    previewDynamoDataStore.updateAtom(sanitisedAtom)
   }
 
   // TODO: Switch to using dynamo async library or stop these functions from returning futures
   def all : Future[Seq[Atom]] = {
-    Future(dynamoDataStore.listAtoms match {
+    Future(previewDynamoDataStore.listAtoms match {
       case Xor.Right(atoms) => atoms.toSeq.map(emptyStringConversion(_, emptyStringMarkerToEmptyString))
       case _ => Nil
     })
   }
 
   def load(id: String): Future[Atom] = {
-    val explainer = dynamoDataStore.getAtom(id).get
+    val explainer = previewDynamoDataStore.getAtom(id).get
 
     val sanitisedExplainer = emptyStringConversion(explainer, emptyStringMarkerToEmptyString)
     Future(sanitisedExplainer)
 
   }
+
+  def publish(explainer: Atom) = {
+    val sanitisedAtom = emptyStringConversion(explainer, emptyStringToEmptyStringMarker)
+    liveDynamoDataStore.updateAtom(sanitisedAtom)
+  }
+
+  def takeDown(explainer: Atom) = {
+    Scanamo.delete(config.dynamoClient)(config.liveTableName)('id -> explainer.id)
+  }
+
 
 }

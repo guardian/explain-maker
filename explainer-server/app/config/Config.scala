@@ -69,6 +69,7 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
     null
   )
 
-  val tableName = s"explain-maker-preview-$stage"
+  val previewTableName = s"explain-maker-preview-$stage"
+  val liveTableName = s"explain-maker-live-$stage"
 
 }
