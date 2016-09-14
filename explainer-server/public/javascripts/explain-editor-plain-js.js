@@ -81,8 +81,8 @@ function readValueAtDiv(id){
 }
 
 function setupScribe() {
-    requireRenamed(['scribe', 'scribe-plugin-toolbar', 'scribe-plugin-link-prompt-command', 'scribe-plugin-keyboard-shortcuts', 'scribe-plugin-sanitizer'],
-        function (Scribe, scribePluginToolbar, scribePluginLinkPromptCommand, scribePluginkeyboardShorcuts, scribePluginSanitizer) {
+    requireRenamed(['scribe', 'scribe-plugin-toolbar', 'scribe-plugin-link-prompt-command', 'scribe-plugin-keyboard-shortcuts', 'scribe-plugin-sanitizer', '/assets/lib/scribe-plugin-noting/scribe-plugin-noting.js'],
+        function (Scribe, scribePluginToolbar, scribePluginLinkPromptCommand, scribePluginkeyboardShorcuts, scribePluginSanitizer, scribePluginNoting) {
 
             var scribeElement = document.querySelector('.scribe-body-editor__textarea');
 
@@ -100,6 +100,16 @@ function setupScribe() {
                 linkPrompt: function (event) { return event.metaKey && !event.shiftKey && event.keyCode === 75; }, // k
                 unlink: function (event) { return event.metaKey && event.shiftKey && event.keyCode === 75; } // shft + k
             }));
+
+            var noteElConfig = {
+                'class': true,
+                'title': true,
+                'data-note-edited-by': true,
+                'data-note-edited-date': true,
+                'data-note-id': true,
+                'data-click-action': true
+            };
+
             scribe.use(scribePluginSanitizer({
                 tags: {
                     p: {},
@@ -110,10 +120,30 @@ function setupScribe() {
                     },
                     ul: {},
                     ol: {},
-                    li: {}
+                    li: {},
+                    "gu-note": noteElConfig,
+                    "gu-flag": noteElConfig,
+                    "gu-correct": noteElConfig
                 }
             }));
-            
+
+            var userName = CONFIG.USER_FIRSTNAME + ' ' + CONFIG.USER_LASTNAME;
+
+            var notingConfig = {
+                user: userName,
+                scribeInstanceSelector: '.scribe-body-editor__textarea',
+                selectors: [
+                    { commandName: 'note',    tagName: 'gu-note',    clickAction: 'collapse',   keyCodes: [119, 121] }
+                ]
+            };
+            notingConfig.selectors = [
+                { commandName: 'note',    tagName: 'gu-note',    clickAction: 'collapse',   keyCodes: [119, 121] },
+                { commandName: 'flag',    tagName: 'gu-flag',    clickAction: 'toggle-tag', toggleTagTo: 'gu-correct', keyCodes: [117] },
+                { commandName: 'correct', tagName: 'gu-correct', clickAction: 'toggle-tag', toggleTagTo: 'gu-flag', keyCodes: [118] }
+            ];
+            scribe.use(scribePluginNoting(notingConfig));
+
+
             scribe.on('content-changed', function() {
                 $(".save-state").addClass("save-state--loading");
             });

@@ -6,10 +6,9 @@ import scala.concurrent.Future
 import org.joda.time.DateTime
 import play.api.cache.CacheApi
 import play.api.Logger
-
 import com.gu.atom.publish.{AtomPublisher, LiveAtomPublisher, PreviewAtomPublisher}
 import com.gu.contentatom.thrift._
-import com.gu.contentatom.thrift.atom.explainer.{DisplayType => ThriftDisplayType, ExplainerAtom}
+import com.gu.contentatom.thrift.atom.explainer.{ExplainerAtom, DisplayType => ThriftDisplayType}
 import config.Config
 import db.ExplainerDB
 import models.{PublishResult, Disabled => PublishDisabled, Fail => PublishFail, Success => PublishSuccess}
@@ -18,9 +17,9 @@ import shared.ExplainerApi
 import shared.models.{CsAtom, ExplainerUpdate}
 import shared.util.ExplainerAtomImplicits._
 import com.gu.pandomainauth.model.{User => PandaUser}
-
 import shared.models.PublicationStatus._
-import util.HelperFunctions.{contentChangeDetailsBuilder, applyExplainerUpdate, getExplainerStatus}
+import util.HelperFunctions.{applyExplainerUpdate, contentChangeDetailsBuilder, getExplainerStatus}
+import util.NotingHelper
 
 
 class ExplainerApiImpl(
@@ -67,6 +66,7 @@ class ExplainerApiImpl(
         contentChangeDetails=contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updatePublished = true)
       )
       explainerDB.update(updatedExplainer)
+
       sendKinesisEvent(updatedExplainer, s"Publishing explainer ${updatedExplainer.id} to LIVE kinesis", liveAtomPublisher)
       CsAtom.atomToCsAtom(updatedExplainer)
     }
@@ -77,6 +77,7 @@ class ExplainerApiImpl(
       val updatedExplainer = explainer.copy(
         contentChangeDetails=contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateLastModified = true)
       )
+
       explainerDB.update(updatedExplainer)
       sendKinesisEvent(updatedExplainer, s"Sending takedown event for explainer ${updatedExplainer.id} to LIVE kinesis.", liveAtomPublisher, EventType.Takedown)
       CsAtom.atomToCsAtom(updatedExplainer)
@@ -92,7 +93,15 @@ class ExplainerApiImpl(
 
   private def sendKinesisEvent(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {
     if (config.publishToKinesis) {
-      val event = ContentAtomEvent(explainer, eventType, DateTime.now.getMillis)
+
+      //Remove notes before sending to CAPI
+      val cleanedExplainer = explainer.updateData((data) => {
+        data.copy(
+          body = NotingHelper.removeNotesAndUnwrapFlags(data.body)
+        )
+      })
+
+      val event = ContentAtomEvent(cleanedExplainer, eventType, DateTime.now.getMillis)
       atomPublisher.publishAtomEvent(event) match {
         case Success(_) =>
           Logger.info(s"$actionMessage succeeded")
