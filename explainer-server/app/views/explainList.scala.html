@@ -61,6 +61,7 @@
                     <th class="explainer-list__header">Last modified</th>
                     <th class="explainer-list__header">Created by</th>
                     <th class="explainer-list__header">Status</th>
+                    <th class="explainer-list__header">Commissioning Desk</th>
                 </tr>
                 @for(e <- explainers) {
                     <tr class="explainer-list__row">
@@ -79,6 +80,9 @@
                         }</td>
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
                         <td class="explainer-list__item">@{isPublished(e)}</td>
+                        <td class="explainer-list__item">@{
+                            selectFirstDeskOrEmptyString(trackingTags,e)
+                        }</td>
                     </tr>
                 }
             </table>

@@ -24,13 +24,11 @@ class CAPIService @Inject() (config: Config, cache: CacheApi) {
   import scala.concurrent.ExecutionContext.Implicits.global
 
   private def getTrackingTagsFromCapi: Future[Seq[Tag]] = {
-
     val trackingTagsQuery = TagsQuery().tagType("tracking").pageSize(200)
     client.getResponse(trackingTagsQuery).map(r => {
       cache.set("trackingTags", r.results, 10 minutes)
       r.results
     })
-
   }
 
   def getTrackingTags: Future[Seq[Tag]] = {
@@ -39,7 +37,6 @@ class CAPIService @Inject() (config: Config, cache: CacheApi) {
 
   def checkExplainerInCapi(id: String): Future[Boolean] = {
     val itemQuery = ItemQuery(s"/atom/explainer/$id")
-
     client.getResponse(itemQuery).map(_ => true) recover {
       case _ => false
     }

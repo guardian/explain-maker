@@ -11,7 +11,7 @@ import shared.models.ExplainerUpdate
 import shared.models.UpdateField._
 
 import scala.concurrent.Future
-
+import shared.util.ExplainerAtomImplicits
 
 object HelperFunctions {
   def getCreatedByString(explainer: Atom) = {
@@ -91,4 +91,26 @@ object HelperFunctions {
     }
     AtomData.Explainer(updatedExplainerAtom)
   }
+
+  def selectTagByIdFromTrackingTags(trackingTags:Seq[com.gu.contentapi.client.model.v1.Tag],id: String): Option[com.gu.contentapi.client.model.v1.Tag] = {
+    trackingTags.filter(t => t.id == id).headOption
+  }
+  def selectFirstDeskOrEmptyString(trackingTags:Seq[com.gu.contentapi.client.model.v1.Tag], e: Atom): String = {
+    ExplainerAtomImplicits.AtomWithData(e).tdata.tags match {
+      case None => ""
+      case Some(sequence) => {
+        val elements = sequence.filter( s => s.startsWith("tracking/commissioningdesk") )
+        if(elements.size>0){
+          elements.head
+          selectTagByIdFromTrackingTags(trackingTags,elements.head) match {
+            case None => ""
+            case Some(tag) => tag._5
+          }
+        }else {
+          ""
+        }
+      }
+    }
+  }
+
 }
