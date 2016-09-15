@@ -7,7 +7,7 @@ import rx._
 import shared.ExplainerApi
 import shared.models.PublicationStatus.PublicationStatus
 import shared.models.UpdateField.{AddTag, RemoveTag}
-import shared.models.{CsAtom, ExplainerUpdate}
+import shared.models.{CsAtom, ExplainerUpdate, WorkflowData}
 
 import scala.concurrent.Future
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -50,6 +50,14 @@ object Model {
 
   def getExplainerStatus(explainerId: String, checkCapiStatus: Boolean): Future[PublicationStatus] = {
     Ajaxer[ExplainerApi].getStatus(explainerId, checkCapiStatus).call()
+  }
+
+  def getWorkflowData(id: String): Future[WorkflowData] = {
+    Ajaxer[ExplainerApi].getWorkflowData(id).call()
+  }
+
+  def setWorkflowData(workflowData: WorkflowData) = {
+    Ajaxer[ExplainerApi].setWorkflowData(workflowData).call()
   }
 
 }

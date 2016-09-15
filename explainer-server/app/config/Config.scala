@@ -71,5 +71,6 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val previewTableName = s"explain-maker-preview-$stage"
   val liveTableName = s"explain-maker-live-$stage"
+  val workflowDataTableName = s"explain-maker-workflow-data-$stage"
 
 }

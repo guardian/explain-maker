@@ -3,7 +3,7 @@ package components
 import api.Model
 import org.scalajs.dom._
 import org.scalajs.dom.html._
-import shared.models.{CsAtom, ExplainerUpdate}
+import shared.models.{PublicationStatus => _, _}
 
 import scala.scalajs.js.Dynamic._
 import scala.util.{Failure, Success}
@@ -13,6 +13,7 @@ import org.scalajs.dom
 import services.State
 import shared.models.PublicationStatus._
 import shared.models.UpdateField.{Body, Title}
+import shared.models.WorkflowStatus._
 import shared.util.SharedHelperFunctions
 import views.ExplainEditor
 
@@ -53,6 +54,27 @@ object Sidebar {
     case Available | UnlaunchedChanges => embedUrlString
     case Draft => "Publish text atom to get embed URL."
     case TakenDown => "The text atom has been taken down. Republish to get URL."
+  }
+
+  def statusToOption(status: WorkflowStatus, currentStatus: WorkflowStatus) = {
+    val opt = option(value:= status.toString)(status.toString).render
+    opt.selected = status == currentStatus
+    opt
+  }
+
+  def wfStatusOptions(currentStatus: WorkflowStatus) = {
+    List(statusToOption(Writers, currentStatus), statusToOption(Desk, currentStatus), statusToOption(Subs, currentStatus), statusToOption(Live, currentStatus))
+  }
+
+  def workflowStatusDropdown(id: String, currentStatus: WorkflowStatus) = {
+    val dropdown = select(cls := "workflow-status-select")(wfStatusOptions(currentStatus)).render
+    dropdown.onchange = (x:Event) => {
+      Model.setWorkflowData(WorkflowData(id, WorkflowStatus(dropdown.value)))
+    }
+    div(cls:="form-row")(
+      div(cls:="form-label")("Status"),
+      dropdown
+    )
   }
 
   def updatePreviewLink(status: PublicationStatus, embedUrl: String) ={
@@ -100,7 +122,7 @@ object Sidebar {
     checkboxTag
   }
 
-  def sidebar(explainer: CsAtom, status: PublicationStatus) = {
+  def sidebar(explainer: CsAtom, status: PublicationStatus, workflowStatus: WorkflowStatus) = {
     val checkboxId = "expandable"
     form()(
       div(cls:="form-row")(
@@ -118,6 +140,7 @@ object Sidebar {
           )
         )
       ),
+      workflowStatusDropdown(explainer.id, workflowStatus),
       div(cls:="explainer-editor__tag-management-wrapper")(
         div(
           id:="explainer-editor__commissioning-desk-tags-wrapper",
