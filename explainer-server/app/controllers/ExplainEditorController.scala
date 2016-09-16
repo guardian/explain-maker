@@ -50,6 +50,8 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
       explainers <- explainerDB.all
       trackingTags <- capiService.getTrackingTags
     } yield {
+      val workflowData = explainerDB.getWorkflowData(explainers.map(_.id).toList)
+      val statusMap = workflowData.map(d => (d.id, d.status)).toMap
 
       val trackingTagsInUse = trackingTags.filter(t => explainers.flatMap(_.tdata.tags.getOrElse(Seq())).distinct.contains(t.id))
 
@@ -59,7 +61,7 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
 
       val paginationConfig = Paginator.getPaginationConfig(pageNumber, desk, explainersWithSorting)
 
-      Ok(views.html.explainList(explainersForPage, request.user.user, trackingTagsInUse, desk, paginationConfig))
+      Ok(views.html.explainList(explainersForPage, request.user.user, trackingTagsInUse, desk, paginationConfig, statusMap))
 
     }
     result.recover{ case err =>

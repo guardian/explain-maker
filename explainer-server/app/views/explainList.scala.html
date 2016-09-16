@@ -7,9 +7,10 @@
 @import scala.concurrent.ExecutionContext.Implicits.global
 @import com.gu.pandomainauth.model.User
 @import util.PaginationConfig
+@import shared.models.WorkflowStatus
 
 @(explainers: Seq[Atom], user: User, trackingTags: Seq[Tag], desk: Option[String],
-        paginationConfig: PaginationConfig)(implicit request: RequestHeader)
+        paginationConfig: PaginationConfig, statusMap: Map[String, WorkflowStatus])(implicit request: RequestHeader)
 
 @toolbar = {
     <header class="top-toolbar">
@@ -60,7 +61,8 @@
                     <th class="explainer-list__header">Title</th>
                     <th class="explainer-list__header">Last modified</th>
                     <th class="explainer-list__header">Created by</th>
-                    <th class="explainer-list__header">Status</th>
+                    <th class="explainer-list__header">Publication status</th>
+                    <th class="explainer-list__header">Workflow status</th>
                 </tr>
                 @for(e <- explainers) {
                     <tr class="explainer-list__row">
@@ -79,6 +81,7 @@
                         }</td>
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
                         <td class="explainer-list__item">@{isPublished(e)}</td>
+                        <td class="explainer-list__item">@{statusMap.getOrElse(e.id, "Unknown status")}</td>
                     </tr>
                 }
             </table>

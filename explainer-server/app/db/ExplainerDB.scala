@@ -95,5 +95,9 @@ class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
     exec(workflowDataTable.put(workflowData))
   }
 
+  def getWorkflowData(ids: List[String]) = {
+    exec(workflowDataTable.getAll('id -> ids)).map(_.getOrElse(None)).asInstanceOf[List[WorkflowData]]
+  }
+
 
 }
