@@ -31,19 +31,25 @@ object ExplainEditor {
       })
     }
 
-    Model.getExplainer(explainerId).map { explainer: CsAtom =>
+    val explainer =  Model.getExplainer(explainerId)
 
+    explainer.map { explainer =>
       dom.document.getElementById("content").appendChild(
         ScribeBodyEditor.renderedBodyEditor(explainer)
-      )
+    )
+  }
 
+    for {
+      e <- explainer
+      wfData <- Model.getWorkflowData(explainerId)
+    } yield {
       getStatus(explainerId).map(s => {
         if (s == TakenDown) State.takenDown = true
         dom.document.getElementById("sidebar").appendChild(
-          Sidebar.sidebar(explainer, s)
+          Sidebar.sidebar(e, s, wfData.status)
         )
         updateEmbedUrlAndStatusLabel(explainerId, s)
-        })
+      })
       callback()
     }
   }

@@ -1,6 +1,6 @@
 package shared
 
-import shared.models.{CsAtom, ExplainerUpdate}
+import shared.models.{CsAtom, ExplainerUpdate, WorkflowData}
 import shared.models.PublicationStatus.PublicationStatus
 
 import scala.concurrent.Future
@@ -14,5 +14,8 @@ trait ExplainerApi {
   def publish(id: String): Future[CsAtom]
   def takeDown(id: String): Future[CsAtom]
   def getStatus(id: String, checkCapiStatus: Boolean): Future[PublicationStatus]
+
+  def getWorkflowData(id:String): WorkflowData
+  def setWorkflowData(workflowData: WorkflowData)
 
 }

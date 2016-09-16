@@ -17,6 +17,14 @@
             "Description": "Code live dynamo table name",
             "Type": "String"
         },
+        "ProdWorkflowDataTableName": {
+            "Description": "Prod workflow data table name",
+            "Type": "String"
+        },
+        "CodeWorkflowDataTableName": {
+            "Description": "Code workflow data table name",
+            "Type": "String"
+        },
         "ProdReadWriteCapacity":{
             "Description": "Prod Read/Write Capacity",
             "Type": "String"
@@ -97,6 +105,50 @@
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "TableName": { "Ref": "CodeLiveTableName" },
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": { "Ref": "CodeReadWriteCapacity" },
+                    "WriteCapacityUnits": { "Ref": "CodeReadWriteCapacity"}
+                }
+            }
+        },
+        "ExplainMakerProdWorkflowDataDynamoTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": { "Ref": "ProdWorkflowDataTableName" },
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": { "Ref": "ProdReadWriteCapacity" },
+                    "WriteCapacityUnits": { "Ref": "ProdReadWriteCapacity" }
+                }
+            }
+        },
+        "ExplainMakerCodeWorkflowDataDynamoTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": { "Ref": "CodeWorkflowDataTableName" },
                 "AttributeDefinitions": [
                     {
                         "AttributeName": "id",

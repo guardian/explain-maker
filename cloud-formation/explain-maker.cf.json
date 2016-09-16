@@ -177,6 +177,11 @@
                             "Effect": "Allow",
                             "Action": [ "dynamodb:*" ],
                             "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:743583969668:table/explain-maker-live-", { "Ref": "Stage" } ] ] } ]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [ "dynamodb:*" ],
+                            "Resource": [ { "Fn::Join": [ "", [ "arn:aws:dynamodb:eu-west-1:743583969668:table/explain-maker-workflow-data-", { "Ref": "Stage" } ] ] } ]
                         }
                     ]
                   }

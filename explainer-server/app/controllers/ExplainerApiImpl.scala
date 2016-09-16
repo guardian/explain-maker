@@ -14,7 +14,7 @@ import db.ExplainerDB
 import models.{PublishResult, Disabled => PublishDisabled, Fail => PublishFail, Success => PublishSuccess}
 import services.{CAPIService, PublicSettingsService}
 import shared.ExplainerApi
-import shared.models.{CsAtom, ExplainerUpdate}
+import shared.models.{CsAtom, ExplainerUpdate, WorkflowData}
 import shared.util.ExplainerAtomImplicits._
 import com.gu.pandomainauth.model.{User => PandaUser}
 import shared.models.PublicationStatus._
@@ -90,6 +90,14 @@ class ExplainerApiImpl(
       e <- explainerDB.load(id)
       s <- getExplainerStatus(e, capiService, checkCapiStatus, config.stage)
     } yield s
+  }
+
+  override def getWorkflowData(id:String): WorkflowData = {
+    explainerDB.getWorkflowData(id)
+  }
+
+  override def setWorkflowData(workflowData: WorkflowData) = {
+    explainerDB.setWorkflowData(workflowData)
   }
 
   private def sendKinesisEvent(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {

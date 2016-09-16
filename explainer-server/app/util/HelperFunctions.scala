@@ -1,7 +1,7 @@
 package util
 
 import com.gu.contentatom.thrift.{ChangeRecord, _}
-import com.gu.contentatom.thrift.atom.explainer.{DisplayType =>ThriftDisplayType, ExplainerAtom}
+import com.gu.contentatom.thrift.atom.explainer.{ExplainerAtom, DisplayType => ThriftDisplayType}
 import org.joda.time.DateTime
 import services.CAPIService
 import shared.models.PublicationStatus._

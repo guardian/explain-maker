@@ -12,8 +12,12 @@ import com.gu.atom.data.{PreviewDynamoDataStore, PublishedDynamoDataStore}
 import com.gu.contentatom.thrift.atom.explainer._
 import shared.util.ExplainerAtomImplicits
 import com.gu.atom.data.ScanamoUtil._
+import com.gu.scanamo.ops.ScanamoOps
+import com.gu.scanamo.query.UniqueKeys
 import com.gu.scanamo.syntax._
 import com.gu.scanamo.{DynamoFormat, Scanamo, Table}
+import shared.models.{WorkflowData, WorkflowStatus}
+import util.HelperFunctions
 
 
 class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
@@ -71,6 +75,28 @@ class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
 
   def takeDown(explainer: Atom) = {
     Scanamo.delete(config.dynamoClient)(config.liveTableName)('id -> explainer.id)
+  }
+
+  implicit val workflowStatusFormat = DynamoFormat.coercedXmap[WorkflowStatus, String, IllegalArgumentException](
+    WorkflowStatus(_))(_.toString)
+
+  val workflowDataTable = Table[WorkflowData](config.workflowDataTableName)
+  def exec[A](ops: ScanamoOps[A]): A = Scanamo.exec(config.dynamoClient)(ops)
+
+  def getWorkflowData(id: String): WorkflowData = {
+    val defaultData = WorkflowData(id)
+    exec(workflowDataTable.get('id -> id)).fold(defaultData)({
+      case Xor.Right(data) => data
+      case _ => defaultData
+    })
+  }
+
+  def setWorkflowData(workflowData: WorkflowData) = {
+    exec(workflowDataTable.put(workflowData))
+  }
+
+  def getWorkflowData(ids: List[String]) = {
+    exec(workflowDataTable.getAll('id -> ids)).map(_.getOrElse(None)).asInstanceOf[List[WorkflowData]]
   }
 
 
