@@ -43,13 +43,13 @@ object ExplainEditor {
       e <- explainer
       wfData <- Model.getWorkflowData(explainerId)
     } yield {
-      Model.getExplainerStatus(explainerId).map(s => {
+      Model.getExplainerStatus(explainerId).map { s =>
         if (s == TakenDown) State.takenDown = true
         dom.document.getElementById("sidebar").appendChild(
           Sidebar.sidebar(e, s, wfData.status)
         )
         updateEmbedUrlAndStatusLabel(explainerId, s)
-      })
+      }
       callback()
     }
   }
