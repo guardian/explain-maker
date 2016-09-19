@@ -8,7 +8,7 @@ object Paginator {
   def deskToQueryStringWithTrailingAmpersand(desk: Option[String]): String = {
     desk.fold("")(t => s"desk=$t&")
   }
-  val pageSize: Int = 50
+
   def previousFragment(desk:Option[String], pageNumber: Int): String = {
     if(pageNumber>1){
       "<a class=\"pagination__link\" href=\"/?" + deskToQueryStringWithTrailingAmpersand(desk)+ "pageNumber=" + (pageNumber-1).toString() + "\">< Previous</a>"
@@ -23,7 +23,7 @@ object Paginator {
       ""
     }
   }
-  def maxPageNumber(numberOfExplainers: Int): Int = {
+  def maxPageNumber(numberOfExplainers: Int, pageSize:Int): Int = {
     if (numberOfExplainers % pageSize == 0){
       (numberOfExplainers.toFloat / pageSize).toInt
     }else{
@@ -31,17 +31,17 @@ object Paginator {
     }
   }
 
-  def selectPageExplainers(explainers: Seq[Atom], pageNumber: Int): Seq[Atom] = {
+  def selectPageExplainers(explainers: Seq[Atom], pageNumber: Int, pageSize:Int): Seq[Atom] = {
     // Here we drop pageNumber*pageSize and then keep the next pageSize elements.
     val startIndex = (pageNumber - 1) * pageSize
     explainers.slice(startIndex, startIndex + pageSize)
   }
 
 
-  def getPaginationConfig(pageNumber: Int, desk: Option[String], explainersWithSorting: Seq[Atom]): PaginationConfig = {
+  def getPaginationConfig(pageNumber: Int, desk: Option[String], explainersWithSorting: Seq[Atom], pageSize:Int): PaginationConfig = {
     PaginationConfig(
       pageNumber,
       previousFragment(desk,pageNumber),
-      nextFragment(desk, pageNumber, maxPageNumber(explainersWithSorting.length)))
+      nextFragment(desk, pageNumber, maxPageNumber(explainersWithSorting.length, pageSize)))
   }
 }

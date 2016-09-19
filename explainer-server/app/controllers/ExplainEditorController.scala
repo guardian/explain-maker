@@ -55,9 +55,9 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
 
       val explainersForDesk = desk.fold(explainers)(d => explainers.filter(_.tdata.tags.exists(_.contains(d))))
       val explainersWithSorting = explainersForDesk.sortWith(sorting)
-      val explainersForPage = Paginator.selectPageExplainers(explainersWithSorting, pageNumber)
+      val explainersForPage = Paginator.selectPageExplainers(explainersWithSorting, pageNumber, config.explainListPageSize)
 
-      val paginationConfig = Paginator.getPaginationConfig(pageNumber, desk, explainersWithSorting)
+      val paginationConfig = Paginator.getPaginationConfig(pageNumber, desk, explainersWithSorting, config.explainListPageSize)
 
       val workflowData = explainerDB.getWorkflowData(explainersForPage.map(_.id).toList)
       val wfStatusMap = workflowData.map(d => (d.id, d.status)).toMap
