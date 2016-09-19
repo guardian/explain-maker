@@ -42,6 +42,7 @@ class ExplainerApiImpl(
       contentChangeDetails = contentChangeDetailsBuilder(user, None, updateCreated = true, updateLastModified = true)
     )
     explainerDB.create(explainer)
+    setWorkflowData(WorkflowData(explainer.id))
     sendKinesisEvent(explainer, s"Publishing new explainer ${explainer.id} to PREVIEW kinesis", previewAtomPublisher)
     Future(CsAtom.atomToCsAtom(explainer))
   }
