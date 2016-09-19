@@ -8,9 +8,11 @@
 @import com.gu.pandomainauth.model.User
 @import util.PaginationConfig
 @import shared.models.WorkflowStatus
+@import shared.models.PublicationStatus
 
 @(explainers: Seq[Atom], user: User, trackingTags: Seq[Tag], desk: Option[String],
-        paginationConfig: PaginationConfig, statusMap: Map[String, WorkflowStatus])(implicit request: RequestHeader)
+        paginationConfig: PaginationConfig, statusMap: Map[String, WorkflowStatus],
+        publicationStatusMap: Map[String, PublicationStatus])(implicit request: RequestHeader)
 
 @toolbar = {
     <header class="top-toolbar">
@@ -80,7 +82,7 @@
                             fmt.print(datetime);
                         }</td>
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
-                        <td class="explainer-list__item">@{isPublished(e)}</td>
+                        <td class="explainer-list__item">@{publicationStatusMap.getOrElse(e.id, "Unknown")}</td>
                         <td class="explainer-list__item">@{statusMap.getOrElse(e.id, "Unknown status")}</td>
                     </tr>
                 }

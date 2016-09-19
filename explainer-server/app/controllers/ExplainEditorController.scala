@@ -13,7 +13,7 @@ import play.api.cache.CacheApi
 import play.api.libs.json.Json
 import services.PublicSettingsService
 import shared.util.ExplainerAtomImplicits
-import util.Paginator
+import util.{HelperFunctions, Paginator}
 import services.CAPIService
 
 class ExplainEditorController @Inject() (val publicSettingsService: PublicSettingsService, config: Config, cache: CacheApi)
@@ -50,8 +50,6 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
       explainers <- explainerDB.all
       trackingTags <- capiService.getTrackingTags
     } yield {
-      val workflowData = explainerDB.getWorkflowData(explainers.map(_.id).toList)
-      val statusMap = workflowData.map(d => (d.id, d.status)).toMap
 
       val trackingTagsInUse = trackingTags.filter(t => explainers.flatMap(_.tdata.tags.getOrElse(Seq())).distinct.contains(t.id))
 
@@ -61,7 +59,13 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
 
       val paginationConfig = Paginator.getPaginationConfig(pageNumber, desk, explainersWithSorting)
 
-      Ok(views.html.explainList(explainersForPage, request.user.user, trackingTagsInUse, desk, paginationConfig, statusMap))
+      val workflowData = explainerDB.getWorkflowData(explainersForPage.map(_.id).toList)
+      val wfStatusMap = workflowData.map(d => (d.id, d.status)).toMap
+      val publicationStatusMap = explainersForPage.map(e =>
+        (e.id, HelperFunctions.getExplainerStatus(e, explainerDB))).toMap
+
+      Ok(views.html.explainList(explainersForPage, request.user.user, trackingTagsInUse, desk, paginationConfig,
+        wfStatusMap, publicationStatusMap))
 
     }
     result.recover{ case err =>

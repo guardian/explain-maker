@@ -3,10 +3,10 @@ package util
 import com.gu.contentatom.thrift.{ChangeRecord, _}
 import com.gu.contentatom.thrift.atom.explainer.{ExplainerAtom, DisplayType => ThriftDisplayType}
 import org.joda.time.DateTime
-import services.CAPIService
-import shared.models.PublicationStatus._
+import shared.models.{PublicationStatus, Draft, TakenDown, Available, UnlaunchedChanges}
 import com.gu.pandomainauth.model.{User => PandaUser}
 import com.gu.contentatom.thrift.User
+import db.ExplainerDB
 import shared.models.ExplainerUpdate
 import shared.models.UpdateField._
 
@@ -26,33 +26,18 @@ object HelperFunctions {
     firstNameLastName.getOrElse("-")
   }
 
-  def isPublished(explainer: Atom) = {
-    if(explainer.contentChangeDetails.published.isDefined) "Published" else "Draft"
-  }
-
-  // works out current status of explainer. If checkCapiStatus is provided then a query to capi will not be made - instead
-  // the value of checkCapiStatus will be used
-  def getExplainerStatus(explainer: Atom, capiService: CAPIService, checkCapiStatus: Boolean, stage: String): Future[PublicationStatus] = {
-    import scala.concurrent.ExecutionContext.Implicits.global
-
+  def getExplainerStatus(explainer: Atom, explainerDB: ExplainerDB): PublicationStatus = {
     val status = for {
       p <- explainer.contentChangeDetails.published
       lm <- explainer.contentChangeDetails.lastModified
     } yield {
-      def capiStatusToExplainerStatus(inCapi: Boolean) = {
-        if (inCapi) {
-          if (p.date >= lm.date) Available
-          else UnlaunchedChanges
-        }
-        else TakenDown
+      val inLiveTable = explainerDB.loadLive(explainer.id).isDefined
+      if (inLiveTable) {
+        if (p.date >= lm.date) Available else UnlaunchedChanges
       }
-      // explain maker doesn't publish to capi when running locally
-      val explainerInCapi= if (stage != "DEV" && checkCapiStatus) {
-        capiService.checkExplainerInCapi(explainer.id)
-      } else Future(true)
-      explainerInCapi.map(capiStatusToExplainerStatus)
+      else TakenDown
     }
-    status.getOrElse(Future(Draft))
+    status.getOrElse(Draft)
   }
 
   def pandaUserToAtomUser(user: PandaUser): User = {

@@ -17,7 +17,7 @@ import shared.ExplainerApi
 import shared.models.{CsAtom, ExplainerUpdate, WorkflowData}
 import shared.util.ExplainerAtomImplicits._
 import com.gu.pandomainauth.model.{User => PandaUser}
-import shared.models.PublicationStatus._
+import shared.models._
 import util.HelperFunctions.{applyExplainerUpdate, contentChangeDetailsBuilder, getExplainerStatus}
 import util.NotingHelper
 
@@ -85,11 +85,12 @@ class ExplainerApiImpl(
     })
   }
 
-  override def getStatus(id:String, checkCapiStatus: Boolean): Future[PublicationStatus] = {
+  override def getStatus(id:String): Future[PublicationStatus] = {
     for {
       e <- explainerDB.load(id)
-      s <- getExplainerStatus(e, capiService, checkCapiStatus, config.stage)
-    } yield s
+    } yield {
+      getExplainerStatus(e, explainerDB)
+    }
   }
 
   override def getWorkflowData(id:String): WorkflowData = {
