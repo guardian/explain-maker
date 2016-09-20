@@ -1,8 +1,7 @@
 package shared.util
 
 
-import shared.models.CsAtom
-import shared.models.PublicationStatus._
+import shared.models._
 
 object SharedHelperFunctions {
   def getExplainerStatusNoTakeDownCheck(explainer: CsAtom, isTakenDown: Boolean): PublicationStatus = {

@@ -3,7 +3,7 @@ package components
 import api.Model
 import org.scalajs.dom._
 import org.scalajs.dom.html._
-import shared.models.{PublicationStatus => _, _}
+import shared.models._
 
 import scala.scalajs.js.Dynamic._
 import scala.util.{Failure, Success}
@@ -11,7 +11,6 @@ import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all._
 import org.scalajs.dom
 import services.State
-import shared.models.PublicationStatus._
 import shared.models.UpdateField.{Body, Title}
 import shared.models.WorkflowStatus._
 import shared.util.SharedHelperFunctions

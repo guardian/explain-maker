@@ -8,7 +8,7 @@ import cats.data.Xor
 import com.gu.contentatom.thrift._
 import config.Config
 import com.gu.scanamo.scrooge.ScroogeDynamoFormat._
-import com.gu.atom.data.{PreviewDynamoDataStore, PublishedDynamoDataStore}
+import com.gu.atom.data.{DataStoreResult, PreviewDynamoDataStore, PublishedDynamoDataStore}
 import com.gu.contentatom.thrift.atom.explainer._
 import shared.util.ExplainerAtomImplicits
 import com.gu.atom.data.ScanamoUtil._
@@ -42,6 +42,8 @@ class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
         body = conversionFunction(explainer.tdata.body))))
   }
 
+  def stringConvertIterator(i: Iterator[Atom]) = i.toSeq.map(emptyStringConversion(_, emptyStringMarkerToEmptyString))
+
   def create(explainer: Atom) = {
     val sanitisedAtom = emptyStringConversion(explainer, emptyStringToEmptyStringMarker)
     previewDynamoDataStore.createAtom(sanitisedAtom)
@@ -55,7 +57,14 @@ class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
   // TODO: Switch to using dynamo async library or stop these functions from returning futures
   def all : Future[Seq[Atom]] = {
     Future(previewDynamoDataStore.listAtoms match {
-      case Xor.Right(atoms) => atoms.toSeq.map(emptyStringConversion(_, emptyStringMarkerToEmptyString))
+      case Xor.Right(atoms) => stringConvertIterator(atoms)
+      case _ => Nil
+    })
+  }
+
+  def allLive: Future[Seq[Atom]] = {
+    Future(liveDynamoDataStore.listAtoms match {
+      case Xor.Right(atoms) => stringConvertIterator(atoms)
       case _ => Nil
     })
   }
@@ -66,6 +75,12 @@ class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
     val sanitisedExplainer = emptyStringConversion(explainer, emptyStringMarkerToEmptyString)
     Future(sanitisedExplainer)
 
+  }
+
+  def loadLive(id: String): Option[Atom] = {
+    val explainer = liveDynamoDataStore.getAtom(id)
+    val sanitisedExplainer = explainer.map(e => emptyStringConversion(e, emptyStringMarkerToEmptyString))
+    sanitisedExplainer
   }
 
   def publish(explainer: Atom) = {

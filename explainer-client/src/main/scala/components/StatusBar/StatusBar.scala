@@ -2,7 +2,7 @@ package components.statusbar
 
 import models.{RenderedStatusLabel, StatusLabel}
 import org.scalajs.dom
-import shared.models.PublicationStatus._
+import shared.models._
 
 import scalatags.JsDom.all._
 import org.scalajs.dom.html.Button

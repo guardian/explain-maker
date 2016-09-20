@@ -14,7 +14,7 @@ import scala.scalajs.js.annotation.JSExport
 import scala.util.{Failure, Success}
 import scala.scalajs.js.{Function0, Object => JsObject}
 import services.State
-import shared.models.PublicationStatus.{Available, PublicationStatus, TakenDown}
+import shared.models._
 import shared.util.SharedHelperFunctions
 
 
@@ -43,13 +43,13 @@ object ExplainEditor {
       e <- explainer
       wfData <- Model.getWorkflowData(explainerId)
     } yield {
-      getStatus(explainerId).map(s => {
+      Model.getExplainerStatus(explainerId).map { s =>
         if (s == TakenDown) State.takenDown = true
         dom.document.getElementById("sidebar").appendChild(
           Sidebar.sidebar(e, s, wfData.status)
         )
         updateEmbedUrlAndStatusLabel(explainerId, s)
-      })
+      }
       callback()
     }
   }
@@ -61,9 +61,6 @@ object ExplainEditor {
     }
   }
 
-  def getStatus(id: String, checkCapi: Boolean = true) = {
-    Model.getExplainerStatus(id, checkCapi)
-  }
 
   def updateEmbedUrlAndStatusLabel(id: String, status: PublicationStatus) = {
     StatusBar.updateStatusBar(status)

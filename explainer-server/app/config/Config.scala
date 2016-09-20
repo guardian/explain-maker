@@ -73,4 +73,6 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
   val liveTableName = s"explain-maker-live-$stage"
   val workflowDataTableName = s"explain-maker-workflow-data-$stage"
 
+  val ExplainListPageSize = 20
+
 }

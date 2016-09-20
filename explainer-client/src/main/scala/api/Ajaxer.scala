@@ -5,7 +5,7 @@ import common.ExtAjax._
 import org.scalajs.dom.ext.Ajax
 import rx._
 import shared.ExplainerApi
-import shared.models.PublicationStatus.PublicationStatus
+import shared.models._
 import shared.models.UpdateField.{AddTag, RemoveTag}
 import shared.models.{CsAtom, ExplainerUpdate, WorkflowData}
 
@@ -48,8 +48,8 @@ object Model {
     Ajaxer[ExplainerApi].takeDown(id).call()
   }
 
-  def getExplainerStatus(explainerId: String, checkCapiStatus: Boolean): Future[PublicationStatus] = {
-    Ajaxer[ExplainerApi].getStatus(explainerId, checkCapiStatus).call()
+  def getExplainerStatus(explainerId: String): Future[PublicationStatus] = {
+    Ajaxer[ExplainerApi].getStatus(explainerId).call()
   }
 
   def getWorkflowData(id: String): Future[WorkflowData] = {
