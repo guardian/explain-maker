@@ -38,7 +38,7 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
     Ok(views.html.explainEditor(id, request.user, viewConfig))
   }
 
-  def listExplainers(desk: Option[String], pageNumber: Int = 1) = pandaAuthenticated.async{ implicit request =>
+  def listExplainers(desk: Option[String], pageNumber: Int = 1, titleQuery: Option[String]) = pandaAuthenticated.async{ implicit request =>
 
     def sorting(e1: Atom, e2: Atom): Boolean = {
       val time1:Long = e1.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
@@ -46,7 +46,7 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
       time1 > time2
     }
 
-    val result = for {
+    val resultFromDB = for {
       explainers <- explainerDB.all
       trackingTags <- capiService.getTrackingTags
     } yield {
@@ -54,7 +54,8 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
       val trackingTagsInUse = trackingTags.filter(t => explainers.flatMap(_.tdata.tags.getOrElse(Seq())).distinct.contains(t.id))
 
       val explainersForDesk = desk.fold(explainers)(d => explainers.filter(_.tdata.tags.exists(_.contains(d))))
-      val explainersWithSorting = explainersForDesk.sortWith(sorting)
+      val explainersForTitleQuery = titleQuery.fold(explainersForDesk)(q => explainersForDesk.filter(_.tdata.title.contains(q)))
+      val explainersWithSorting = explainersForTitleQuery.sortWith(sorting)
       val explainersForPage = Paginator.selectPageExplainers(explainersWithSorting, pageNumber, config.ExplainListPageSize)
 
       val paginationConfig = Paginator.getPaginationConfig(pageNumber, desk, explainersWithSorting, config.ExplainListPageSize)
@@ -68,9 +69,12 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
         wfStatusMap, publicationStatusMap))
 
     }
-    result.recover{ case err =>
+    val dbRes = resultFromDB.recover{ case err =>
       Logger.error("Error fetching explainers from dynamo", err)
       InternalServerError(err.getMessage)
     }
+
+    dbRes
+
   }
 }

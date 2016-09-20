@@ -3,8 +3,9 @@ package services
 import javax.inject.Inject
 
 import com.gu.contentapi.client.{ContentApiClientLogic, GuardianContentClient}
-import com.gu.contentapi.client.model.{ItemQuery, TagsQuery}
+import com.gu.contentapi.client.model.{ItemQuery, SearchQuery, TagsQuery}
 import com.gu.contentapi.client.model.v1.{ItemResponse, Tag}
+import com.gu.contentapi.client.Parameters
 import config.Config
 import play.api.cache._
 
@@ -12,14 +13,20 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-class CustomUrlGuardianContentClient(val apiKey: String, val apiUrl: String) extends ContentApiClientLogic {
+class CustomUrlGuardianContentClient(val apiKey: String, val apiUrl: String, val user: Option[String] = None, val pass: Option[String] = None) extends ContentApiClientLogic {
   val useThrift = false
-  override val targetUrl = apiUrl
+  val urlWithAuth = for {
+    u <- user
+    p <- pass
+  } yield s"https://$u:$p@$apiUrl"
+
+  override val targetUrl = urlWithAuth.getOrElse(apiUrl)
 }
 
 class CAPIService @Inject() (config: Config, cache: CacheApi) {
 
   val client = new CustomUrlGuardianContentClient(config.capiKey, config.capiUrl)
+  val previewClient = new CustomUrlGuardianContentClient(config.capiKey, config.capiPreviewUrl, config.capiPreviewUsername, config.capiPreviewPassword)
 
   import scala.concurrent.ExecutionContext.Implicits.global
 

@@ -34,6 +34,15 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
     case "DEV" => "http://content.guardianapis.com"
   }
 
+  val capiPreviewUrl = stage match {
+    case "CODE" => "preview.content.code.dev-guardianapis.com"
+    case "PROD" => "preview.content.guardianapis.com"
+    case "DEV" => "preview.content.guardianapis.com"
+  }
+
+  val capiPreviewUsername = conf.getString("capi.preview.username")
+  val capiPreviewPassword = conf.getString("capi.preview.password")
+
   val presenceEnabled = conf.getBoolean("enable.presence") getOrElse true
   val presenceEndpointURL = fetchOrErrorOptionalProperty(presenceEnabled, "presence.endpoint", "presence endpoint required when presence enabled")
 
