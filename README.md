@@ -50,6 +50,8 @@ DEV {
     streamName {
       preview = "<preview kinesis name - only needed if kinesis publishing enabled>"
       live = "<live kinesis name- only needed if kinesis publishing enabled>",
+      reindex-preview = "<reindex preview kinesis name, usually the same as the preview stream name - only needed if kinesis publishing enabled>"
+      reindex-live = "<reindex live kinesis name, usually the same as the live stream name - only needed if kinesis publishing enabled>",
       elk  = "<elk kinesis stream - only needed if elk publishing enabled"
     }
   }
