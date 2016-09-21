@@ -19,16 +19,40 @@ object ExplainList {
     dom.document.location.search = s"$keyEnc=$valueEnc"
   }
 
+  def insertParamAndRemovePageNumber(key: String, value: String): Unit = {
+    val keyEnc = URIUtils.encodeURI(key)
+    val valueEnc = URIUtils.encodeURI(value)
+    dom.document.location.search = s"$keyEnc=$valueEnc"
+    val parameters = dom.document.location.search.substring(1).split('&').flatMap(p => {
+      if (p.startsWith(keyEnc)) {
+        Some(s"$keyEnc=$valueEnc")
+      } else if (p.startsWith("pageNumber")) {
+        None
+      } else Some(p)
+    }).mkString("&")
+    val newQueryString = if (!parameters.contains(keyEnc)) s"$parameters&$keyEnc=$valueEnc" else parameters
+
+    dom.document.location.search = newQueryString
+  }
+
   @JSExport
   def deskChanged() = {
     val dropdown: Select = dom.document.getElementById("desk-dropdown").asInstanceOf[Select]
     val selectedDesk = dropdown.value
-    println(selectedDesk)
     if (selectedDesk == "all-desks") {
       val urlWithoutQueryParameters = s"${dom.document.location.protocol}//${dom.document.location.host}${dom.document.location.pathname}"
       dom.document.location.assign(urlWithoutQueryParameters)
     } else {
       replaceParams("desk", selectedDesk)
+    }
+  }
+
+  @JSExport
+  def searchExplainers() = {
+    val search: Select = dom.document.getElementById("explainer-search").asInstanceOf[Select]
+    val searchQuery = search.value
+    if(searchQuery != "") {
+      insertParamAndRemovePageNumber("titleQuery", searchQuery)
     }
   }
 

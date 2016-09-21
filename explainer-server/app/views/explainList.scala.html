@@ -56,9 +56,17 @@
 
 @main("Explainers", toolbar){
     <div class="container block-center">
+
+        <div class="page-title">
+            <h1>Text Atoms</h1>
+
+            <div class="form-flex">
+                <input onchange="views.ExplainList().searchExplainers()" id="explainer-search" class="form-field" type="search" placeholder="Search">
+                <button onclick="views.ExplainList().searchExplainers()" class="btn form-search">Search</button>
+            </div>
+        </div>
         
         <div id="dashboard" class="explainer-list">
-            <h1>Text Atoms</h1>
             <table class="explainer-list__table">
                 <tr>
                     <th class="explainer-list__header">Title</th>
