@@ -26,6 +26,7 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
   }
 
   val pandaDomain = configValueForStage("pandomain.domain").get
+  val appDomainName = "explainers"
 
   val capiKey = configValueForStage("capi.key").get
   val capiUrl = stage match {
