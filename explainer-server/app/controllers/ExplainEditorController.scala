@@ -54,13 +54,15 @@ class ExplainEditorController @Inject() (val publicSettingsService: PublicSettin
       val trackingTagsInUse = trackingTags.filter(t => explainers.flatMap(_.tdata.tags.getOrElse(Seq())).distinct.contains(t.id))
 
       val explainersForDesk = desk.fold(explainers)(d => explainers.filter(_.tdata.tags.exists(_.contains(d))))
-      val explainersForTitleQuery = titleQuery.fold(explainersForDesk)(q => explainersForDesk.filter(_.tdata.title.contains(q)))
+      val explainersForTitleQuery = titleQuery.fold(explainersForDesk)(q => explainersForDesk.filter(_.tdata.title.toUpperCase.contains(q.toUpperCase)))
       val explainersWithSorting = explainersForTitleQuery.sortWith(sorting)
       val explainersForPage = Paginator.selectPageExplainers(explainersWithSorting, pageNumber, config.ExplainListPageSize)
 
       val paginationConfig = Paginator.getPaginationConfig(pageNumber, desk, explainersWithSorting, config.ExplainListPageSize)
 
-      val workflowData = explainerDB.getWorkflowData(explainersForPage.map(_.id).toList)
+      val workflowData = if (explainersForPage.nonEmpty) {
+        explainerDB.getWorkflowData(explainersForPage.map(_.id).toList)
+      } else List()
       val wfStatusMap = workflowData.map(d => (d.id, d.status)).toMap
       val publicationStatusMap = explainersForPage.map(e =>
         (e.id, HelperFunctions.getExplainerStatus(e, explainerDB))).toMap
