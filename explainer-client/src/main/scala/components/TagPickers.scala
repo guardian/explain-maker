@@ -1,13 +1,11 @@
 package components
 
 import api.Model
-import models.Tag
 import org.scalajs.dom
 import org.scalajs.dom._
 import org.scalajs.dom.html._
 import services.CAPIClient
-import shared.models.{CsAtom, ExplainerUpdate}
-import models.{Tag => CapiTag}
+import shared.models.{CsAtom, CsTag, ExplainerUpdate}
 import shared.models.UpdateField.{AddTag, RemoveTag}
 
 import scala.scalajs.js.Dynamic._
@@ -71,7 +69,7 @@ object TagPickers {
     )
   }
 
-  def renderSuggestionSet(tags:List[CapiTag], explainerId:String, suggestionsDivIdentifier:String) = {
+  def renderSuggestionSet(tags:List[CsTag], explainerId:String, suggestionsDivIdentifier:String) = {
     g.jQuery(s"#$suggestionsDivIdentifier").empty()
     tags.foreach( tagObject => {
       val node = div(cls:="tag__result")(tagObject.webTitle).render

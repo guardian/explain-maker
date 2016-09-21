@@ -60,4 +60,8 @@ object Model {
     Ajaxer[ExplainerApi].setWorkflowData(workflowData).call()
   }
 
+  def getTrackingTags = {
+    Ajaxer[ExplainerApi].getTrackingTags().call()
+  }
+
 }

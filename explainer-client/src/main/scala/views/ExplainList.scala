@@ -1,6 +1,7 @@
 package views
 
 import api.Model
+import components.ExplainListComponents
 import org.scalajs.dom
 import org.scalajs.dom.html.Select
 import shared.models.CsAtom
@@ -9,6 +10,7 @@ import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scala.scalajs.js.Dynamic.{global => g}
 import scala.scalajs.js.URIUtils
 import scala.scalajs.js.annotation.JSExport
+import org.scalajs.dom._
 
 @JSExport
 object ExplainList {
@@ -36,6 +38,16 @@ object ExplainList {
   def createNewExplainer() = {
     Model.createNewExplainer().map{ explainer: CsAtom =>
       g.location.href = s"/explain/${explainer.id}"
+    }
+  }
+
+  @JSExport
+  def renderDeskList() = {
+    val deskDropdown = dom.document.getElementById("desk-dropdown").asInstanceOf[Select]
+
+    Model.getTrackingTags.map{ tags =>
+      val opts = ExplainListComponents.tagsToSelectOptions(tags, deskDropdown.value)
+      deskDropdown.appendChild(opts)
     }
   }
 }

@@ -1,7 +1,6 @@
 package shared
 
-import shared.models.{CsAtom, ExplainerUpdate, WorkflowData}
-import shared.models.PublicationStatus
+import shared.models._
 
 import scala.concurrent.Future
 
@@ -17,5 +16,7 @@ trait ExplainerApi {
 
   def getWorkflowData(id:String): WorkflowData
   def setWorkflowData(workflowData: WorkflowData)
+
+  def getTrackingTags(): Future[Seq[CsTag]]
 
 }

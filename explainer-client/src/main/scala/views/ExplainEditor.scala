@@ -1,8 +1,7 @@
 package views
 
 import api.Model
-import components.statusbar.StatusBar
-import components.{ScribeBodyEditor, Sidebar, TagPickers}
+import components.{ScribeBodyEditor, Sidebar, StatusBar, TagPickers}
 import org.scalajs.dom
 import services.PresenceClient
 import shared.models.UpdateField.{Body, DisplayType, RemoveTag, UpdateField}

@@ -102,6 +102,13 @@ class ExplainerApiImpl(
     explainerDB.setWorkflowData(workflowData)
   }
 
+  override def getTrackingTags(): Future[Seq[CsTag]] = {
+    capiService.getTrackingTags.map(tags => {
+      println(tags)
+      tags.map(t => CsTag(t.id, t.webTitle))
+    })
+  }
+
   private def sendKinesisEvent(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {
     if (config.publishToKinesis) {
 
