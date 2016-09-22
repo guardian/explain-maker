@@ -95,6 +95,12 @@
   }
 }
 
+$search-field-width: 300px;
+
+.form-field--search {
+  width: $search-field-width;
+}
+
 .form-search {
   font-size: 0;
   background: url(/assets/images/icons/search.svg) $c-grey-500 center center no-repeat;
@@ -103,5 +109,20 @@
 
   &:hover {
     background: url(/assets/images/icons/search.svg) $c-grey-400 center center no-repeat;
+  }
+}
+
+.form-search--delete {
+  font-size: 0;
+  background: url(/assets/images/icons/cross.svg) transparent center center no-repeat;
+  background-size: 16px;
+  margin-bottom: 10px;
+  padding: 10px 20px;
+  position: relative;
+  left: $search-field-width;
+  opacity: 0.8;
+
+  &:hover {
+    opactiy: 1;
   }
 }

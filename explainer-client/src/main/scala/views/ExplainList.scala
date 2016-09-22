@@ -2,6 +2,7 @@ package views
 
 import api.Model
 import org.scalajs.dom
+import org.scalajs.dom.Event
 import org.scalajs.dom.html.Select
 import shared.models.CsAtom
 
@@ -54,6 +55,12 @@ object ExplainList {
     if(searchQuery != "") {
       insertParamAndRemovePageNumber("titleQuery", searchQuery)
     }
+  }
+
+  @JSExport
+  def clearSearch() = {
+    val search: Select = dom.document.getElementById("explainer-search").asInstanceOf[Select]
+    search.value = ""
   }
 
   @JSExport
