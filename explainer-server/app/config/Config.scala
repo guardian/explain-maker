@@ -63,6 +63,9 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val previewKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.preview", "preview stream name required when kinesis publishing enabled")
   val liveKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.live", "live stream name required when kinesis publishing enabled")
+  val previewReindexKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.reindex-preview", "reindex preview stream name required")
+  val liveReindexKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.reindex-live", "reindex live stream name required")
+
 
   val elkLoggingEnabled = conf.getBoolean("enable.elk.logging") getOrElse true
   val elkKinesisStream = fetchOrErrorOptionalProperty(elkLoggingEnabled, "kinesis.streamName.elk", "elk stream name required when elk logging enabled")

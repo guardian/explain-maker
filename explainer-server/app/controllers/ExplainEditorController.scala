@@ -3,6 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import actions.AuthActions
+import com.gu.atom.data.{PublishedDataStore, PreviewDataStore}
 import com.gu.contentatom.thrift.Atom
 import config.Config
 import db.ExplainerDB
@@ -16,11 +17,17 @@ import shared.util.ExplainerAtomImplicits
 import util.{HelperFunctions, Paginator}
 import services.CAPIService
 
-class ExplainEditorController @Inject() (val publicSettingsService: PublicSettingsService, config: Config, cache: CacheApi)
+class ExplainEditorController @Inject() (
+                                          val publicSettingsService: PublicSettingsService,
+                                          val previewDynamoDataStore: PreviewDataStore,
+                                          val liveDynamoDataStore: PublishedDataStore,
+                                          config: Config,
+                                          cache: CacheApi
+                                        )
   extends Controller with AuthActions with ExplainerAtomImplicits {
 
   val pandaAuthenticated = new PandaAuthenticated(config)
-  val explainerDB = new ExplainerDB(config)
+  val explainerDB = new ExplainerDB(config, previewDynamoDataStore, liveDynamoDataStore)
   val capiService = new CAPIService(config, cache)
 
   def get(id: String) = pandaAuthenticated { implicit request =>

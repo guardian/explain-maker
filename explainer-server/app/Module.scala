@@ -1,8 +1,9 @@
+import com.gu.atom.data.{PublishedExplainerAtomDataStoreProvider, PreviewExplainerAtomDataStoreProvider, PreviewDataStore, PublishedDataStore}
 import services.PublicSettingsService
 import com.google.inject.AbstractModule
-import com.gu.atom.publish.{LiveAtomPublisher, PreviewAtomPublisher}
+import com.gu.atom.publish.{PublishedAtomReindexer, PreviewAtomReindexer, LiveAtomPublisher, PreviewAtomPublisher}
 import config.LogConfig
-import data.{LiveAtomPublisherProvider, PreviewAtomPublisherProvider}
+import data._
 
 /**
   * This class is a Guice module that tells Guice how to bind several
@@ -24,6 +25,18 @@ class Module extends AbstractModule {
 
     bind(classOf[PreviewAtomPublisher])
       .toProvider(classOf[PreviewAtomPublisherProvider])
+
+    bind(classOf[PreviewAtomReindexer])
+      .toProvider(classOf[PreviewReindexerProvider])
+
+    bind(classOf[PublishedAtomReindexer])
+      .toProvider(classOf[PublishedReindexerProvider])
+
+    bind(classOf[PublishedDataStore])
+      .toProvider(classOf[PublishedExplainerAtomDataStoreProvider])
+
+    bind(classOf[PreviewDataStore])
+      .toProvider(classOf[PreviewExplainerAtomDataStoreProvider])
 
     bind(classOf[LogConfig]).asEagerSingleton()
   }
