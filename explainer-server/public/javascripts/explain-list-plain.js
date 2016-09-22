@@ -1,6 +1,6 @@
 const searchForm = $('#search-form');
 const searchField = $('#explainer-search');
-var searchQuery = document.location.search.substring(1).split('&').find(p => p.startsWith('titleQuery')).split('=')[1];
+var searchQuery = document.location.search.substring(1).split('&').find(p => p.startsWith('titleQuery'));
 
 // Stop the page reloading
 searchForm.submit(function(e){
@@ -8,4 +8,4 @@ searchForm.submit(function(e){
 });
 
 
-searchField.val(searchQuery);
+searchField.val(searchQuery.split('=')[1]);
