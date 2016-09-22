@@ -8,7 +8,7 @@ import cats.data.Xor
 import com.gu.contentatom.thrift._
 import config.Config
 import com.gu.scanamo.scrooge.ScroogeDynamoFormat._
-import com.gu.atom.data.{DataStoreResult, PreviewDynamoDataStore, PublishedDynamoDataStore}
+import com.gu.atom.data.{PublishedDataStore, PreviewDataStore, DataStoreResult}
 import com.gu.contentatom.thrift.atom.explainer._
 import shared.util.ExplainerAtomImplicits
 import com.gu.atom.data.ScanamoUtil._
@@ -20,17 +20,11 @@ import shared.models.{WorkflowData, WorkflowStatus}
 import util.HelperFunctions
 
 
-class ExplainerDB @Inject() (config: Config) extends ExplainerAtomImplicits {
-
-  val previewDynamoDataStore = new PreviewDynamoDataStore[ExplainerAtom](config.dynamoClient, config.previewTableName) {
-    def fromAtomData = { case AtomData.Explainer(data) => data }
-    def toAtomData(data: ExplainerAtom) = AtomData.Explainer(data)
-  }
-
-  val liveDynamoDataStore = new PublishedDynamoDataStore[ExplainerAtom](config.dynamoClient, config.liveTableName) {
-    def fromAtomData = { case AtomData.Explainer(data) => data }
-    def toAtomData(data: ExplainerAtom) = AtomData.Explainer(data)
-  }
+class ExplainerDB @Inject() (
+                              config: Config,
+                              val previewDynamoDataStore: PreviewDataStore,
+                              val liveDynamoDataStore: PublishedDataStore
+                            ) extends ExplainerAtomImplicits {
 
   def emptyStringMarkerToEmptyString(s: String) = if (s == "-") "" else s
   def emptyStringToEmptyStringMarker(s: String) = if (s == "") "-" else s
