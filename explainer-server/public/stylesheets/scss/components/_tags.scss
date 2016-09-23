@@ -44,6 +44,9 @@
 .tag__result {
   padding: 5px;
   cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: left;
 
   &:hover {
     background: $light-grey;

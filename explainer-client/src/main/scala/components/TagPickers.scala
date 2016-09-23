@@ -74,8 +74,9 @@ object TagPickers {
   def renderSuggestionSet(tags:List[CapiTag], explainerId:String, suggestionsDivIdentifier:String) = {
     g.jQuery(s"#$suggestionsDivIdentifier").empty()
     tags.foreach( tagObject => {
-      val node = div(cls:="tag__result")(tagObject.webTitle).render
-      node.onclick = (x: Event) => {
+      val node = button(cls:="tag__result")(tagObject.webTitle).render
+      node.onmousedown = (x: Event) => {
+        println("CLICKED")
         Model.updateFieldContent(explainerId, ExplainerUpdate(AddTag, tagObject.id)).map { explainer =>
           redisplayExplainerTagManagementAreas(explainer)
         }
@@ -99,9 +100,11 @@ object TagPickers {
         .map(renderSuggestionSet(_, explainer.id, suggestionsDivIdentifier))
 
     }
-    tagsSearchInputTag.onblur = (x: Event) => {
-      dom.document.getElementById(suggestionsDivIdentifier).innerHTML = ""
+
+    dom.window.onmouseup = (x: Event) => {
+      dom.document.getElementById(suggestionsDivIdentifier).innerHTML= ""
     }
+
     renderTaggingArea(explainer, suggestionsDivIdentifier, "Tags", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
   }
 
@@ -120,7 +123,7 @@ object TagPickers {
         .map(renderSuggestionSet(_, explainer.id, suggestionsDivIdentifier))
 
     }
-    tagsSearchInputTag.onblur = (x: Event) => {
+    dom.window.onmouseup = (x: Event) => {
       dom.document.getElementById(suggestionsDivIdentifier).innerHTML = ""
     }
     renderTaggingArea(explainer, suggestionsDivIdentifier, "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
