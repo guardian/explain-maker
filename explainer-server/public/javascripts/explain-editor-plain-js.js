@@ -14,7 +14,7 @@ function getBodyWordCount(){
     var words = $.trim(innerText).split(/[.!?\s]+/).filter(function (string) {
         return string != "\u200B";
       })
-   
+
     if (!words.length){
         return 0;
     }
@@ -30,7 +30,7 @@ function updateWordCountWarningDisplay() {
     var msg = $(".word-count__message");
     if ( (getBodyWordCount()>maxWordCount) && !$("#expandable").is(':checked') ) {
         msg.show();
-        msg.text("Too long for flat explainer");
+        msg.text("This explainer is too long");
     } else {
         msg.hide();
         msg.text("");
