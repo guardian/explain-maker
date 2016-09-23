@@ -14,49 +14,64 @@
     margin: 0 auto;
 
     &__table {
-        border: 1px solid $dark-grey;
         width: 100%;
         text-align: left;
         background: $text-contrast;
     }
 
     &__header {
-        background: $brand-color;
-        color: $text-contrast;
-        font-weight: bold;
+        padding: 5px;
+        background-color: $c-grey-200;
+        color: $c-grey-700;
+        text-align: left;
         font-size: 13px;
+        font-weight: bold;
     }
 
     &__header, &__item {
         padding: 10px;
     }
 
-    &__item:not(:last-child) {
-        border-right: 1px solid $dark-grey;
+    &__item {
+        padding: 0 5px;
+        text-align: left;
+        font-size: 13px;
+        line-height: 18px;
     }
 
     &__row {
-        &:not(:last-child) .explainer-list__item {
-            border-bottom: 1px solid $dark-grey;
+        background-color: white;
+        border-bottom: 1px solid $c-grey-200;
+        border-left: 5px solid $c-white;
+        border-right: 5px solid $c-white;
+
+        &--ready {
+            border-left: 5px solid #00adee;
+            border-right: 5px solid #00adee;
+            background-color: #edf7f9;
         }
 
-        &:hover .explainer-list__item {
-            background-color: $mid-grey;
+        &:hover {
+            border-left: 5px solid $c-grey-150;
+            border-right: 5px solid $c-grey-150;
+            background-color: $c-grey-150;
         }
     }
 
     &__link {
         font-weight: bold;
         text-decoration: none;
-        color: inherit;
+        color: $c-blue-link;
         cursor: pointer;
+        padding: 5px 0;
+        display: block;
+        width: 300px;
 
         &:hover {
             text-decoration: underline;
         }
     }
 }
-
 
 /* -------------------------------------- */
 /* Presence                               */
