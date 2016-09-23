@@ -10,10 +10,11 @@
 @import shared.models.WorkflowStatus
 @import shared.models.PublicationStatus
 @import shared.models.Available
+@import config.Config
 
 @(explainers: Seq[Atom], user: User, trackingTags: Seq[Tag], desk: Option[String],
         paginationConfig: PaginationConfig, statusMap: Map[String, WorkflowStatus],
-        publicationStatusMap: Map[String, PublicationStatus])(implicit request: RequestHeader)
+        publicationStatusMap: Map[String, PublicationStatus], config: Config)(implicit request: RequestHeader)
 
 @toolbar = {
     <header class="top-toolbar">
@@ -60,15 +61,16 @@
         <div id="dashboard" class="explainer-list">
             <h1>Text Atoms</h1>
             <table class="explainer-list__table">
-                <tr>
+                <tr class="explainer-list__header-row">
                     <th class="explainer-list__header">Title</th>
                     <th class="explainer-list__header">Last modified</th>
                     <th class="explainer-list__header">Created by</th>
                     <th class="explainer-list__header">Publication status</th>
                     <th class="explainer-list__header">Workflow status</th>
+                    @*<th class="explainer-list__header"></th>*@
                 </tr>
                 @for(e <- explainers) {
-                    <tr class="explainer-list__row @{if(publicationStatusMap.get(e.id).map(status => status == Available)){"explainer-list__row--ready"}}">
+                    <tr class="explainer-list__row">
                         <td class="explainer-list__item">
                             <a class="explainer-list__link" href="/explain/@e.id">@{if(ExplainerAtomImplicits.AtomWithData(e).tdata.title.trim.length>0){
                                 ExplainerAtomImplicits.AtomWithData(e).tdata.title
@@ -85,6 +87,10 @@
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
                         <td class="explainer-list__item">@{publicationStatusMap.getOrElse(e.id, "Unknown")}</td>
                         <td class="explainer-list__item">@{statusMap.getOrElse(e.id, "Unknown status")}</td>
+                        @*<td class="explainer-list__item">*@
+                            @*<a href="@config.ophanUrl@e.id">*@
+                            @*<i class="i-ophan"></i>*@
+                        @*</a></td>*@
                     </tr>
                 }
             </table>

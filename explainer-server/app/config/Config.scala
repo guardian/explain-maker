@@ -40,6 +40,8 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val interactiveUrl = conf.getString("interactive.url")
 
+  val ophanUrl = "https://dashboard.ophan.co.uk/interaction/textAtomInteraction?days=2&platform=all&country=all&interaction-component=explainer_feedback__"
+
   lazy val region = {
     val r = conf.getString("aws.region").map(Regions.fromName).getOrElse(Regions.EU_WEST_1)
     Region.getRegion(r)

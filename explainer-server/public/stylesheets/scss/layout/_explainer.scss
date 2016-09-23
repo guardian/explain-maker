@@ -21,11 +21,6 @@
 
     &__header {
         padding: 5px;
-        background-color: $c-grey-200;
-        color: $c-grey-700;
-        text-align: left;
-        font-size: 13px;
-        font-weight: bold;
     }
 
     &__header, &__item {
@@ -40,22 +35,32 @@
     }
 
     &__row {
-        background-color: white;
-        border-bottom: 1px solid $c-grey-200;
-        border-left: 5px solid $c-white;
-        border-right: 5px solid $c-white;
-
-        &--ready {
-            border-left: 5px solid #00adee;
-            border-right: 5px solid #00adee;
-            background-color: #edf7f9;
-        }
+        background-color: #edf7f9;
+        border: {
+            bottom: 1px solid $c-grey-200;
+            left: 5px solid #00adee;
+            right: 5px solid #00adee;
+        };
 
         &:hover {
-            border-left: 5px solid $c-grey-150;
-            border-right: 5px solid $c-grey-150;
+            border: {
+                left: 5px solid $c-grey-150;
+                right: 5px solid $c-grey-150;
+            };
             background-color: $c-grey-150;
         }
+    }
+
+    &__header-row {
+        background-color: $c-grey-200;
+        border: {
+            left: 5px solid $c-grey-200;
+            right: 5px solid $c-grey-200;
+        };
+        color: $c-grey-700;
+        text-align: left;
+        font-size: 13px;
+        font-weight: bold;
     }
 
     &__link {
