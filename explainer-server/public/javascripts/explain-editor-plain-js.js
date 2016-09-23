@@ -6,19 +6,19 @@ var explainEditor = views.ExplainEditor();
  */
 function getBodyWordCount(){
 
-    var elem = $(".scribe-body-editor__textarea").clone()
-    var notes = elem.find("gu-note")
-    notes.remove()
+    var elem = $(".scribe-body-editor__textarea").clone();
+    var notes = elem.find("gu-note");
+    notes.remove();
     var innerText = elem[0].innerText;
 
     var words = $.trim(innerText).split(/[.!?\s]+/).filter(function (string) {
         return string != "\u200B";
       })
 
-    if (!words.length){
+    if (!words.length) {
         return 0;
     }
-    return words.length
+    return words.length;
 }
 const maxWordCount = 100;
 function updateWordCountDisplay() {
