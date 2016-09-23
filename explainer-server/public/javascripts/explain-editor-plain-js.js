@@ -9,7 +9,7 @@ function getBodyWordCount(){
     if (!trimmedInnerText.length){
         return 0;
     }
-    return trimmedInnerText.split(" ").length;
+    return trimmedInnerText.split(/[.!?\s]+/).length;
 }
 const maxWordCount = 100;
 function updateWordCountDisplay() {
