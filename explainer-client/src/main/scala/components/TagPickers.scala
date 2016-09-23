@@ -76,7 +76,6 @@ object TagPickers {
     tags.foreach( tagObject => {
       val node = button(cls:="tag__result")(tagObject.webTitle).render
       node.onmousedown = (x: Event) => {
-        println("CLICKED")
         Model.updateFieldContent(explainerId, ExplainerUpdate(AddTag, tagObject.id)).map { explainer =>
           redisplayExplainerTagManagementAreas(explainer)
         }
