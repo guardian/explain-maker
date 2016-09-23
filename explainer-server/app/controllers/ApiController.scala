@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 import actions.AuthActions
 import autowire.Core.Request
+import com.gu.atom.data.{PublishedDataStore, PreviewDataStore}
 import com.gu.atom.publish.{LiveAtomPublisher, PreviewAtomPublisher}
 import config.Config
 import play.api.cache.CacheApi
@@ -22,6 +23,8 @@ class ApiController @Inject() (val config: Config,
   val previewAtomPublisher: PreviewAtomPublisher,
   val publicSettingsService: PublicSettingsService,
   val liveAtomPublisher: LiveAtomPublisher,
+  val previewDynamoDataStore: PreviewDataStore,
+  val liveDynamoDataStore: PublishedDataStore,
   cache: CacheApi) extends Controller with AuthActions {
 
   val pandaAuthenticated = new PandaAuthenticated(config)
@@ -32,7 +35,15 @@ class ApiController @Inject() (val config: Config,
       path.split("/"),
       upickle.json.read(request.body.toString()).asInstanceOf[Js.Obj].value.toMap
     )
-    val api = new ExplainerApiImpl(config, previewAtomPublisher, liveAtomPublisher, publicSettingsService, request.user.user, cache)
+    val api = new ExplainerApiImpl(
+      config,
+      previewAtomPublisher,
+      liveAtomPublisher,
+      previewDynamoDataStore,
+      liveDynamoDataStore,
+      publicSettingsService,
+      request.user.user, cache
+    )
     AutowireServer.route[ExplainerApi](api)(autowireRequest).map(responseJS => {
       Ok(upickle.json.write(responseJS))
     })
