@@ -44,7 +44,7 @@ class ExplainEditorController @Inject() (
     )
     Ok(views.html.explainEditor(id, request.user, viewConfig))
   }
-
+  
   def listExplainers(desk: Option[String], pageNumber: Int = 1, titleQuery: Option[String]) = pandaAuthenticated.async{ implicit request =>
 
     def sorting(e1: Atom, e2: Atom): Boolean = {
@@ -75,7 +75,7 @@ class ExplainEditorController @Inject() (
         (e.id, HelperFunctions.getExplainerStatus(e, explainerDB))).toMap
 
       Ok(views.html.explainList(explainersForPage, request.user.user, trackingTagsInUse, desk, paginationConfig,
-        wfStatusMap, publicationStatusMap))
+        wfStatusMap, publicationStatusMap, config))
 
     }
     val dbRes = resultFromDB.recover{ case err =>
