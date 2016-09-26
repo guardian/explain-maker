@@ -66,7 +66,7 @@ object Sidebar {
   }
 
   def workflowStatusDropdown(id: String, currentStatus: WorkflowStatus) = {
-    val dropdown = select(cls := "workflow-status-select")(wfStatusOptions(currentStatus)).render
+    val dropdown = select(cls := "form-field form-field--select")(wfStatusOptions(currentStatus)).render
     dropdown.onchange = (x:Event) => {
       Model.setWorkflowData(WorkflowData(id, WorkflowStatus(dropdown.value)))
     }
