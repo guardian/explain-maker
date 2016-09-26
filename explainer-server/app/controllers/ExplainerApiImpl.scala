@@ -1,5 +1,7 @@
 package controllers
 
+import com.gu.atom.data.{PublishedDataStore, PreviewDataStore}
+
 import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -26,11 +28,13 @@ class ExplainerApiImpl(
   config: Config,
   previewAtomPublisher: PreviewAtomPublisher,
   liveAtomPublisher: LiveAtomPublisher,
+  previewDynamoDataStore: PreviewDataStore,
+  liveDynamoDataStore: PublishedDataStore,
   val publicSettingsService: PublicSettingsService,
   user: PandaUser,
   cache: CacheApi) extends ExplainerApi {
 
-  val explainerDB = new ExplainerDB(config)
+  val explainerDB = new ExplainerDB(config, previewDynamoDataStore, liveDynamoDataStore)
   val capiService = new CAPIService(config, cache)
 
   override def create(): Future[CsAtom] = {

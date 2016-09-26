@@ -3,7 +3,9 @@
 # ~~~~
 
 # Explain List
-GET           /                            controllers.ExplainEditorController.listExplainers(desk: Option[String], pageNumber: Int = 1)
+
+GET           /                            controllers.ExplainEditorController.listExplainers(desk: Option[String], pageNumber: Int = 1, titleQuery: Option[String])
+
 # Explain Editor
 GET           /explain/:id                 controllers.ExplainEditorController.get(id)
 
@@ -15,6 +17,11 @@ GET           /assets/*file                controllers.Assets.at(path="/public",
 
 GET           /healthcheck                 controllers.Healthcheck.healthcheck
 
+# reindex
+POST    /reindex-preview                    com.gu.atom.play.ReindexController.newPreviewReindexJob()
+POST    /reindex-publish                    com.gu.atom.play.ReindexController.newPublishedReindexJob()
+GET     /reindex-preview                    com.gu.atom.play.ReindexController.previewReindexJobStatus()
+GET     /reindex-publish                    com.gu.atom.play.ReindexController.publishedReindexJobStatus()
 
 
 

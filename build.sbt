@@ -36,6 +36,7 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
     "org.webjars" % "jquery" % "2.1.4",
     "org.webjars" % "font-awesome" % "4.4.0",
     "com.gu" %% "atom-publisher-lib" % "0.1.3-SNAPSHOT",
+    "com.gu" %% "atom-manager-play" % "0.1.3-SNAPSHOT",
     "com.twitter" %% "scrooge-core" % "4.5.0",
     "com.gu" %% "scanamo-scrooge" % "0.1.2",
     "com.amazonaws" % "aws-java-sdk-ec2" % awsVersion,

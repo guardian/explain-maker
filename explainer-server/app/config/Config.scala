@@ -35,10 +35,21 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
     case "DEV" => "http://content.guardianapis.com"
   }
 
+  val capiPreviewUrl = stage match {
+    case "CODE" => "preview.content.code.dev-guardianapis.com"
+    case "PROD" => "preview.content.guardianapis.com"
+    case "DEV" => "preview.content.guardianapis.com"
+  }
+
+  val capiPreviewUsername = conf.getString("capi.preview.username")
+  val capiPreviewPassword = conf.getString("capi.preview.password")
+
   val presenceEnabled = conf.getBoolean("enable.presence") getOrElse true
   val presenceEndpointURL = fetchOrErrorOptionalProperty(presenceEnabled, "presence.endpoint", "presence endpoint required when presence enabled")
 
   val interactiveUrl = conf.getString("interactive.url")
+
+  val ophanUrl = "https://dashboard.ophan.co.uk/interaction/textAtomInteraction?days=2&platform=all&country=all&interaction-component=explainer_feedback__"
 
   lazy val region = {
     val r = conf.getString("aws.region").map(Regions.fromName).getOrElse(Regions.EU_WEST_1)
@@ -54,6 +65,9 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val previewKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.preview", "preview stream name required when kinesis publishing enabled")
   val liveKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.live", "live stream name required when kinesis publishing enabled")
+  val previewReindexKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.reindex-preview", "reindex preview stream name required")
+  val liveReindexKinesisStreamName = fetchOrErrorOptionalProperty(publishToKinesis, "kinesis.streamName.reindex-live", "reindex live stream name required")
+
 
   val elkLoggingEnabled = conf.getBoolean("enable.elk.logging") getOrElse true
   val elkKinesisStream = fetchOrErrorOptionalProperty(elkLoggingEnabled, "kinesis.streamName.elk", "elk stream name required when elk logging enabled")
