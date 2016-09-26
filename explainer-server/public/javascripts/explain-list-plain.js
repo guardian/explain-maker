@@ -7,5 +7,6 @@ searchForm.submit(function(e){
   e.preventDefault()
 });
 
-
-searchField.val(searchQuery.split('=')[1]);
+if(searchQuery) {
+  searchField.val(searchQuery.split('=')[1]);
+}

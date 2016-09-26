@@ -61,6 +61,7 @@ object ExplainList {
   def clearSearch() = {
     val search: Select = dom.document.getElementById("explainer-search").asInstanceOf[Select]
     search.value = ""
+    insertParamAndRemovePageNumber("titleQuery", search.value)
   }
 
   @JSExport
