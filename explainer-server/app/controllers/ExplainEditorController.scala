@@ -44,15 +44,16 @@ class ExplainEditorController @Inject() (
     )
     Ok(views.html.explainEditor(id, request.user, viewConfig))
   }
+  
+  def listExplainers(desk: Option[String], pageNumber: Int = 1, titleQuery: Option[String]) = pandaAuthenticated.async{ implicit request =>
 
-  def listExplainers(desk: Option[String], pageNumber: Int = 1) = pandaAuthenticated.async{ implicit request =>
     def sorting(e1: Atom, e2: Atom): Boolean = {
       val time1:Long = e1.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
       val time2:Long = e2.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
       time1 > time2
     }
 
-    val result = for {
+    val resultFromDB = for {
       explainers <- explainerDB.all
       trackingTags <- capiService.getTrackingTags
     } yield {
@@ -60,12 +61,15 @@ class ExplainEditorController @Inject() (
       val trackingTagsInUse = trackingTags.filter(t => explainers.flatMap(_.tdata.tags.getOrElse(Seq())).distinct.contains(t.id))
 
       val explainersForDesk = desk.fold(explainers)(d => explainers.filter(_.tdata.tags.exists(_.contains(d))))
-      val explainersWithSorting = explainersForDesk.sortWith(sorting)
+      val explainersForTitleQuery = titleQuery.fold(explainersForDesk)(q => explainersForDesk.filter(_.tdata.title.toUpperCase.contains(q.toUpperCase)))
+      val explainersWithSorting = explainersForTitleQuery.sortWith(sorting)
       val explainersForPage = Paginator.selectPageExplainers(explainersWithSorting, pageNumber, config.ExplainListPageSize)
 
       val paginationConfig = Paginator.getPaginationConfig(pageNumber, desk, explainersWithSorting, config.ExplainListPageSize)
 
-      val workflowData = explainerDB.getWorkflowData(explainersForPage.map(_.id).toList)
+      val workflowData = if (explainersForPage.nonEmpty) {
+        explainerDB.getWorkflowData(explainersForPage.map(_.id).toList)
+      } else List()
       val wfStatusMap = workflowData.map(d => (d.id, d.status)).toMap
       val publicationStatusMap = explainersForPage.map(e =>
         (e.id, HelperFunctions.getExplainerStatus(e, explainerDB))).toMap
@@ -74,9 +78,12 @@ class ExplainEditorController @Inject() (
         wfStatusMap, publicationStatusMap, config))
 
     }
-    result.recover{ case err =>
+    val dbRes = resultFromDB.recover{ case err =>
       Logger.error("Error fetching explainers from dynamo", err)
       InternalServerError(err.getMessage)
     }
+
+    dbRes
+
   }
 }
