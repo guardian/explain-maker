@@ -53,12 +53,8 @@ class ExplainEditorController @Inject() (
       time1 > time2
     }
 
-    val resultFromDB = for {
-      explainers <- explainerDB.all
-      trackingTags <- capiService.getTrackingTags
-    } yield {
+    val explainListPage = explainerDB.all.map{ explainers =>
 
-      val trackingTagsInUse = trackingTags.filter(t => explainers.flatMap(_.tdata.tags.getOrElse(Seq())).distinct.contains(t.id))
 
       val explainersForDesk = desk.fold(explainers)(d => explainers.filter(_.tdata.tags.exists(_.contains(d))))
       val explainersForTitleQuery = titleQuery.fold(explainersForDesk)(q => explainersForDesk.filter(_.tdata.title.toUpperCase.contains(q.toUpperCase)))
@@ -74,16 +70,14 @@ class ExplainEditorController @Inject() (
       val publicationStatusMap = explainersForPage.map(e =>
         (e.id, HelperFunctions.getExplainerStatus(e, explainerDB))).toMap
 
-      Ok(views.html.explainList(explainersForPage, request.user.user, trackingTagsInUse, desk, paginationConfig,
-        wfStatusMap, publicationStatusMap, config))
-
+      Ok(views.html.explainList(explainersForPage, request.user.user, desk, paginationConfig,
+          wfStatusMap, publicationStatusMap, config))
     }
-    val dbRes = resultFromDB.recover{ case err =>
+
+    explainListPage.recover{ case err =>
       Logger.error("Error fetching explainers from dynamo", err)
       InternalServerError(err.getMessage)
     }
-
-    dbRes
 
   }
 }

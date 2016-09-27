@@ -1,11 +1,10 @@
 package services
 
 import fr.hmil.roshttp.HttpRequest
-import models.Tag
+import shared.models.CsTag
 import upickle.default._
 
 import scala.concurrent.Future
-
 import scala.scalajs.js.JSON
 import scala.scalajs.js.Dynamic.{global => g}
 
@@ -18,7 +17,7 @@ object CAPIClient {
   // client side, we have to always query PROD capi as CODE isn't available on https
   val capiUrl = "https://content.guardianapis.com"
 
-  def capiTagRequest(parameters: Seq[(String, String)]): Future[List[Tag]] = {
+  def capiTagRequest(parameters: Seq[(String, String)]): Future[List[CsTag]] = {
     import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -27,6 +26,6 @@ object CAPIClient {
     val request = HttpRequest(s"$capiUrl/tags")
       .withQueryParameters(parametersWithApiKey:_*)
 
-    request.send().map(response => read[List[Tag]](JSON.stringify(JSON.parse(response.body).response.results)))
+    request.send().map(response => read[List[CsTag]](JSON.stringify(JSON.parse(response.body).response.results)))
   }
 }

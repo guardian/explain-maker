@@ -1,11 +1,11 @@
-package components.statusbar
+package components
 
 import models.{RenderedStatusLabel, StatusLabel}
 import org.scalajs.dom
+import org.scalajs.dom.html.Button
 import shared.models._
 
 import scalatags.JsDom.all._
-import org.scalajs.dom.html.Button
 
 object StatusBar {
 

@@ -12,8 +12,7 @@
 @import shared.models.{Available, Draft, UnlaunchedChanges}
 @import config.Config
 
-@import shared.models.UnlaunchedChanges
-@(explainers: Seq[Atom], user: User, trackingTags: Seq[Tag], desk: Option[String],
+@(explainers: Seq[Atom], user: User, desk: Option[String],
         paginationConfig: PaginationConfig, statusMap: Map[String, WorkflowStatus],
         publicationStatusMap: Map[String, PublicationStatus], config: Config)(implicit request: RequestHeader)
 
@@ -36,9 +35,6 @@
                                class="top-toolbar__item__dropdown">
 
                                 <option value="all-desks" @{if(desk.isEmpty){"selected"}}>All desks</option>
-                                @for(t <- trackingTags) {
-                                    <option value="@t.id" @{if(desk.contains(t.id)){"selected"}}>@t.webTitle</option>
-                                }
                             </select>
                         </label>
                     </li>
@@ -115,6 +111,5 @@
             </div>
         </div>
     </div>
-
-    <script src="@routes.Assets.at("javascripts/explain-list-plain.js")"></script>
+    <script src="@routes.Assets.at("javascripts/explain-list-plain-js.js")"></script>
 }

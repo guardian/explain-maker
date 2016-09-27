@@ -43,9 +43,4 @@ object CsAtom extends ExplainerAtomImplicits {
 
 }
 
-// play json converters - not currently needed
-
-//  implicit val csUserFormats = Json.format[CsContentChangeDetails]
-//  implicit val csChangeRecordFormats = Json.format[CsChangeRecord]
-//  implicit val csExplainerAtomFormats = Json.format[CsExplainerAtom]
-//  implicit val csAtomFormats = Json.format[CsAtom]
+case class CsTag(id:String, webTitle: String)
