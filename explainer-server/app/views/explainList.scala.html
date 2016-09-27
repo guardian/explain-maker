@@ -97,10 +97,10 @@
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
                         <td class="explainer-list__item">@{publicationStatusMap.getOrElse(e.id, "Unknown")}</td>
                         <td class="explainer-list__item">@{statusMap.getOrElse(e.id, "Unknown status")}</td>
-                        @*<td class="explainer-list__item">*@
-                            @*<a href="@config.ophanUrl@e.id">*@
-                            @*<i class="i-ophan"></i>*@
-                        @*</a></td>*@
+                        <td class="explainer-list__item">
+                            <a href="https://dashboard.ophan.co.uk/interaction/textAtomInteraction?days=7&platform=all&interaction-component=explainer_feedback__@e.id">
+                            <i class="i-ophan"></i>
+                        </a></td>
                     </tr>
                 }
             </table>
