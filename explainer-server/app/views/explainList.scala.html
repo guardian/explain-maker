@@ -9,9 +9,10 @@
 @import util.PaginationConfig
 @import shared.models.WorkflowStatus
 @import shared.models.PublicationStatus
-@import shared.models.Available
+@import shared.models.{Available, Draft, UnlaunchedChanges}
 @import config.Config
 
+@import shared.models.UnlaunchedChanges
 @(explainers: Seq[Atom], user: User, trackingTags: Seq[Tag], desk: Option[String],
         paginationConfig: PaginationConfig, statusMap: Map[String, WorkflowStatus],
         publicationStatusMap: Map[String, PublicationStatus], config: Config)(implicit request: RequestHeader)
@@ -77,7 +78,7 @@
                     <th class="explainer-list__header">Created by</th>
                     <th class="explainer-list__header">Publication status</th>
                     <th class="explainer-list__header">Workflow status</th>
-                    @*<th class="explainer-list__header"></th>*@
+                    <th class="explainer-list__header">Ophan</th>
                 </tr>
                 @for(e <- explainers) {
                     <tr class="explainer-list__row">
@@ -98,9 +99,12 @@
                         <td class="explainer-list__item">@{publicationStatusMap.getOrElse(e.id, "Unknown")}</td>
                         <td class="explainer-list__item">@{statusMap.getOrElse(e.id, "Unknown status")}</td>
                         <td class="explainer-list__item">
-                            <a href="https://dashboard.ophan.co.uk/interaction/textAtomInteraction?days=7&platform=all&interaction-component=explainer_feedback__@e.id">
-                            <i class="i-ophan"></i>
-                        </a></td>
+                            <div class="@{if(publicationStatusMap.get(e.id).exists(s => s != Available && s != UnlaunchedChanges)){"ophan-link-hidden"}}">
+                                    <a target="_blank" href="https://dashboard.ophan.co.uk/interaction/textAtomInteraction?days=7&platform=all&interaction-component=explainer_feedback__@e.id">
+                                    <i class="i-ophan"></i>
+                                    </a></div>
+
+                        </td>
                     </tr>
                 }
             </table>
