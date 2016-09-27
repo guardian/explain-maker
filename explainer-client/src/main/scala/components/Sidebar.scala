@@ -124,6 +124,7 @@ object Sidebar {
   def sidebar(explainer: CsAtom, status: PublicationStatus, workflowStatus: WorkflowStatus) = {
     val checkboxId = "expandable"
     form()(
+      span(cls:="text-atom-guide-link")(a(href:="https://docs.google.com/document/d/1-o4kOXINgsxxotUYlkEoyqcwnJLrtc54Nv7m2S3l_7c/edit?ts=57e13f8a", target:="_blank")("Text Atom Guide")),
       div(cls:="form-row")(
         div(cls:="form-label")("Text Atom Title"),
         title(explainer)
