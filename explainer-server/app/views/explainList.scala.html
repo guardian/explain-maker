@@ -9,7 +9,7 @@
 @import util.PaginationConfig
 @import shared.models.WorkflowStatus
 @import shared.models.PublicationStatus
-@import shared.models.Available
+@import shared.models.{Available, Draft, UnlaunchedChanges}
 @import config.Config
 
 @(explainers: Seq[Atom], user: User, desk: Option[String],
@@ -35,9 +35,6 @@
                                class="top-toolbar__item__dropdown">
 
                                 <option value="all-desks" @{if(desk.isEmpty){"selected"}}>All desks</option>
-                                @*for(t <- trackingTags) {*@
-                                    @*<option value="@t.id" @{if(desk.contains(t.id)){"selected"}}>@t.webTitle</option>*@
-                                @*}*@
                             </select>
                         </label>
                     </li>
@@ -77,7 +74,7 @@
                     <th class="explainer-list__header">Created by</th>
                     <th class="explainer-list__header">Publication status</th>
                     <th class="explainer-list__header">Workflow status</th>
-                    @*<th class="explainer-list__header"></th>*@
+                    <th class="explainer-list__header">Ophan</th>
                 </tr>
                 @for(e <- explainers) {
                     <tr class="explainer-list__row">
@@ -97,10 +94,13 @@
                         <td class="explainer-list__item">@{getCreatedByString(e)}</td>
                         <td class="explainer-list__item">@{publicationStatusMap.getOrElse(e.id, "Unknown")}</td>
                         <td class="explainer-list__item">@{statusMap.getOrElse(e.id, "Unknown status")}</td>
-                        @*<td class="explainer-list__item">*@
-                            @*<a href="@config.ophanUrl@e.id">*@
-                            @*<i class="i-ophan"></i>*@
-                        @*</a></td>*@
+                        <td class="explainer-list__item">
+                            <div class="@{if(publicationStatusMap.get(e.id).exists(s => s != Available && s != UnlaunchedChanges)){"ophan-link-hidden"}}">
+                                    <a target="_blank" href="https://dashboard.ophan.co.uk/interaction/textAtomInteraction?days=7&platform=all&interaction-component=explainer_feedback__@e.id">
+                                    <i class="i-ophan"></i>
+                                    </a></div>
+
+                        </td>
                     </tr>
                 }
             </table>

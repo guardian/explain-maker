@@ -89,17 +89,32 @@ object TagPickers {
       cls:="form-field",
       placeholder:="Tag search"
     )
+
     val tagsSearchInputTag = tagsSearchInput().render
-    tagsSearchInputTag.oninput = (x: Event) => {
+
+    def searchTags() = {
       val queryValue: String = dom.document.getElementById("explainer-editor__tags__tag-search-input-field").asInstanceOf[Input].value
 
       CAPIClient.capiTagRequest(Seq("type" -> "keyword", "q" -> queryValue))
         .map(renderSuggestionSet(_, explainer.id, suggestionsDivIdentifier))
+    }
 
+    def clearSuggestions() = {
+      dom.document.getElementById(suggestionsDivIdentifier).innerHTML= ""
+    }
+
+    tagsSearchInputTag.oninput = (x: Event) => {
+      searchTags()
+    }
+
+    dom.window.onkeydown = (x: KeyboardEvent) => {
+      if(x.key == "Escape") {
+        clearSuggestions()
+      }
     }
 
     dom.window.onmouseup = (x: Event) => {
-      dom.document.getElementById(suggestionsDivIdentifier).innerHTML= ""
+      clearSuggestions()
     }
 
     renderTaggingArea(explainer, suggestionsDivIdentifier, "Tags", tagsSearchInputTag, { tagId => !tagId.startsWith("tracking") })
@@ -113,16 +128,32 @@ object TagPickers {
       placeholder:="Commissioning desk"
     )
     val tagsSearchInputTag = tagsSearchInput().render
-    tagsSearchInputTag.oninput = (x: Event) => {
+
+    def searchTags() = {
       val queryValue: String = dom.document.getElementById("explainer-editor__commissioning-desk-tags__tag-search-input-field").asInstanceOf[Input].value
 
       CAPIClient.capiTagRequest(Seq("type" -> "tracking", "q" -> queryValue))
         .map(renderSuggestionSet(_, explainer.id, suggestionsDivIdentifier))
-
     }
-    dom.window.onmouseup = (x: Event) => {
+
+    def clearSuggestions() = {
       dom.document.getElementById(suggestionsDivIdentifier).innerHTML = ""
     }
+
+    tagsSearchInputTag.oninput = (x: Event) => {
+      searchTags()
+    }
+
+    dom.window.onkeydown = (x: KeyboardEvent) => {
+      if(x.key == "Escape") {
+        clearSuggestions()
+      }
+    }
+
+    dom.window.onmouseup = (x: Event) => {
+      clearSuggestions()
+    }
+
     renderTaggingArea(explainer, suggestionsDivIdentifier, "Commissioning Desk", tagsSearchInputTag, { tagId => tagId.startsWith("tracking") })
   }
 
