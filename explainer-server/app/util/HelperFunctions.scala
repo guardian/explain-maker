@@ -44,6 +44,10 @@ object HelperFunctions {
     User(user.email, Some(user.firstName), Some(user.lastName))
   }
 
+  def renderDefaultHtml(explainerData: AtomData.Explainer): String = {
+    views.html.defaultHtml(explainerData).body
+  }
+
   def contentChangeDetailsBuilder(user: PandaUser, existingContentChangeDetails: Option[ContentChangeDetails], updateCreated: Boolean = false,
     updateLastModified: Boolean = false, updatePublished: Boolean = false): ContentChangeDetails = {
     def buildChangeRecord(existingRecord: Option[ChangeRecord], shouldUpdate: Boolean) = {

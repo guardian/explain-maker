@@ -1,0 +1,10 @@
+@(atom: com.gu.contentatom.thrift.AtomData.Explainer)
+
+<figure class="element element-explainer element-atom">
+  @if(!atom.explainer.title.isEmpty) {
+    <h1>@atom.explainer.title</h1>
+  }
+  @if(!atom.explainer.body.isEmpty) {
+    <div>@atom.explainer.body</div>
+  }
+</figure>

@@ -20,7 +20,7 @@ import shared.models.{CsAtom, ExplainerUpdate, WorkflowData}
 import shared.util.ExplainerAtomImplicits._
 import com.gu.pandomainauth.model.{User => PandaUser}
 import shared.models._
-import util.HelperFunctions.{applyExplainerUpdate, contentChangeDetailsBuilder, getExplainerStatus}
+import util.HelperFunctions.{applyExplainerUpdate, contentChangeDetailsBuilder, getExplainerStatus, renderDefaultHtml}
 import util.NotingHelper
 
 
@@ -38,11 +38,14 @@ class ExplainerApiImpl(
   val capiService = new CAPIService(config, cache)
 
   override def create(): Future[CsAtom] = {
+
+    val atomData = AtomData.Explainer(ExplainerAtom("", "", ThriftDisplayType.Flat))
+
     val explainer = Atom(
       id = java.util.UUID.randomUUID.toString,
       atomType = AtomType.Explainer,
-      defaultHtml = "-",
-      data = AtomData.Explainer(ExplainerAtom("", "", ThriftDisplayType.Flat)),
+      defaultHtml = renderDefaultHtml(atomData),
+      data = atomData,
       contentChangeDetails = contentChangeDetailsBuilder(user, None, updateCreated = true, updateLastModified = true)
     )
     explainerDB.create(explainer)
@@ -55,8 +58,12 @@ class ExplainerApiImpl(
 
   override def update(id: String, update: ExplainerUpdate): Future[CsAtom] = {
     explainerDB.load(id).map( explainer => {
+
+      val updatedAtomData = applyExplainerUpdate(explainer.tdata, update)
+
       val updatedExplainer = explainer.copy(
-        data = applyExplainerUpdate(explainer.tdata, update),
+        data = updatedAtomData,
+        defaultHtml = renderDefaultHtml(updatedAtomData),
         contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails),updateLastModified = true)
       )
       explainerDB.update(updatedExplainer)
