@@ -103,10 +103,10 @@
                         <td class="explainer-list__item">@{statusMap.getOrElse(e.id, "Unknown status")}</td>
                         <td class="explainer-list__item">
                             <div class="@{if(publicationStatusMap.get(e.id).exists(s => s != Available && s != UnlaunchedChanges)){"ophan-link-hidden"}}">
-                                    <a target="_blank" href="https://dashboard.ophan.co.uk/interaction/textAtomInteraction?days=7&platform=all&interaction-component=explainer_feedback__@e.id">
-                                    <i class="i-ophan"></i>
-                                    </a></div>
-
+                                <a target="_blank" href="https://dashboard.ophan.co.uk/interaction/textAtomInteraction?days=7&platform=all&interaction-component=explainer_feedback__@e.id">
+                                    <i class="block-center i-ophan"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 }
