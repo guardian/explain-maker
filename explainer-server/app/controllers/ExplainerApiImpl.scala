@@ -20,8 +20,9 @@ import shared.models.{CsAtom, ExplainerUpdate, WorkflowData}
 import shared.util.ExplainerAtomImplicits._
 import com.gu.pandomainauth.model.{User => PandaUser}
 import shared.models._
-import util.HelperFunctions.{applyExplainerUpdate, contentChangeDetailsBuilder, getExplainerStatus, renderDefaultHtml}
+import util.HelperFunctions.{applyExplainerUpdate, contentChangeDetailsBuilder, getExplainerStatus}
 import util.NotingHelper
+import shared.util.SharedHelperFunctions.generateDefaultHtml
 
 
 class ExplainerApiImpl(
@@ -44,7 +45,7 @@ class ExplainerApiImpl(
     val explainer = Atom(
       id = java.util.UUID.randomUUID.toString,
       atomType = AtomType.Explainer,
-      defaultHtml = renderDefaultHtml(atomData),
+      defaultHtml = generateDefaultHtml(atomData.explainer),
       data = atomData,
       contentChangeDetails = contentChangeDetailsBuilder(user, None, updateCreated = true, updateLastModified = true)
     )
@@ -63,7 +64,7 @@ class ExplainerApiImpl(
 
       val updatedExplainer = explainer.copy(
         data = updatedAtomData,
-        defaultHtml = renderDefaultHtml(updatedAtomData),
+        defaultHtml = generateDefaultHtml(updatedAtomData.explainer),
         contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails),updateLastModified = true)
       )
       explainerDB.update(updatedExplainer)
@@ -121,7 +122,6 @@ class ExplainerApiImpl(
 
   private def sendKinesisEvent(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {
     if (config.publishToKinesis) {
-
       //Remove notes before sending to CAPI
       val cleanedExplainer = explainer.updateData((data) => {
         data.copy(
