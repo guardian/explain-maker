@@ -1,6 +1,6 @@
 package controllers
 
-import com.gu.atom.data.{PublishedDataStore, PreviewDataStore}
+import com.gu.atom.data.{PreviewDataStore, PublishedDataStore}
 
 import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -19,9 +19,10 @@ import shared.ExplainerApi
 import shared.models.{CsAtom, ExplainerUpdate, WorkflowData}
 import shared.util.ExplainerAtomImplicits._
 import com.gu.pandomainauth.model.{User => PandaUser}
+import play.api.libs.ws.WSClient
 import shared.models._
 import util.HelperFunctions.{applyExplainerUpdate, contentChangeDetailsBuilder, getExplainerStatus}
-import util.NotingHelper
+import util.{HelperFunctions, NotingHelper}
 
 
 class ExplainerApiImpl(
@@ -32,7 +33,8 @@ class ExplainerApiImpl(
   liveDynamoDataStore: PublishedDataStore,
   val publicSettingsService: PublicSettingsService,
   user: PandaUser,
-  cache: CacheApi) extends ExplainerApi {
+  cache: CacheApi,
+  ws: WSClient) extends ExplainerApi {
 
   val explainerDB = new ExplainerDB(config, previewDynamoDataStore, liveDynamoDataStore)
   val capiService = new CAPIService(config, cache)
@@ -73,6 +75,9 @@ class ExplainerApiImpl(
       explainerDB.update(updatedExplainer)
       explainerDB.publish(updatedExplainer)
       sendKinesisEvent(updatedExplainer, s"Publishing explainer ${updatedExplainer.id} to LIVE kinesis", liveAtomPublisher)
+      HelperFunctions.sendFastlyPurgeRequest(id)(ws).foreach{ r =>
+          Logger.debug(s"Fastly purge request result: ${r.status} ${r.statusText}, ${r.body}")
+      }
       CsAtom.atomToCsAtom(updatedExplainer)
     }
   }
