@@ -118,7 +118,7 @@ class ExplainerApiImpl(
   def sendFastlyPurgeRequest(id: String) = {
     if (config.fastlyPurgingEnabled) {
       val purgeRequest = ws.url(s"https://explainers-api.guim.co.uk/atom/explainer/$id").withMethod("PURGE").withHeaders(("Fastly-Key", config.fastlyAPIKey))
-      Future(Thread.sleep(5000)).onComplete{ _ =>
+      Future(Thread.sleep(4000)).onComplete{ _ =>
         purgeRequest.execute().foreach{ r =>
           Logger.debug(s"Fastly purge request result: ${r.status} ${r.statusText}, ${r.body}")
         }

@@ -151,7 +151,7 @@ $toolbarHeight: 50px;
   height: 100%;
 }
 
-.save-state {
+.publication-state .save-state {
   position: relative;
 
   &__icon {
@@ -163,11 +163,35 @@ $toolbarHeight: 50px;
   }
 
   &--loading {
+    .publication-state__icon
     .save-state__icon {
       visibility: visible;
     }
 
+    .publication-state__message
     .save-state__message {
+      visibility: hidden;
+    }
+  }
+}
+
+.publication-state {
+  position: relative;
+
+  &__icon {
+    visibility: hidden;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &--loading {
+    .publication-state__icon {
+      visibility: visible;
+    }
+
+    .publication-state__message {
       visibility: hidden;
     }
   }

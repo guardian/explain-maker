@@ -3,6 +3,7 @@ package views
 import api.Model
 import components.{ScribeBodyEditor, Sidebar, StatusBar, TagPickers}
 import org.scalajs.dom
+import org.scalajs.dom.html.Div
 import services.PresenceClient
 import shared.models.UpdateField.{Body, DisplayType, RemoveTag, UpdateField}
 import shared.models.{CsAtom, ExplainerUpdate}
@@ -62,12 +63,14 @@ object ExplainEditor {
 
 
   def updateEmbedUrlAndStatusLabel(id: String, status: PublicationStatus) = {
+    dom.document.getElementById("publication-state-icon").asInstanceOf[Div].classList.remove("publication-state--loading")
     StatusBar.updateStatusBar(status)
     Sidebar.republishembedURL(id, status)
   }
 
   @JSExport
   def publish(explainerId: String) = {
+    dom.document.getElementById("publication-state-icon").asInstanceOf[Div].classList.add("publication-state--loading")
     Model.publish(explainerId) onComplete {
       case Success(_) =>
         State.takenDown = false
@@ -78,6 +81,7 @@ object ExplainEditor {
 
   @JSExport
   def takeDown(explainerId: String) = {
+    dom.document.getElementById("publication-state-icon").asInstanceOf[Div].classList.add("publication-state--loading")
     Model.takeDown(explainerId) onComplete {
       case Success(_) =>
         State.takenDown = true
