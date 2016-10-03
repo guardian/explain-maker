@@ -77,9 +77,4 @@ object HelperFunctions {
     }
     AtomData.Explainer(updatedExplainerAtom)
   }
-
-  def sendFastlyPurgeRequest(explainerId: String)(ws: WSClient): Future[WSResponse] = {
-    val purgeRequest = ws.url(s"https://explainers-api.guim.co.uk/atom/explainer/$explainerId").withMethod("PURGE")
-    purgeRequest.execute()
-  }
 }

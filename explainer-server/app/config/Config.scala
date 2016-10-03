@@ -51,6 +51,9 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val ophanUrl = "<<unused>>"
 
+  val fastlyPurgingEnabled = stage =="PROD"
+  val fastlyAPIKey = fetchOrErrorOptionalProperty(fastlyPurgingEnabled, "fastly.apikey", "fastly api key required when fastly purging enabled")
+
   lazy val region = {
     val r = conf.getString("aws.region").map(Regions.fromName).getOrElse(Regions.EU_WEST_1)
     Region.getRegion(r)
