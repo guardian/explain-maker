@@ -70,11 +70,14 @@
         cursor: pointer;
         padding: 5px 0;
         display: block;
-        width: 300px;
 
         &:hover {
             text-decoration: underline;
         }
+    }
+
+    &__editor-link {
+        width: 300px;
     }
 }
 
