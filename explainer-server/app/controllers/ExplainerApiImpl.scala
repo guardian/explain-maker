@@ -22,7 +22,8 @@ import com.gu.pandomainauth.model.{User => PandaUser}
 import play.api.libs.ws.WSClient
 import shared.models._
 import util.HelperFunctions.{applyExplainerUpdate, contentChangeDetailsBuilder, getExplainerStatus}
-import util.{HelperFunctions, NotingHelper}
+import shared.util.SharedHelperFunctions.generateDefaultHtml
+import util.NotingHelper
 
 
 class ExplainerApiImpl(
@@ -40,11 +41,14 @@ class ExplainerApiImpl(
   val capiService = new CAPIService(config, cache)
 
   override def create(): Future[CsAtom] = {
+
+    val atomData = AtomData.Explainer(ExplainerAtom("", "", ThriftDisplayType.Flat))
+
     val explainer = Atom(
       id = java.util.UUID.randomUUID.toString,
       atomType = AtomType.Explainer,
-      defaultHtml = "-",
-      data = AtomData.Explainer(ExplainerAtom("", "", ThriftDisplayType.Flat)),
+      defaultHtml = generateDefaultHtml(atomData.explainer),
+      data = atomData,
       contentChangeDetails = contentChangeDetailsBuilder(user, None, updateCreated = true, updateLastModified = true)
     )
     explainerDB.create(explainer)
@@ -57,8 +61,12 @@ class ExplainerApiImpl(
 
   override def update(id: String, update: ExplainerUpdate): Future[CsAtom] = {
     explainerDB.load(id).map( explainer => {
+
+      val updatedAtomData = applyExplainerUpdate(explainer.tdata, update)
+
       val updatedExplainer = explainer.copy(
-        data = applyExplainerUpdate(explainer.tdata, update),
+        data = updatedAtomData,
+        defaultHtml = generateDefaultHtml(updatedAtomData.explainer),
         contentChangeDetails = contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails),updateLastModified = true)
       )
       explainerDB.update(updatedExplainer)
@@ -127,7 +135,6 @@ class ExplainerApiImpl(
 
   private def sendKinesisEvent(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {
     if (config.publishToKinesis) {
-
       //Remove notes before sending to CAPI
       val cleanedExplainer = explainer.updateData((data) => {
         data.copy(

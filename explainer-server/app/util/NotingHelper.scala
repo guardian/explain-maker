@@ -1,7 +1,7 @@
 package util
 
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 
 import scala.collection.JavaConverters._
 
@@ -15,12 +15,12 @@ object NotingHelper {
   private val parse: String => Document = s => Jsoup.parseBodyFragment(s)
   val removeNotesAndUnwrapFlags: String => String = s => unwrapFlags(removeNotes(parse(s))).html()
 
-  private def unwrapFlags(doc: Document): Document = {
+  private def unwrapFlags(doc: Document): Element = {
     for(tag <- flagList) {
       val elements = doc.getElementsByTag(tag)
       for (element <- elements.asScala) { element.unwrap() }
     }
-    doc
+    doc.body
   }
 
   private def removeNotes(doc: Document): Document = {
