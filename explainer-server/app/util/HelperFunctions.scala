@@ -3,10 +3,11 @@ package util
 import com.gu.contentatom.thrift.{ChangeRecord, _}
 import com.gu.contentatom.thrift.atom.explainer.{ExplainerAtom, DisplayType => ThriftDisplayType}
 import org.joda.time.DateTime
-import shared.models.{PublicationStatus, Draft, TakenDown, Available, UnlaunchedChanges}
+import shared.models.{Available, Draft, PublicationStatus, TakenDown, UnlaunchedChanges}
 import com.gu.pandomainauth.model.{User => PandaUser}
 import com.gu.contentatom.thrift.User
 import db.ExplainerDB
+import play.api.libs.ws.{WSClient, WSResponse}
 import shared.models.ExplainerUpdate
 import shared.models.UpdateField._
 

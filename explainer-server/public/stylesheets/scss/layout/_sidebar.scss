@@ -12,13 +12,8 @@
   overflow: auto;
 }
 
-.preview-link {
-  display: inline;
-  color: $c-blue-link;
-
-  &--hidden {
-    display: none;
-  }
+.simple-link {
+  color: $brand-color;
 }
 
 .text-atom-guide-link {
