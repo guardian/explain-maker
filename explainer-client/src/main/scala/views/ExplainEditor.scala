@@ -16,6 +16,7 @@ import scala.scalajs.js.{Function0, Object => JsObject}
 import services.State
 import shared.models._
 import shared.util.SharedHelperFunctions
+import scala.scalajs.js.timers._
 
 
 @JSExport
@@ -63,7 +64,10 @@ object ExplainEditor {
 
 
   def updateEmbedUrlAndStatusLabel(id: String, status: PublicationStatus) = {
-    dom.document.getElementById("publication-state-icon").asInstanceOf[Div].classList.remove("publication-state--loading")
+    // show spinner for 4s to allow fastly cache to purge
+    setTimeout(4000) {
+      dom.document.getElementById("publication-state-icon").asInstanceOf[Div].classList.remove("publication-state--loading")
+    }
     StatusBar.updateStatusBar(status)
     Sidebar.republishembedURL(id, status)
   }
