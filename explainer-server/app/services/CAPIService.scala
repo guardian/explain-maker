@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import com.gu.contentapi.client.{ContentApiClientLogic, GuardianContentClient}
 import com.gu.contentapi.client.model.{ItemQuery, SearchQuery, TagsQuery}
-import com.gu.contentapi.client.model.v1.{ItemResponse, Tag}
+import com.gu.contentapi.client.model.v1.{ItemResponse, SearchResponse, Tag}
 import com.gu.contentapi.client.Parameters
 import config.Config
 import play.api.cache._
@@ -38,6 +38,11 @@ class CAPIService @Inject() (config: Config, cache: CacheApi) {
       r.results
     })
 
+  }
+
+  def findExplainerUsages(explainerId: String): Future[Seq[String]] = {
+    val searchQuery = SearchQuery().q(explainerId)
+    client.getResponse(searchQuery).map(_.results.map(_.webUrl))
   }
 
   def getTrackingTags: Future[Seq[Tag]] = {

@@ -8,6 +8,7 @@ GET           /                            controllers.ExplainEditorController.l
 
 # Explain Editor
 GET           /explain/:id                 controllers.ExplainEditorController.get(id)
+GET           /explain/:id/usages          controllers.ExplainEditorController.findUsages(id, title: Option[String])
 
 # Autowire calls
 POST          /api/*path                   controllers.ApiController.autowireApi(path: String)

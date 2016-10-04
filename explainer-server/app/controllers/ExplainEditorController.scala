@@ -80,4 +80,10 @@ class ExplainEditorController @Inject() (
     }
 
   }
+
+  def findUsages(id: String, title:Option[String]) = pandaAuthenticated.async { implicit request =>
+    capiService.findExplainerUsages(s""""$id"""").map{ usages =>
+      Ok(views.html.usages(title.getOrElse(id), usages))
+    }
+  }
 }

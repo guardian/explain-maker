@@ -1,0 +1,34 @@
+
+@(explainerTitle: String, usages: Seq[String])(implicit request: RequestHeader)
+
+@toolbar = {
+    <header class="top-toolbar">
+        <div class="top-toolbar__container">
+            <a class="top-toolbar__title" href="/">
+                <div class="top-toolbar__logo"></div>
+                <div class="top-toolbar__page-icon"></div>
+                <div class="top-toolbar__title__hover-state">
+                    <span class="top-toolbar__title__hover-state__subtitle">Back to</span><br />
+                    <span class="top-toolbar__title__hover-state__title">Dashboard</span>
+                </div>
+            </a>
+        </div>
+    </header>
+}
+
+@main("Explainers", toolbar){
+    <div class="container block-center">
+
+        <div class="page-title">
+            <h1>Usages of @{explainerTitle}</h1>
+        </div>
+        <p>This is an experimental feature. If you need to be absolutely confident that you have found all occurrences
+            of a text atom, please contact digitalcms.dev@@guardian.co.uk.</p>
+        <b>@{if(usages.isEmpty){"No usages found"}}</b>
+        <ul>
+        @for(u <- usages) {
+            <li><a class="explainer-list__link" href="@u">@u</a></li>
+        }
+        </ul>
+    </div>
+}
