@@ -64,12 +64,12 @@ object ExplainEditor {
 
 
   def updateEmbedUrlAndStatusLabel(id: String, status: PublicationStatus) = {
+    StatusBar.updateStatusBar(status)
+    Sidebar.republishembedURL(id, status)
     // show spinner for 4s to allow fastly cache to purge
     setTimeout(4000) {
       dom.document.getElementById("publication-state-icon").asInstanceOf[Div].classList.remove("state-indicator--loading")
     }
-    StatusBar.updateStatusBar(status)
-    Sidebar.republishembedURL(id, status)
   }
 
   @JSExport
