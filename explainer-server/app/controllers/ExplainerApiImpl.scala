@@ -75,9 +75,7 @@ class ExplainerApiImpl(
       explainerDB.update(updatedExplainer)
       explainerDB.publish(updatedExplainer)
       sendKinesisEvent(updatedExplainer, s"Publishing explainer ${updatedExplainer.id} to LIVE kinesis", liveAtomPublisher)
-      HelperFunctions.sendFastlyPurgeRequest(id)(ws).foreach{ r =>
-          Logger.debug(s"Fastly purge request result: ${r.status} ${r.statusText}, ${r.body}")
-      }
+      sendFastlyPurgeRequest(id)
       CsAtom.atomToCsAtom(updatedExplainer)
     }
   }
@@ -87,10 +85,10 @@ class ExplainerApiImpl(
       val updatedExplainer = explainer.copy(
         contentChangeDetails=contentChangeDetailsBuilder(user, Some(explainer.contentChangeDetails), updateLastModified = true)
       )
-
       explainerDB.update(updatedExplainer)
       explainerDB.takeDown(updatedExplainer)
       sendKinesisEvent(updatedExplainer, s"Sending takedown event for explainer ${updatedExplainer.id} to LIVE kinesis.", liveAtomPublisher, EventType.Takedown)
+      sendFastlyPurgeRequest(id)
       CsAtom.atomToCsAtom(updatedExplainer)
     })
   }
@@ -115,6 +113,16 @@ class ExplainerApiImpl(
     capiService.getTrackingTags.map{ tags =>
       tags.map(t => CsTag(t.id, t.webTitle))
     }
+  }
+
+  def sendFastlyPurgeRequest(id: String): Future[Unit] = {
+    Future { if (config.fastlyPurgingEnabled) {
+      val purgeRequest = ws.url(s"https://explainers-api.guim.co.uk/atom/explainer/$id").withMethod("PURGE").withHeaders(("Fastly-Key", config.fastlyAPIKey))
+      Thread.sleep(5000)
+      purgeRequest.execute().foreach { r =>
+        Logger.info(s"Fastly purge request result: ${r.status} ${r.statusText}, ${r.body}")
+      }
+    }}
   }
 
   private def sendKinesisEvent(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {

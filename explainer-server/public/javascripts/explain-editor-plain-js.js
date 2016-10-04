@@ -154,7 +154,7 @@ function setupScribe() {
 
 
             scribe.on('content-changed', function() {
-                $(".save-state").addClass("save-state--loading");
+                $(".save-state").addClass("state-indicator--loading");
             });
 
             scribe.on('content-changed',  debounce(function() {
@@ -162,7 +162,7 @@ function setupScribe() {
                 updateWordCountDisplay();
                 updateWordCountWarningDisplay();
                 explainEditor.updateBodyContents(CONFIG.EXPLAINER_IDENTIFIER, bodyString);
-                $(".save-state").removeClass("save-state--loading");
+                $(".save-state").removeClass("state-indicator--loading");
             }, 500));
 
         });

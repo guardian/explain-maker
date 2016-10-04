@@ -22,21 +22,29 @@
                 </div>
             </a>
             <div class="top-toolbar__item">
-                <div class="top-toolbar__item-inner save-state">
-                    <i class="save-state__icon i i-loading"></i>
-                    <span class="label label-container label--success save-state__message">Saved</span>
+                <div class="top-toolbar__item-inner save-state state-indicator">
+                    <i class="state-indicator__icon i i-loading"></i>
+                    <span class="label label-container label--success state-indicator__message">Saved</span>
                 </div>
             </div>
         </div>
         <div class="top-toolbar__container">
+            <div class="top-toolbar__item top-toolbar__item--no-spacing">
+                <a class="top-toolbar__button"
+                target="_blank"
+                href="https://docs.google.com/document/d/1-o4kOXINgsxxotUYlkEoyqcwnJLrtc54Nv7m2S3l_7c/edit?ts=57e13f8a">
+                    How-to Guide
+                </a>
+            </div>
             <div class="top-toolbar__item">
                 <div class="top-toolbar__item-inner">
                     <div id="presence-names-display-wrapper"></div>
                 </div>
             </div>
             <div class="top-toolbar__item">
-                <div class="top-toolbar__item-inner">
-                    <div id = "explainer-publication-status" class="label-container"></div>
+                <div id="publication-state-icon" class="top-toolbar__item-inner state-indicator">
+                    <i class="state-indicator__icon i i-loading"></i>
+                    <div id = "explainer-publication-status" class="label-container state-indicator__message"></div>
                 </div>
             </div>
             <div class="top-toolbar__item top-toolbar__item--no-spacing">

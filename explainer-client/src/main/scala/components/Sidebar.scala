@@ -3,6 +3,7 @@ package components
 import api.Model
 import org.scalajs.dom._
 import org.scalajs.dom.html._
+import org.scalajs.dom.html.Anchor
 import shared.models._
 
 import scala.scalajs.js.Dynamic._
@@ -15,6 +16,7 @@ import shared.models.UpdateField.{Body, Title}
 import shared.models.WorkflowStatus._
 import shared.util.SharedHelperFunctions
 import views.ExplainEditor
+
 
 import scala.scalajs.js.Dynamic.{global => g}
 
@@ -40,7 +42,7 @@ object Sidebar {
 
   def embedUrlBox(embedUrlText: String) =
     div(cls:="form-row")(
-      div(cls:="form-label")("Embed URL ", span(id:="embed-preview-link", cls:="preview-link")(a(href:=embedUrlString, target:="_blank")("Preview"))),
+      div(cls:="form-label")("Embed URL ", a(id:="embed-preview-link", cls:="simple-link preview-link", href:=embedUrlString, target:="_blank")("Preview")),
       textarea(
         id:="interactive-url-text",
         cls:="form-field form-field--text-area text-monospaced",
@@ -81,12 +83,10 @@ object Sidebar {
     status match {
 
       case Available | UnlaunchedChanges => {
-        interactivePreviewLink.asInstanceOf[Span].classList.remove("preview-link--hidden")
-        interactivePreviewLink.asInstanceOf[Span].classList.add("preview-link")
+        interactivePreviewLink.asInstanceOf[Anchor].classList.remove("visually-hidden")
       }
       case _ => {
-        interactivePreviewLink.asInstanceOf[Span].classList.remove("preview-link")
-        interactivePreviewLink.asInstanceOf[Span].classList.add("preview-link--hidden")
+        interactivePreviewLink.asInstanceOf[Anchor].classList.add("visually-hidden")
       }
     }
   }
@@ -124,7 +124,6 @@ object Sidebar {
   def sidebar(explainer: CsAtom, status: PublicationStatus, workflowStatus: WorkflowStatus) = {
     val checkboxId = "expandable"
     form()(
-      span(cls:="text-atom-guide-link")(a(href:="https://docs.google.com/document/d/1-o4kOXINgsxxotUYlkEoyqcwnJLrtc54Nv7m2S3l_7c/edit?ts=57e13f8a", target:="_blank")("Text Atom Guide")),
       div(cls:="form-row")(
         div(cls:="form-label")("Text Atom Title"),
         title(explainer)

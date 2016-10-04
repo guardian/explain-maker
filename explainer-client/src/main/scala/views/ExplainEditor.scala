@@ -3,6 +3,7 @@ package views
 import api.Model
 import components.{ScribeBodyEditor, Sidebar, StatusBar, TagPickers}
 import org.scalajs.dom
+import org.scalajs.dom.html.Div
 import services.PresenceClient
 import shared.models.UpdateField.{Body, DisplayType, RemoveTag, UpdateField}
 import shared.models.{CsAtom, ExplainerUpdate}
@@ -15,6 +16,7 @@ import scala.scalajs.js.{Function0, Object => JsObject}
 import services.State
 import shared.models._
 import shared.util.SharedHelperFunctions
+import scala.scalajs.js.timers._
 
 
 @JSExport
@@ -62,12 +64,17 @@ object ExplainEditor {
 
 
   def updateEmbedUrlAndStatusLabel(id: String, status: PublicationStatus) = {
+    // show spinner for 4s to allow fastly cache to purge
+    setTimeout(4000) {
+      dom.document.getElementById("publication-state-icon").asInstanceOf[Div].classList.remove("state-indicator--loading")
+    }
     StatusBar.updateStatusBar(status)
     Sidebar.republishembedURL(id, status)
   }
 
   @JSExport
   def publish(explainerId: String) = {
+    dom.document.getElementById("publication-state-icon").asInstanceOf[Div].classList.add("state-indicator--loading")
     Model.publish(explainerId) onComplete {
       case Success(_) =>
         State.takenDown = false
@@ -78,6 +85,7 @@ object ExplainEditor {
 
   @JSExport
   def takeDown(explainerId: String) = {
+    dom.document.getElementById("publication-state-icon").asInstanceOf[Div].classList.add("state-indicator--loading")
     Model.takeDown(explainerId) onComplete {
       case Success(_) =>
         State.takenDown = true
