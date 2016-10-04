@@ -31,15 +31,7 @@ trait ExplainerAtomImplicits extends AtomImplicits[ExplainerAtom] {
     def getData(a: Atom) = a.data.asInstanceOf[AtomData.Explainer].explainer
     def setData(a: Atom, newData: ExplainerAtom) =
       a.copy(data = a.data.asInstanceOf[AtomData.Explainer].copy(explainer = newData))
-    def makeDefaultHtml(a: Atom) = {
-      val data = getData(a)
-//      data.assets
-//        .find(_.version == data.activeVersion)
-//        .map(asset => views.html.ExplainerAtom.embedAsset(asset).toString)
-//        .getOrElse(
-          s"<div></div>"
-//      )
-    }
+    def makeDefaultHtml(a: Atom) = SharedHelperFunctions.generateDefaultHtml(getData(a))
   }
 }
 
