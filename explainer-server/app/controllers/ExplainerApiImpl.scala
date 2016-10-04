@@ -120,7 +120,7 @@ class ExplainerApiImpl(
       val purgeRequest = ws.url(s"https://explainers-api.guim.co.uk/atom/explainer/$id").withMethod("PURGE").withHeaders(("Fastly-Key", config.fastlyAPIKey))
       Thread.sleep(5000)
       purgeRequest.execute().foreach { r =>
-        Logger.debug(s"Fastly purge request result: ${r.status} ${r.statusText}, ${r.body}")
+        Logger.info(s"Fastly purge request result: ${r.status} ${r.statusText}, ${r.body}")
       }
     }}
   }
