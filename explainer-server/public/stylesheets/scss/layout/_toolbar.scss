@@ -151,7 +151,7 @@ $toolbarHeight: 50px;
   height: 100%;
 }
 
-.publication-state, .save-state {
+.state-indicator {
   position: relative;
 
   &__icon {
@@ -163,13 +163,11 @@ $toolbarHeight: 50px;
   }
 
   &--loading {
-    .publication-state__icon,
-    .save-state__icon {
+    .state-indicator__icon {
       visibility: visible;
     }
 
-    .publication-state__message,
-    .save-state__message {
+    .state-indicator__message {
       visibility: hidden;
     }
   }
