@@ -1,16 +1,34 @@
 # Explainer Atom Editor
 
-* CI : [TeamCity](https://teamcity-aws.gutools.co.uk/viewType.html?buildTypeId=EditorialTools_Explainer)
-* See live: [PROD](https://explainers.gutools.co.uk) [CODE](https://explainers.code.dev-gutools.co.uk)
+### Architecture
 
-###Scala: 2.11.6, Scala.js: 0.6.5, Play: 2.4.0, Slick: 3.0.0
+```
+Dynamo - Explainerserver - Explainerclient
+                |
+                | kinesis
+                |
+              CAPI
+```
 
+### Tech stack: 
+
+- Scala: 2.11.6, Scala.js: 0.6.5, Play: 2.4.0, Slick: 3.0.0
+- DynamoDB
+
+### Code Organization: 
 
 The sbt build file contains 3 modules
+
 - `ExplainMakerServer` Play application (server side)
 - `ExplainMakerClient` Scala.js application (client side)
 - `ExplainMakerShared` Scala code that you want to share between the server and the client.
 
+### Links: 
+
+* CI : [TeamCity](https://teamcity-aws.gutools.co.uk/viewType.html?buildTypeId=EditorialTools_Explainer)
+* See live: [PROD](https://explainers.gutools.co.uk) [CODE](https://explainers.code.dev-gutools.co.uk)
+
+## Running Locally
 
 ### Setup Nginx
 
