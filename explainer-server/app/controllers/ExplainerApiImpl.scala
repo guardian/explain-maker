@@ -9,6 +9,7 @@ import org.joda.time.DateTime
 import play.api.cache.CacheApi
 import play.api.Logger
 import com.gu.atom.publish.{AtomPublisher, LiveAtomPublisher, PreviewAtomPublisher}
+import com.gu.contentapi.client.model.v1.TagType
 import com.gu.contentatom.thrift._
 import com.gu.contentatom.thrift.atom.explainer.{ExplainerAtom, DisplayType => ThriftDisplayType}
 import config.Config
@@ -119,7 +120,7 @@ class ExplainerApiImpl(
 
   override def getTrackingTags(): Future[Seq[CsTag]] = {
     capiService.getTrackingTags.map{ tags =>
-      tags.map(t => CsTag(t.id, t.webTitle))
+      tags.map(t => CsTag(t.id, t.webTitle, t.sectionName.getOrElse("unknown section"), t.`type`.name))
     }
   }
 
