@@ -4,7 +4,7 @@ import com.gu.atom.data.{PreviewDataStore, PublishedDataStore}
 
 import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{Future, blocking}
 import org.joda.time.DateTime
 import play.api.cache.CacheApi
 import play.api.Logger
@@ -123,14 +123,18 @@ class ExplainerApiImpl(
     }
   }
 
-  def sendFastlyPurgeRequest(id: String): Future[Unit] = {
-    Future { if (config.fastlyPurgingEnabled) {
-      val purgeRequest = ws.url(s"https://explainers-api.guim.co.uk/atom/explainer/$id").withMethod("PURGE").withHeaders(("Fastly-Key", config.fastlyAPIKey))
-      Thread.sleep(5000)
-      purgeRequest.execute().foreach { r =>
-        Logger.info(s"Fastly purge request result: ${r.status} ${r.statusText}, ${r.body}")
+  def sendFastlyPurgeRequest(id: String): Unit = {
+    Future {
+      blocking {
+        if (config.fastlyPurgingEnabled) {
+          val purgeRequest = ws.url(s"https://explainers-api.guim.co.uk/atom/explainer/$id").withMethod("PURGE").withHeaders(("Fastly-Key", config.fastlyAPIKey))
+          Thread.sleep(5000)
+          purgeRequest.execute().foreach { r =>
+            Logger.info(s"Fastly purge request result: ${r.status} ${r.statusText}, ${r.body}")
+          }
+        }
       }
-    }}
+    }
   }
 
   private def sendKinesisEvent(explainer: Atom, actionMessage: String, atomPublisher: AtomPublisher, eventType: EventType = EventType.Update): PublishResult = {
