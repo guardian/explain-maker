@@ -43,4 +43,4 @@ object CsAtom extends ExplainerAtomImplicits {
 
 }
 
-case class CsTag(id:String, webTitle: String)
+case class CsTag(id:String, webTitle: String, sectionName: String = "unknown section",`type`: String)

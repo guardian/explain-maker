@@ -69,10 +69,11 @@ object TagPickers {
     )
   }
 
-  def renderSuggestionSet(tags:List[CsTag], explainerId:String, suggestionsDivIdentifier:String) = {
-    g.jQuery(s"#$suggestionsDivIdentifier").empty()
+  def renderSuggestionSet(tags:List[CsTag], explainerId:String, suggestionsDivIdentifier:String, includeSectionName: Boolean = false) = {
+    dom.document.getElementById(suggestionsDivIdentifier).innerHTML = ""
     tags.foreach( tagObject => {
-      val node = button(cls:="tag__result")(tagObject.webTitle).render
+      val sectionNameString = if(includeSectionName) s"(${tagObject.sectionName})" else ""
+      val node = button(cls:="tag__result")(s"${tagObject.webTitle} $sectionNameString").render
       node.onmousedown = (x: Event) => {
         Model.updateFieldContent(explainerId, ExplainerUpdate(AddTag, tagObject.id)).map { explainer =>
           redisplayExplainerTagManagementAreas(explainer)
@@ -96,7 +97,7 @@ object TagPickers {
       val queryValue: String = dom.document.getElementById("explainer-editor__tags__tag-search-input-field").asInstanceOf[Input].value
 
       CAPIClient.capiTagRequest(Seq("type" -> "keyword", "q" -> queryValue))
-        .map(renderSuggestionSet(_, explainer.id, suggestionsDivIdentifier))
+        .map(renderSuggestionSet(_, explainer.id, suggestionsDivIdentifier, includeSectionName = true))
     }
 
     def clearSuggestions() = {
