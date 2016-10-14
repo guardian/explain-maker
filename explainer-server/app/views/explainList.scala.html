@@ -118,9 +118,9 @@
                         PAGE_NUMBER = @Html(paginationConfig.pageNumber.toString);
                         MAX_PAGE_NUMBER = @Html(paginationConfig.totalPages.toString);
                 </script>
-                <a id="previous-page-link" class="pagination__link" onclick="views.ExplainList().updatePageNumber(@(paginationConfig.pageNumber-1))">Previous</a>
+                <button id="previous-page-link" class="pagination__link" onclick="views.ExplainList().updatePageNumber(@(paginationConfig.pageNumber-1))">Previous</button>
                 <p class="pagination__label">Page @{paginationConfig.pageNumber}</p>
-                <a id="next-page-link" class="pagination__link" onclick="views.ExplainList().updatePageNumber(@(paginationConfig.pageNumber+1))">Next</a>
+                <button id="next-page-link" class="pagination__link" onclick="views.ExplainList().updatePageNumber(@(paginationConfig.pageNumber+1))">Next</button>
             </div>
         </div>
     </div>
