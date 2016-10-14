@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import actions.AuthActions
-import com.gu.atom.data.{PublishedDataStore, PreviewDataStore}
+import com.gu.atom.data.{PreviewDataStore, PublishedDataStore}
 import com.gu.contentatom.thrift.Atom
 import config.Config
 import db.ExplainerDB
@@ -14,7 +14,7 @@ import play.api.cache.CacheApi
 import play.api.libs.json.Json
 import services.PublicSettingsService
 import shared.util.ExplainerAtomImplicits
-import util.{HelperFunctions, Paginator}
+import util.{HelperFunctions, PaginationConfig, Paginator}
 import services.CAPIService
 
 class ExplainEditorController @Inject() (
@@ -45,7 +45,7 @@ class ExplainEditorController @Inject() (
     Ok(views.html.explainEditor(id, request.user, viewConfig))
   }
   
-  def listExplainers(desk: Option[String], pageNumber: Int = 1, titleQuery: Option[String]) = pandaAuthenticated.async{ implicit request =>
+  def listExplainers(desk: Option[String], pageNumber: Option[Int], titleQuery: Option[String]) = pandaAuthenticated.async{ implicit request =>
 
     def sorting(e1: Atom, e2: Atom): Boolean = {
       val time1:Long = e1.contentChangeDetails.lastModified.map(_.date).getOrElse(0)
@@ -55,14 +55,13 @@ class ExplainEditorController @Inject() (
 
     val explainListPage = explainerDB.all.map{ explainers =>
 
-
       val explainersForDesk = desk.fold(explainers)(d => explainers.filter(_.tdata.tags.exists(_.contains(d))))
       val explainersForTitleQuery = titleQuery.fold(explainersForDesk)(q => explainersForDesk.filter(_.tdata.title.toUpperCase.contains(q.toUpperCase)))
       val explainersWithSorting = explainersForTitleQuery.sortWith(sorting)
-      val explainersForPage = Paginator.selectPageExplainers(explainersWithSorting, pageNumber, config.ExplainListPageSize)
+      val explainersForPage = Paginator.selectPageExplainers(explainersWithSorting, pageNumber.getOrElse(1), config.ExplainListPageSize)
 
-      val paginationConfig = Paginator.getPaginationConfig(pageNumber, desk, explainersWithSorting, config.ExplainListPageSize)
-
+      val paginationConfig = PaginationConfig(pageNumber.getOrElse(1),
+        Paginator.maxPageNumber(explainersWithSorting.length, config.ExplainListPageSize))
       val workflowData = if (explainersForPage.nonEmpty) {
         explainerDB.getWorkflowData(explainersForPage.map(_.id).toList)
       } else List()

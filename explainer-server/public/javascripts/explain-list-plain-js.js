@@ -1,5 +1,5 @@
 window.onload = function(){
-    views.ExplainList().renderDeskList();
+    views.ExplainList().main();
 }
 
 const searchForm = $('#search-form');

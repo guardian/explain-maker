@@ -16,26 +16,71 @@ import org.scalajs.dom._
 @JSExport
 object ExplainList {
 
-  def replaceParams(key: String, value: String): Unit = {
-    val keyEnc = URIUtils.encodeURI(key)
-    val valueEnc = URIUtils.encodeURI(value)
-    dom.document.location.search = s"$keyEnc=$valueEnc"
+  @JSExport
+  def main() = {
+    renderDeskList()
+    updatePageNumberButtons(g.PAGE_NUMBER.toString.toInt, g.MAX_PAGE_NUMBER.toString.toInt)
   }
 
   def insertParamAndRemovePageNumber(key: String, value: String): Unit = {
     val keyEnc = URIUtils.encodeURI(key)
     val valueEnc = URIUtils.encodeURI(value)
-    dom.document.location.search = s"$keyEnc=$valueEnc"
+    val newParameter = s"$keyEnc=$valueEnc"
+
     val parameters = dom.document.location.search.substring(1).split('&').flatMap(p => {
       if (p.startsWith(keyEnc)) {
-        Some(s"$keyEnc=$valueEnc")
+        Some(newParameter)
       } else if (p.startsWith("pageNumber")) {
         None
       } else Some(p)
     }).mkString("&")
-    val newQueryString = if (!parameters.contains(keyEnc)) s"$parameters&$keyEnc=$valueEnc" else parameters
+
+    val newQueryString = if (!parameters.contains(keyEnc)) {
+
+      if (parameters.length > 0 ) {
+        s"$parameters&$newParameter"
+      } else {
+        newParameter
+      }
+
+    } else parameters
 
     dom.document.location.search = newQueryString
+  }
+
+  def updatePageNumberButtons(pageNo: Int, maxPageNo: Int): Unit = {
+    if (pageNo > 1) {
+      dom.document.getElementById("previous-page-link").classList.remove("visually-hidden")
+    } else {
+      dom.document.getElementById("previous-page-link").classList.add("visually-hidden")
+    }
+    if (pageNo < maxPageNo) {
+      dom.document.getElementById("next-page-link").classList.remove("visually-hidden")
+    } else {
+      dom.document.getElementById("next-page-link").classList.add("visually-hidden")
+    }
+  }
+
+  def updateOrInsertParam(paramName: String, newValue: String) = {
+    val newValueEnc = URIUtils.encodeURI(newValue)
+    val queryString = dom.document.location.search.substring(1)
+    val newQueryString = if (queryString.contains(paramName)) {
+      queryString.split('&').map { p =>
+        if (p.startsWith(paramName)) {
+          s"$paramName=${URIUtils.encodeURI(newValue)}"
+        } else p
+      }.mkString("&")
+    } else if (queryString.length > 0) {
+      s"$queryString&$paramName=$newValueEnc"
+    } else {
+      s"$paramName=$newValueEnc"
+    }
+    dom.document.location.search = newQueryString
+  }
+
+  @JSExport
+  def updatePageNumber(no: Int) = {
+    updateOrInsertParam("pageNumber", no.toString)
   }
 
   @JSExport
@@ -46,7 +91,7 @@ object ExplainList {
       val urlWithoutQueryParameters = s"${dom.document.location.protocol}//${dom.document.location.host}${dom.document.location.pathname}"
       dom.document.location.assign(urlWithoutQueryParameters)
     } else {
-      replaceParams("desk", selectedDesk)
+      dom.document.location.search = s"desk=${URIUtils.encodeURI(selectedDesk)}"
     }
   }
 
