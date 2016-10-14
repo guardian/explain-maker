@@ -114,9 +114,13 @@
                 }
             </table>
             <div class="pagination">
-                @Html(paginationConfig.previousFragmentHTML)
+                <script type="text/javascript">
+                        PAGE_NUMBER = @Html(paginationConfig.pageNumber.toString);
+                        MAX_PAGE_NUMBER = @Html(paginationConfig.totalPages.toString);
+                </script>
+                <button id="previous-page-link" class="pagination__link" onclick="views.ExplainList().updatePageNumber(@(paginationConfig.pageNumber-1))">Previous</button>
                 <p class="pagination__label">Page @{paginationConfig.pageNumber}</p>
-                @Html(paginationConfig.nextFragmentHTML)
+                <button id="next-page-link" class="pagination__link" onclick="views.ExplainList().updatePageNumber(@(paginationConfig.pageNumber+1))">Next</button>
             </div>
         </div>
     </div>
