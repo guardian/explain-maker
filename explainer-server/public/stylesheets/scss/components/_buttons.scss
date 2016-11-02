@@ -26,8 +26,5 @@ button {
   &.btn--cancel {
     background-color: $c-red;
     line-height: 6px;
-    &:hover {
-      background-color: $c-green;
-    }
   }
 }
