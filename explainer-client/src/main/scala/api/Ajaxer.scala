@@ -48,6 +48,10 @@ object Model {
     Ajaxer[ExplainerApi].takeDown(id).call()
   }
 
+  def delete(id: String): Future[Unit] = {
+    Ajaxer[ExplainerApi].delete(id).call()
+  }
+
   def getExplainerStatus(explainerId: String): Future[PublicationStatus] = {
     Ajaxer[ExplainerApi].getStatus(explainerId).call()
   }

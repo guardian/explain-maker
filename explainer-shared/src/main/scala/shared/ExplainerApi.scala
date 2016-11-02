@@ -12,6 +12,7 @@ trait ExplainerApi {
   def update(id: String, explainerUpdate: ExplainerUpdate): Future[CsAtom]
   def publish(id: String): Future[CsAtom]
   def takeDown(id: String): Future[CsAtom]
+  def delete(id: String): Future[Unit]
   def getStatus(id: String): Future[PublicationStatus]
 
   def getWorkflowData(id:String): WorkflowData
