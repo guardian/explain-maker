@@ -79,10 +79,19 @@
     &__editor-link {
         width: 300px;
     }
+
+    &__delete {
+        width: 100px;
+        text-align: right;
+    }
 }
 
 .ophan-link-hidden {
     visibility:hidden;
+}
+
+.delete-button-hidden {
+    display: none;
 }
 /* -------------------------------------- */
 /* Presence                               */
