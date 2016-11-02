@@ -4,14 +4,17 @@ import api.Model
 import components.ExplainListComponents
 import org.scalajs.dom
 import org.scalajs.dom.Event
-import org.scalajs.dom.html.Select
-import shared.models.CsAtom
+import org.scalajs.dom.html._
+import services.State
+import shared.models.{TakenDown, CsAtom}
 
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scala.scalajs.js.Dynamic.{global => g}
 import scala.scalajs.js.URIUtils
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom._
+
+import scala.util.{Failure, Success}
 
 @JSExport
 object ExplainList {
@@ -125,6 +128,26 @@ object ExplainList {
     Model.getTrackingTags.map{ tags =>
       val opts = ExplainListComponents.tagsToSelectOptions(tags, deskDropdown.value)
       deskDropdown.appendChild(opts)
+    }
+  }
+
+  @JSExport
+  def delete(explainerId: String) = {
+    dom.document.getElementById(s"delete-button__$explainerId").classList.add("delete-button-hidden")
+    dom.document.getElementById(s"delete-confirmation-button__$explainerId").classList.remove("delete-button-hidden")
+  }
+
+  @JSExport
+  def resetDelete(explainerId: String) = {
+    dom.document.getElementById(s"delete-button__$explainerId").classList.remove("delete-button-hidden")
+    dom.document.getElementById(s"delete-confirmation-button__$explainerId").classList.add("delete-button-hidden")
+  }
+
+  @JSExport
+  def deleteConfirmation(explainerId: String) = {
+    Model.delete(explainerId) onComplete {
+      case Success(_) => dom.document.location.reload()
+      case Failure(_) => g.console.error(s"Failed to delete explainer")
     }
   }
 }

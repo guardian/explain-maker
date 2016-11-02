@@ -22,4 +22,9 @@ button {
   &:hover {
     background: $brand-color-light;
   }
+
+  &.btn--cancel {
+    background-color: $c-red;
+    line-height: 6px;
+  }
 }

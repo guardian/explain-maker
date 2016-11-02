@@ -102,6 +102,18 @@ class ExplainerApiImpl(
     })
   }
 
+  override def delete(id: String): Future[Unit] = {
+    getStatus(id).map( publicationStatus => {
+      if (publicationStatus == Draft || publicationStatus == TakenDown) {
+        explainerDB.load(id).map( explainer => {
+          explainerDB.delete(id)
+          sendKinesisEvent(explainer, s"Sending delete event for explainer $id to PREVIEW kinesis.", previewAtomPublisher, EventType.Takedown)
+          sendFastlyPurgeRequest(id)
+        })
+      }
+    })
+  }
+
   override def getStatus(id:String): Future[PublicationStatus] = {
     for {
       e <- explainerDB.load(id)
