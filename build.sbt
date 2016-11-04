@@ -7,7 +7,6 @@ import play.sbt.PlayImport.PlayKeys._
 lazy val clients = Seq(explainMakerClient)
 lazy val scalaV = "2.11.8"
 def env(key: String): Option[String] = Option(System.getenv(key))
-
 lazy val awsVersion = "1.10.77"
 
 lazy val explainMakerServer = (project in file("explainer-server")).enablePlugins(
@@ -107,7 +106,7 @@ lazy val explainMakerClient = (project in file("explainer-client")).settings(
 lazy val explainMakerShared = (crossProject.crossType(CrossType.Pure) in file("explainer-shared")).
   settings(scalaVersion := scalaV,
     libraryDependencies ++= Seq(
-      "com.gu" %% "content-atom-model" % "2.4.11"
+      "com.gu" %% "content-atom-model" % "2.4.12"
     ))
     .jsConfigure(_ enablePlugins ScalaJSPlay)
 
