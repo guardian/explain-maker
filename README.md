@@ -88,6 +88,12 @@ Ensure that you have the required node version available. If you're using [nvm](
 nvm install 6
 ```
 
+You will need node-sass, to install it run:
+
+```
+npm install node-sass
+```
+
 Install dependencies and build CSS:
 
 ```
