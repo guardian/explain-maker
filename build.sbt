@@ -49,8 +49,8 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
     "org.webjars.bower" % "scribe-plugin-link-prompt-command" % "1.0.0",
     "org.webjars.bower" % "scribe-plugin-keyboard-shortcuts" % "0.1.1",
     "org.webjars.bower" % "scribe-plugin-noting" % "0.4.11",
-    "org.jsoup" % "jsoup" % "1.9.2"
-
+    "org.jsoup" % "jsoup" % "1.9.2",
+    "com.amazonaws" % "aws-xray-recorder-sdk-core" % "1.0.0-beta"
   ),
   sources in (Compile,doc) := Seq.empty, publishArtifact in (Compile, packageDoc) := false, // Don't do slow ScalaDoc step for anything but a library!
   serverLoading in Debian := Systemd,
