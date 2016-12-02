@@ -33,12 +33,6 @@
             "Description" : "Applied directly as a tag",
             "Default" : "CODE"
         },
-        "InstanceType" : {
-            "Type" : "String",
-            "Description" : "EC2 instance type",
-            "AllowedValues" : [ "t2.small", "t2.medium", "m3.medium" ],
-            "ConstraintDescription" : "must be a valid EC2 instance type."
-        },
         "ImageId": {
             "Description": "AMI ID",
             "Type": "String"
@@ -68,10 +62,10 @@
     "Mappings": {
         "Config":{
             "CODE":{
-                "MinSize": 2,
-                "MaxSize": 4,
-                "DesiredCapacity": 2,
-                "InstanceType": "t2.small",
+                "MinSize": 1,
+                "MaxSize": 2,
+                "DesiredCapacity": 1,
+                "InstanceType": "t2.micro",
                 "ELBIngressIPRange": "77.91.248.0/21"
             },
             "PROD":{
@@ -125,7 +119,7 @@
                 "UserData" : { "Fn::Base64": {
                     "Fn::Join":["\n", [
                       "#!/bin/bash -ev",
-                      "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-team-keys -t Digital-CMS || true \n",
+                      "/opt/features/ssh-keys/initialise-keys-and-cron-job.sh -l -b github-public-keys -t Editorial-Tools-SSHAccess || true \n",
                       "mkdir /etc/gu",
                       "aws s3 cp s3://explainer-config/application.secrets.conf /etc/gu/explainer.secrets.conf",
                         "/opt/features/native-packager/install.sh -b composer-dist -a explain-maker -t tgz -s\n"
@@ -147,19 +141,19 @@
                 },
                 "Policies": [
                 {
-                    "PolicyName": "GithubTeamKeysPolicy",
+                    "PolicyName": "GithubPublicKeysPolicy",
                     "PolicyDocument": {
                         "Version": "2012-10-17",
                         "Statement": [
                             {
                                 "Effect": "Allow",
                                 "Action": ["s3:GetObject"],
-                                "Resource": ["arn:aws:s3:::github-team-keys/*"]
+                                "Resource": ["arn:aws:s3:::github-public-keys/*"]
                             },
                             {
                                 "Effect":"Allow",
                                 "Action": ["s3:ListBucket"],
-                                "Resource":"arn:aws:s3:::github-team-keys"
+                                "Resource":"arn:aws:s3:::github-public-keys"
                             }
                         ]
                     }
