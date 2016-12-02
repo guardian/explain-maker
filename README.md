@@ -50,7 +50,7 @@ To run explain maker locally you will need ngnix.
 
 5. Set up certs if you've not already done so (see dev-nginx readme)
 
-6. Configure the workflow route in nginx
+6. Configure the explain maker route in nginx
 
 ```
 sudo /path/to/dev-nginx/setup-app.rb /path/to/explain-maker/nginx/nginx-mapping.yml
@@ -82,14 +82,7 @@ enable.elk.logging=false
 include "application.conf"
 ```
 
-Configure the composer route in nginx:
-
-```
-cd <path_of_dev_nginx>
-sudo ./setup-app.rb <path_of_explainer>/nginx/nginx-mapping.yml
-```
-
-Ensure that you have the required node version available. You should be using [nvm](https://github.com/creationix/nvm) to manage your node dependencies, then run:
+Ensure that you have the required node version available. If you're using [nvm](https://github.com/creationix/nvm) (recommended), then run:
 
 ```
 nvm install 6
@@ -117,7 +110,7 @@ npm run watch
 
 Explain Maker should now be found at [https://explainers.local.dev-gutools.co.uk/](https://explainers.local.dev-gutools.co.uk/).
 
-In order to get the Panda authentication cookie needed to access Explain Maker, you might want to, for instance, first visit your local instance of Composer or Workflow. Alternatively (better option) you can run [login.gutools](https://github.com/guardian/login.gutools) for a seamless experience.
+In order to get the Panda authentication cookie needed to access Explain Maker, you might want to, for instance, first visit your local instance of Composer or Workflow. Alternatively (better option) you can run [login.gutools](https://github.com/guardian/login.gutools) for a seamless experience (you'll need Workflow AWS credentials from janus for this).
 
 Note that, when running on local, the presence endpoint is the CODE Presence. This implies that to get Presence display correctly when running on local, you need to have a CODE Panda cookie (to get one just visit the CODE instance of Composer or Workflow).
 

@@ -6,7 +6,7 @@ import org.scalajs.dom
 import org.scalajs.dom.html.Div
 import services.PresenceClient
 import shared.models.UpdateField.{Body, DisplayType, RemoveTag, UpdateField}
-import shared.models.{CsAtom, ExplainerUpdate}
+import shared.models.ExplainerUpdate
 
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scala.scalajs.js.Dynamic.{global => g}

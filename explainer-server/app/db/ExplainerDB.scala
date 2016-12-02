@@ -86,6 +86,10 @@ class ExplainerDB @Inject() (
     Scanamo.delete(config.dynamoClient)(config.liveTableName)('id -> explainer.id)
   }
 
+  def delete(explainerId: String) = {
+    Scanamo.delete(config.dynamoClient)(config.previewTableName)('id -> explainerId)
+  }
+
   implicit val workflowStatusFormat = DynamoFormat.coercedXmap[WorkflowStatus, String, IllegalArgumentException](
     WorkflowStatus(_))(_.toString)
 

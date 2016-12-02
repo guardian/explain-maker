@@ -4,7 +4,7 @@
 
 # Explain List
 
-GET           /                            controllers.ExplainEditorController.listExplainers(desk: Option[String], pageNumber: Int = 1, titleQuery: Option[String])
+GET           /                            controllers.ExplainEditorController.listExplainers(desk: Option[String], pageNumber: Option[Int], titleQuery: Option[String])
 
 # Explain Editor
 GET           /explain/:id                 controllers.ExplainEditorController.get(id)
