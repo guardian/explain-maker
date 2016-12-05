@@ -4,6 +4,7 @@ import jslibwrappers.{Person, PresenceGlobalScope}
 import org.scalajs.dom
 import org.scalajs.dom._
 import org.scalajs.dom.html.Element
+import scalatags.JsDom.all._
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
@@ -14,7 +15,7 @@ object PresenceClient {
   val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
   def attachPresenceEventHandlerToElement(explainerId: String, element: Element) = {
     element.onmouseover = (x: MouseEvent) => {
-      presenceClient.enter("explain-" + explainerId, "document")
+      presenceClient.enter(s"explain-$explainerId", "document")
     }
     enterDocument(explainerId)
     activatePresenceHandler()
@@ -27,7 +28,7 @@ object PresenceClient {
     presenceClient.on("visitor-list-updated", { data: js.Object =>
       val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
       val statesOnThisArea: Seq[StateChange.State] = stateChange.currentState.filter(_.location == "document")
-      dom.document.getElementById("presence-names-display-wrapper").innerHTML = statesOnThisArea.map(_.clientId.person.initials).map( i => s"<span class=${ "presence-names-single" }>${i}</span>" ).mkString(" ")
+      dom.document.getElementById("presence-names-display-wrapper").innerHTML = statesOnThisArea.map(_.clientId.person.initials).map( i => span(cls:="presence-names-single")(i) ).mkString(" ")
       ()
     })
   }
