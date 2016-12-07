@@ -109,7 +109,10 @@ class ExplainerDB @Inject() (
   }
 
   def getWorkflowData(ids: List[String]) = {
-    exec(workflowDataTable.getAll('id -> ids)).map(_.getOrElse(None)).asInstanceOf[List[WorkflowData]]
+    exec(workflowDataTable.getAll('id -> ids.toSet)).flatMap{
+      case(Xor.Right(data)) => Some(data)
+      case _ => None
+    }.toList
   }
 
 

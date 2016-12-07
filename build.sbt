@@ -23,7 +23,7 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
   libraryDependencies ++= Seq(
     filters,
     "com.amazonaws" % "aws-java-sdk-core" % awsVersion,
-    "com.gu" %% "scanamo" % "0.6.0",
+    "com.gu" %% "scanamo" % "0.7.0",
     ws, // for panda
     cache,
     "com.gu" %% "pan-domain-auth-verification" % "0.3.0",
@@ -34,8 +34,8 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
     "org.webjars" % "bootstrap" % "3.3.5",
     "org.webjars" % "jquery" % "2.1.4",
     "org.webjars" % "font-awesome" % "4.4.0",
-    "com.gu" %% "atom-publisher-lib" % "0.1.3",
-    "com.gu" %% "atom-manager-play" % "0.1.3",
+    "com.gu" %% "atom-publisher-lib" % "0.1.5",
+    "com.gu" %% "atom-manager-play" % "0.1.5",
     "com.twitter" %% "scrooge-core" % "4.5.0",
     "com.gu" %% "scanamo-scrooge" % "0.1.2",
     "com.amazonaws" % "aws-java-sdk-ec2" % awsVersion,

@@ -61,7 +61,7 @@ class Config @Inject() (conf: Configuration) extends AwsInstanceTags {
 
   val awsCredentialsprovider = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider("composer"),
-    new InstanceProfileCredentialsProvider
+    new InstanceProfileCredentialsProvider(true)
   )
 
   val publishToKinesis = conf.getBoolean("enable.kinesis.publishing") getOrElse true
