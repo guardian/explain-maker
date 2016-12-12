@@ -2,10 +2,9 @@ package views
 
 import api.Model
 import components.{ScribeBodyEditor, Sidebar, StatusBar, TagPickers}
-import fr.hmil.roshttp.HttpRequest
 import org.scalajs.dom
 import org.scalajs.dom.html.Div
-import services.{PresenceClient, State, StateChange}
+import services.{PresenceClient, State}
 import shared.models.UpdateField.{Body, DisplayType, RemoveTag, UpdateField}
 import shared.models.ExplainerUpdate
 
@@ -16,8 +15,6 @@ import scala.util.{Failure, Success}
 import scala.scalajs.js.{Function0, Object => JsObject}
 import shared.models._
 import shared.util.SharedHelperFunctions
-import scala.concurrent.Future
-import scala.scalajs.js.JSON
 import scala.scalajs.js.timers._
 
 
@@ -56,20 +53,6 @@ object ExplainEditor {
       callback()
     }
 
-    checkNumberOfUserInExplainer(explainerId).foreach{no =>
-      if (no >= 2) println("DANGER")
-    }
-
-  }
-
-  def checkNumberOfUserInExplainer(id: String): Future[Int] = {
-    val presenceApiRequest = HttpRequest(s"${g.CONFIG.PRESENCE_ENDPOINT_URL.toString}/api/currentState/explain-$id")
-
-    presenceApiRequest.send().map{r =>
-      val sc = upickle.default.read[StateChange](JSON.stringify(r.body))
-      sc.currentState.length
-    }
-
   }
 
   def updateFieldAndRefresh(explainerId: String, updateField: UpdateField, updateValue: String, errorMessage: String) = {
@@ -78,7 +61,6 @@ object ExplainEditor {
       case Failure(_) => g.console.error(errorMessage)
     }
   }
-
 
   def updateEmbedUrlAndStatusLabel(id: String, status: PublicationStatus) = {
     StatusBar.updateStatusBar(status)

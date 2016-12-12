@@ -10,7 +10,7 @@ import scala.scalajs.js
 import scala.scalajs.js.Dynamic.{global => g}
 
 object PresenceClient {
-  val endpoint = g.CONFIG.PRESENCE_ENDPOINT_URL.toString
+  val endpoint = s"wss://presence.${g.CONFIG.PRESENCE_ENDPOINT_URL.toString}/socket"
   val person = new Person(g.CONFIG.USER_FIRSTNAME.toString, g.CONFIG.USER_LASTNAME.toString, g.CONFIG.USER_EMAIL_ADDRESS.toString)
   val presenceClient = PresenceGlobalScope.presenceClient(endpoint, person)
   def attachPresenceEventHandlerToElement(explainerId: String, element: Element) = {
@@ -27,6 +27,11 @@ object PresenceClient {
   def activatePresenceHandler() = {
     presenceClient.on("visitor-list-updated", { data: js.Object =>
       val stateChange = upickle.default.read[StateChange](js.JSON.stringify(data))
+      if (stateChange.currentState.length > 1) {
+        dom.document.getElementById("presence-warning-message").classList.remove("visually-hidden")
+      } else {
+        dom.document.getElementById("presence-warning-message").classList.add("visually-hidden")
+      }
       val statesOnThisArea: Seq[StateChange.State] = stateChange.currentState.filter(_.location == "document")
       dom.document.getElementById("presence-names-display-wrapper").innerHTML = statesOnThisArea.map(_.clientId.person.initials).map( i => span(cls:="presence-names-single")(i) ).mkString(" ")
       ()
