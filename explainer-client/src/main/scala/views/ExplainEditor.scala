@@ -4,7 +4,7 @@ import api.Model
 import components.{ScribeBodyEditor, Sidebar, StatusBar, TagPickers}
 import org.scalajs.dom
 import org.scalajs.dom.html.Div
-import services.PresenceClient
+import services.{PresenceClient, State}
 import shared.models.UpdateField.{Body, DisplayType, RemoveTag, UpdateField}
 import shared.models.ExplainerUpdate
 
@@ -13,7 +13,6 @@ import scala.scalajs.js.Dynamic.{global => g}
 import scala.scalajs.js.annotation.JSExport
 import scala.util.{Failure, Success}
 import scala.scalajs.js.{Function0, Object => JsObject}
-import services.State
 import shared.models._
 import shared.util.SharedHelperFunctions
 import scala.scalajs.js.timers._
@@ -53,6 +52,7 @@ object ExplainEditor {
       }
       callback()
     }
+
   }
 
   def updateFieldAndRefresh(explainerId: String, updateField: UpdateField, updateValue: String, errorMessage: String) = {
@@ -61,7 +61,6 @@ object ExplainEditor {
       case Failure(_) => g.console.error(errorMessage)
     }
   }
-
 
   def updateEmbedUrlAndStatusLabel(id: String, status: PublicationStatus) = {
     StatusBar.updateStatusBar(status)
