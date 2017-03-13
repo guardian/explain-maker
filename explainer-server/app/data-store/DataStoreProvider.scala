@@ -12,18 +12,10 @@ import scala.reflect.classTag
 
 import DynamoFormat._
 
-class PublishedExplainerAtomDataStoreProvider @Inject() (config: Config)
-  extends Provider[PublishedDataStore] {
-  def get = new PublishedDynamoDataStore[ExplainerAtom](config.dynamoClient, config.liveTableName) {
-    def fromAtomData = { case AtomData.Explainer(data) => data }
-    def toAtomData(data: ExplainerAtom) = AtomData.Explainer(data)
-  }
+class PublishedExplainerAtomDataStoreProvider @Inject() (config: Config) extends Provider[PublishedDataStore] {
+  def get = new PublishedDynamoDataStore(config.dynamoClient, config.liveTableName)
 }
 
-class PreviewExplainerAtomDataStoreProvider @Inject() (config: Config)
-  extends Provider[PreviewDataStore] {
-  def get = new PreviewDynamoDataStore[ExplainerAtom](config.dynamoClient, config.previewTableName) {
-    def fromAtomData = { case AtomData.Explainer(data) => data }
-    def toAtomData(data: ExplainerAtom) = AtomData.Explainer(data)
-  }
+class PreviewExplainerAtomDataStoreProvider @Inject() (config: Config) extends Provider[PreviewDataStore] {
+  def get = new PreviewDynamoDataStore(config.dynamoClient, config.previewTableName)
 }

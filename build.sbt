@@ -23,7 +23,7 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
   libraryDependencies ++= Seq(
     filters,
     "com.amazonaws" % "aws-java-sdk-core" % awsVersion,
-    "com.gu" %% "scanamo" % "0.6.0",
+    "com.gu" %% "scanamo" % "0.9.2",
     ws, // for panda
     cache,
     "com.gu" %% "pan-domain-auth-verification" % "0.3.0",
@@ -34,10 +34,10 @@ lazy val explainMakerServer = (project in file("explainer-server")).enablePlugin
     "org.webjars" % "bootstrap" % "3.3.5",
     "org.webjars" % "jquery" % "2.1.4",
     "org.webjars" % "font-awesome" % "4.4.0",
-    "com.gu" %% "atom-publisher-lib" % "0.1.3",
-    "com.gu" %% "atom-manager-play" % "0.1.3",
+    "com.gu" %% "atom-publisher-lib" % "0.2.3-SNAPSHOT",
+    "com.gu" %% "atom-manager-play" % "0.2.3-SNAPSHOT",
     "com.twitter" %% "scrooge-core" % "4.5.0",
-    "com.gu" %% "scanamo-scrooge" % "0.1.2",
+    "com.gu" %% "scanamo-scrooge" % "0.1.4",
     "com.amazonaws" % "aws-java-sdk-ec2" % awsVersion,
     "com.gu" % "kinesis-logback-appender" % "1.2.0",
     "net.logstash.logback" % "logstash-logback-encoder" % "4.2",
@@ -106,7 +106,7 @@ lazy val explainMakerClient = (project in file("explainer-client")).settings(
 lazy val explainMakerShared = (crossProject.crossType(CrossType.Pure) in file("explainer-shared")).
   settings(scalaVersion := scalaV,
     libraryDependencies ++= Seq(
-      "com.gu" %% "content-atom-model" % "2.4.12"
+      "com.gu" %% "content-atom-model" % "2.4.34"
     ))
     .jsConfigure(_ enablePlugins ScalaJSPlay)
 

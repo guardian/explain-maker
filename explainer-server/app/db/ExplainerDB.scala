@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import cats.data.Xor
+import cats.syntax.either._
 import com.gu.contentatom.thrift._
 import config.Config
 import com.gu.scanamo.scrooge.ScroogeDynamoFormat._
@@ -13,7 +13,7 @@ import com.gu.contentatom.thrift.atom.explainer._
 import shared.util.ExplainerAtomImplicits
 import com.gu.atom.data.ScanamoUtil._
 import com.gu.scanamo.ops.ScanamoOps
-import com.gu.scanamo.query.UniqueKeys
+import com.gu.scanamo.query.{KeyList, UniqueKeys}
 import com.gu.scanamo.syntax._
 import com.gu.scanamo.{DynamoFormat, Scanamo, Table}
 import shared.models.{WorkflowData, WorkflowStatus}
@@ -51,22 +51,25 @@ class ExplainerDB @Inject() (
   // TODO: Switch to using dynamo async library or stop these functions from returning futures
   def all : Future[Seq[Atom]] = {
     Future(previewDynamoDataStore.listAtoms match {
-      case Xor.Right(atoms) => stringConvertIterator(atoms)
+      case Right(atoms) => stringConvertIterator(atoms)
       case _ => Nil
     })
   }
 
   def allLive: Future[Seq[Atom]] = {
     Future(liveDynamoDataStore.listAtoms match {
-      case Xor.Right(atoms) => stringConvertIterator(atoms)
+      case Right(atoms) => stringConvertIterator(atoms)
       case _ => Nil
     })
   }
 
   def load(id: String): Future[Atom] = {
-    val explainer = previewDynamoDataStore.getAtom(id).get
+    val explainer = previewDynamoDataStore.getAtom(id) match {
+      case Right(value) => Some(value)
+      case Left(_) => None
+    }
 
-    val sanitisedExplainer = emptyStringConversion(explainer, emptyStringMarkerToEmptyString)
+    val sanitisedExplainer = emptyStringConversion(explainer.get, emptyStringMarkerToEmptyString)
     Future(sanitisedExplainer)
 
   }
@@ -74,7 +77,10 @@ class ExplainerDB @Inject() (
   def loadLive(id: String): Option[Atom] = {
     val explainer = liveDynamoDataStore.getAtom(id)
     val sanitisedExplainer = explainer.map(e => emptyStringConversion(e, emptyStringMarkerToEmptyString))
-    sanitisedExplainer
+    sanitisedExplainer match {
+      case Right(value) => Some(value)
+      case Left(_) => None
+    }
   }
 
   def publish(explainer: Atom) = {
@@ -99,7 +105,7 @@ class ExplainerDB @Inject() (
   def getWorkflowData(id: String): WorkflowData = {
     val defaultData = WorkflowData(id)
     exec(workflowDataTable.get('id -> id)).fold(defaultData)({
-      case Xor.Right(data) => data
+      case Right(data) => data
       case _ => defaultData
     })
   }
@@ -109,7 +115,7 @@ class ExplainerDB @Inject() (
   }
 
   def getWorkflowData(ids: List[String]) = {
-    exec(workflowDataTable.getAll('id -> ids)).map(_.getOrElse(None)).asInstanceOf[List[WorkflowData]]
+    exec(workflowDataTable.getAll(UniqueKeys(KeyList('id, ids.toSet)))).map(_.getOrElse(None)).asInstanceOf[List[WorkflowData]]
   }
 
 
