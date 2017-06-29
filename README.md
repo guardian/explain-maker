@@ -25,7 +25,7 @@ The sbt build file contains 3 modules
 
 ### Links: 
 
-* CI : [TeamCity](https://teamcity-aws.gutools.co.uk/viewType.html?buildTypeId=EditorialTools_Explainer)
+* CI : [TeamCity](https://teamcity.gutools.co.uk/viewType.html?buildTypeId=EditorialTools_Explainer)
 * See live: [PROD](https://explainers.gutools.co.uk) [CODE](https://explainers.code.dev-gutools.co.uk)
 
 ## Running Locally
