@@ -65,15 +65,13 @@
                 "MinSize": 1,
                 "MaxSize": 2,
                 "DesiredCapacity": 1,
-                "InstanceType": "t2.micro",
-                "ELBIngressIPRange": "77.91.248.0/21"
+                "InstanceType": "t2.micro"
             },
             "PROD":{
                 "MinSize": 3,
                 "MaxSize": 6,
                 "DesiredCapacity": 3,
-                "InstanceType": "t2.small",
-                "ELBIngressIPRange": "0.0.0.0/0"
+                "InstanceType": "t2.small"
             }
         }
     },
@@ -331,7 +329,7 @@
                         "IpProtocol": "tcp",
                         "FromPort": "443",
                         "ToPort": "443",
-                        "CidrIp": { "Fn::FindInMap": [ "Config", { "Ref": "Stage" }, "ELBIngressIPRange" ] }
+                        "CidrIp": "0.0.0.0/0"
                     }
                 ],
                 "SecurityGroupEgress" : [
