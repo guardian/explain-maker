@@ -28,7 +28,7 @@ Parameters:
     - CODE
     Description: Applied directly as a tag
     Default: CODE
-  ImageId:
+  AMI:
     Description: AMI ID
     Type: String
   ELBSSLCertificate:
@@ -89,7 +89,7 @@ Resources:
   LaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      ImageId: !Ref 'ImageId'
+      ImageId: !Ref 'AMI'
       SecurityGroups:
       - !Ref 'InstanceSecurityGroup'
       - !Ref 'SSHSecurityGroup'
@@ -97,11 +97,13 @@ Resources:
       InstanceType: !FindInMap [Config, !Ref 'Stage', InstanceType]
       KeyName: !Ref 'KeyName'
       IamInstanceProfile: !Ref 'AppInstanceProfile'
-      UserData: !Base64 "#!/bin/bash -ev\n/opt/features/ssh-keys/initialise-keys-and-cron-job.sh\
-        \ -l -b github-public-keys -t Editorial-Tools-SSHAccess || true \n\nmkdir\
-        \ /etc/gu\naws s3 cp s3://explainer-config/application.secrets.conf /etc/gu/explainer.secrets.conf\n\
-        /opt/features/native-packager/install.sh -b composer-dist -a explain-maker\
-        \ -t tgz -s\n"
+      UserData: !Base64
+        Fn::Sub: |
+          #!/bin/bash -ev
+          mkdir /etc/gu
+          aws s3 cp s3://explainer-config/application.secrets.conf /etc/gu/explainer.secrets.conf
+          aws s3 cp s3://composer-dist/flexible/${Stage}/explain-maker/explain-maker_0.1-SNAPSHOT_all.deb /tmp/explain-maker.deb
+          dpkg -i /tmp/explain-maker.deb
   AppRole:
     Type: AWS::IAM::Role
     Properties:

@@ -1,0 +1,17 @@
+stacks: [flexible]
+regions: [eu-west-1]
+deployments:
+  ami-update:
+    type: ami-cloudformation-parameter
+    app: explain-maker
+    parameters:
+      amiTags:
+        Recipe: editorial-tools-xenial-java8
+        AmigoStage: PROD
+        BuiltBy: amigo
+  explain-maker:
+    type: autoscaling
+    parameters:
+      bucket: composer-dist
+    dependencies:
+    - ami-update
