@@ -8,11 +8,11 @@ Parameters:
   PrivateSubnets:
     Type: List<AWS::EC2::Subnet::Id>
     Description: The list of SubnetIds in your Virtual Private Cloud (VPC)
-    Default: subnet-c2620fa7,subnet-2967c870,subnet-2a37bd5d
+    Default: subnet-c2620fa7,subnet-2967c870
   PublicSubnets:
     Type: List<AWS::EC2::Subnet::Id>
     Description: The list of SubnetIds in your Virtual Private Cloud (VPC)
-    Default: subnet-c3620fa6,subnet-2b37bd5c,subnet-3667c86f
+    Default: subnet-c3620fa6,subnet-2b37bd5c
   Stack:
     Type: String
     Description: Applied directly as a tag
@@ -53,25 +53,28 @@ Mappings:
     CODE:
       MinSize: 1
       MaxSize: 2
-      DesiredCapacity: 1
       InstanceType: t2.micro
       ELBIngressIPRange: 77.91.248.0/21
     PROD:
-      MinSize: 3
-      MaxSize: 6
-      DesiredCapacity: 3
-      InstanceType: t2.small
+      MinSize: 2
+      MaxSize: 4
+      InstanceType: t2.micro
       ELBIngressIPRange: 0.0.0.0/0
 Resources:
   AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
-      AvailabilityZones: !GetAZs ''
+      AvailabilityZones:
+        - Fn::Select:
+          - 0
+          - Fn::GetAZs: !Ref "AWS::Region"
+        - Fn::Select:
+          - 1
+          - Fn::GetAZs: !Ref "AWS::Region"
       VPCZoneIdentifier: !Ref 'PrivateSubnets'
       LaunchConfigurationName: !Ref 'LaunchConfig'
       MinSize: !FindInMap [Config, !Ref 'Stage', MinSize]
       MaxSize: !FindInMap [Config, !Ref 'Stage', MaxSize]
-      DesiredCapacity: !FindInMap [Config, !Ref 'Stage', DesiredCapacity]
       LoadBalancerNames:
       - !Ref 'ElasticLoadBalancer'
       HealthCheckType: ELB
