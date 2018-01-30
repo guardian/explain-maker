@@ -1,3 +1,6 @@
+**This repo is no longer in use and has been deleted in AWS.** 
+_Since legacy explainers can now be edited inside Atom Workshop, there is no need for a separate tool._ 
+
 # Explainer Atom Editor
 
 ### Architecture
