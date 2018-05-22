@@ -6,7 +6,7 @@ deployments:
     app: explain-maker
     parameters:
       amiTags:
-        Recipe: editorial-tools-xenial-java8
+        Recipe: editorial-tools-xenial-java8-deprecated
         AmigoStage: PROD
         BuiltBy: amigo
   explain-maker:
